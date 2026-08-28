@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7f8">
+<title>信用卡優惠額度</title>
+<style>
+:root{
+  --bg:#f6f7f8;
+  --card:#fff;
+  --text:#151515;
+  --muted:#7a7f87;
+  --line:#e7e9ec;
+  --soft:#f1f2f4;
+  --good:#147a55;
+  --bad:#bc3d3d;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang HK","Noto Sans TC","Microsoft JhengHei",sans-serif;
+}
+body{padding-bottom:96px}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:720px;margin:0 auto;padding:16px 14px 24px}
+
+.top{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  margin-bottom:16px
+}
+.title{font-size:22px;font-weight:800;letter-spacing:-.35px}
+.top-actions{display:flex;gap:7px;align-items:center}
+.month{
+  width:120px;border:0;background:transparent;color:var(--muted);
+  font-weight:700;padding:7px 0
+}
+.icon-btn{
+  width:38px;height:38px;border:1px solid var(--line);border-radius:11px;
+  background:#fff;display:grid;place-items:center;font-size:18px
+}
+
+.section-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin:0 2px 8px
+}
+.section-head h2{font-size:16px;margin:0}
+.section-head span{font-size:11px;color:var(--muted)}
+
+.goals{
+  background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden
+}
+.goal{
+  padding:13px 14px;border-bottom:1px solid var(--line)
+}
+.goal:last-child{border-bottom:0}
+.goal-card{
+  font-size:13px;font-weight:800;margin-bottom:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.goal-title{
+  font-size:14px;font-weight:800;line-height:1.35;margin-bottom:5px
+}
+.goal-meta{
+  font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:8px
+}
+.goal-progress-row{
+  display:flex;align-items:center;gap:9px
+}
+.progress{
+  flex:1;height:7px;background:#eceef0;border-radius:999px;overflow:hidden
+}
+.progress>div{height:100%;background:#111;border-radius:999px}
+.goal-percent{
+  flex:0 0 auto;min-width:36px;text-align:right;font-size:12px;font-weight:800
+}
+.goal-status{
+  margin-top:6px;font-size:11px;color:var(--muted);line-height:1.4
+}
+.goal-status b{color:var(--text)}
+.goal-days{
+  display:inline-block;margin-left:6px;font-size:10px;font-weight:700;
+  padding:2px 6px;border-radius:999px;background:var(--soft);vertical-align:1px
+}
+.goal-days.good{color:var(--good)}
+.goal-days.bad{color:var(--bad)}
+.history-head{margin-top:20px}
+.tx-list{
+  background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden
+}
+.tx{
+  display:grid;grid-template-columns:1fr auto;gap:10px;
+  padding:11px 13px;border-bottom:1px solid var(--line)
+}
+.tx:last-child{border-bottom:0}
+.tx-card{font-size:13px;font-weight:750}
+.tx-sub{
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+  margin-top:3px;font-size:10.5px;color:var(--muted)
+}
+.pill{background:var(--soft);padding:2px 6px;border-radius:999px}
+.tx-amount{align-self:center;font-size:14px;font-weight:800}
+.empty{padding:28px 14px;text-align:center;color:var(--muted);font-size:12px}
+
+.bottom{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(246,247,248,0),rgba(246,247,248,.96) 30%,#f6f7f8 60%)
+}
+.add-btn{
+  display:block;width:min(692px,100%);margin:0 auto;border:0;border-radius:15px;
+  background:#111;color:#fff;padding:14px;font-size:15px;font-weight:800;
+  box-shadow:0 8px 22px rgba(0,0,0,.13)
+}
+
+.modal{
+  position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.34);
+  display:none;align-items:flex-end;justify-content:center
+}
+.modal.show{display:flex}
+.sheet{
+  width:min(720px,100%);max-height:90vh;overflow:auto;background:#fff;
+  border-radius:22px 22px 0 0;padding:16px 14px calc(16px + env(safe-area-inset-bottom))
+}
+.sheet-head{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  margin:0 -14px 14px;padding:0 14px 12px;
+}
+#settingsModal .sheet-head{
+  position:sticky;top:-16px;z-index:10;
+  background:#fff;
+  padding-top:16px;
+  border-bottom:1px solid var(--line);
+}
+.sheet-head h3{font-size:17px;margin:0}
+.close{
+  width:34px;height:34px;border:0;border-radius:50%;background:var(--soft);font-size:19px
+}
+
+.field{margin-bottom:11px}
+.field label{
+  display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px
+}
+input,select{
+  width:100%;border:1px solid var(--line);border-radius:12px;
+  background:#fff;padding:11px 10px;outline:none
+}
+input:focus,select:focus{border-color:#a9adb4}
+.confirm{
+  width:100%;border:0;border-radius:13px;background:#111;color:#fff;
+  padding:13px;font-weight:800
+}
+
+
+.offer-tabs{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;
+  background:var(--soft);padding:4px;border-radius:12px;margin-bottom:12px
+}
+.offer-tab{
+  border:0;background:transparent;border-radius:9px;padding:9px 8px;
+  font-size:12px;font-weight:800;color:var(--muted)
+}
+.offer-tab.active{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.offer-panel.hidden{display:none}
+.settings-card{
+  border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:10px
+}
+.settings-title{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px
+}
+.settings-title h4{margin:0;font-size:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.full{grid-column:1/-1}
+.subhead{
+  font-size:11px;font-weight:800;color:var(--muted);
+  margin:4px 0 8px;padding-top:9px;border-top:1px solid var(--line)
+}
+.toggle-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0 3px
+}
+.toggle-row span{font-size:12px;font-weight:750}
+.switch{
+  position:relative;width:44px;height:26px;background:#d9dce1;border-radius:999px;cursor:pointer
+}
+.switch input{display:none}
+.switch i{
+  position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;
+  box-shadow:0 1px 4px rgba(0,0,0,.18);transition:.16s
+}
+.switch input:checked + i{left:21px}
+.switch:has(input:checked){background:#111}
+.welcome-fields.hidden{display:none}
+.save-row{display:flex;gap:8px;margin-top:8px}
+.save-row button{
+  flex:1;border:0;border-radius:11px;padding:10px;font-size:12px;font-weight:750
+}
+.save{background:#111;color:#fff}
+.remove{background:#fff0f0;color:var(--bad)}
+.add-card{
+  width:100%;border:1px dashed #cfd2d7;border-radius:13px;background:#fafafa;
+  padding:11px;font-weight:750
+}
+.tiny{font-size:10.5px;color:var(--muted);line-height:1.4}
+
+@media(max-width:460px){
+  .grid2{grid-template-columns:1fr 1fr}
+}
+</style>
+<script type="text/javascript" nonce="db67d173f66441678a8dd740458" src="//injections.adguard.org?ts=1787940510889&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000009d748207a691013aa884c283%26ts%3D496651%26p%3Dfs%26cid%3D1%26sig%3D51d3ec64e0f485fbeafcb9e0e538de966cfab7b9dd0c657279dce20eaa0670a2%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="db67d173f66441678a8dd740458" src="//injections.adguard.org?ts=1787940510889&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+<body>
+
+<div class="app">
+  <div class="top">
+    <div class="title">信用卡優惠額度</div>
+    <div class="top-actions">
+      <input id="monthPicker" class="month" type="month">
+      <button id="settingsBtn" class="icon-btn" aria-label="設定">⚙︎</button>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>額度進度</h2>
+    <span id="goalCount">0 個目標</span>
+  </div>
+  <div id="goals" class="goals"></div>
+
+  <div class="section-head history-head">
+    <h2>消費紀錄</h2>
+    <span id="txCount">0 筆</span>
+  </div>
+  <div id="txList" class="tx-list"></div>
+</div>
+
+<div class="bottom">
+  <button id="openAdd" class="add-btn">＋ 新增消費</button>
+</div>
+
+<div id="addModal" class="modal">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3>新增消費</h3>
+      <button class="close" data-close="addModal">×</button>
+    </div>
+
+    <div class="field">
+      <label>信用卡</label>
+      <select id="txCard"></select>
+    </div>
+
+    <div class="field">
+      <label>金額</label>
+      <input id="txAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="$0">
+    </div>
+
+    <div class="field">
+      <label>類別</label>
+      <select id="txCategory">
+        <option value="一般零售">一般零售</option>
+        <option value="手機支付">手機支付</option>
+        <option value="旅遊商戶">旅遊商戶</option>
+        <option value="海外簽賬（外幣簽賬）">海外簽賬（外幣簽賬）</option>
+        <option value="線上娛樂">線上娛樂</option>
+      </select>
+    </div>
+
+    <button id="confirmAdd" class="confirm">確定</button>
+  </div>
+</div>
+
+<div id="settingsModal" class="modal">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3>回贈優惠設定</h3>
+      <button class="close" data-close="settingsModal">×</button>
+    </div>
+
+    <datalist id="cardNameSuggestions">
+      <option value="Citi Cash Back 信用卡"></option>
+      <option value="渣打國泰Mastercard"></option>
+      <option value="DBS Eminent Visa Platinum Card"></option>
+      <option value="渣打Smart信用卡"></option>
+      <option value="DBS Black World Mastercard®"></option>
+      <option value="信銀國際Motion信用卡"></option>
+      <option value="信銀國際大灣區雙幣信用卡"></option>
+      <option value="Mox 信用卡 (CashBack)"></option>
+      <option value="sim Credit Card"></option>
+      <option value="滙豐Red信用卡"></option>
+      <option value="滙豐EveryMile信用卡"></option>
+      <option value="恒生MMPOWER World Mastercard"></option>
+      <option value="Airwallex雲匯Visa卡"></option>
+      <option value="sim World Mastercard®️"></option>
+      <option value="Citi Rewards 信用卡"></option>
+      <option value="美國運通白金卡"></option>
+      <option value="美國運通 Explorer® 信用卡"></option>
+      <option value="Mox 信用卡 （「亞洲萬里通」）"></option>
+      <option value="Citi PremierMiles 信用卡"></option>
+      <option value="渣打Simply Cash Visa卡"></option>
+      <option value="恒生enJoy卡"></option>
+      <option value="恒生Travel+ Visa Signature 卡"></option>
+      <option value="中銀Bliss Card"></option>
+      <option value="中信銀行(國際)香港航空Mastercard®卡"></option>
+      <option value="富邦iN ShopBack Visa 白金卡"></option>
+      <option value="安信WeWa Visa Signature卡"></option>
+      <option value="滙豐銀聯雙幣信用卡"></option>
+      <option value="Citi 八達通白金卡"></option>
+      <option value="滙豐easy信用卡"></option>
+      <option value="滙豐滙財金卡"></option>
+      <option value="中銀 Cheers Visa Signature Card"></option>
+      <option value="中銀Chill Platinum Mastercard"></option>
+      <option value="中銀Chill World Mastercard"></option>
+      <option value="安信EarnMORE銀聯鑽石卡"></option>
+      <option value="滙豐 Visa Signature卡"></option>
+      <option value="滙豐Pulse銀聯雙幣鑽石信用卡"></option>
+      <option value="中銀 Cheers Visa Infinite Card"></option>
+      <option value="渣打國泰Mastercard - 優先理財"></option>
+      <option value="渣打國泰Mastercard - 優先私人理財"></option>
+      <option value="美國運通白金信用卡"></option>
+      <option value="美國運通Blue Cash®信用卡"></option>
+      <option value="Citi Rewards 銀聯信用卡"></option>
+      <option value="DBS COMPASS VISA"></option>
+      <option value="DBS Eminent Visa Signature Card"></option>
+      <option value="DBS Live Fresh 大專生信用卡"></option>
+      <option value="DBS Live Fresh Card"></option>
+      <option value="滙豐滙財金卡 - 學生卡"></option>
+      <option value="安信WeWa Visa 白金卡（適用於全日制大學/大專學生）"></option>
+      <option value="安信EarnMORE銀聯卡 (適用於全日制大學/大專學生)"></option>
+      <option value="Citi Prestige 信用卡"></option>
+      <option value="大新ONE+信用卡"></option>
+      <option value="美國運通商務金卡"></option>
+      <option value="大新ANA World萬事達卡"></option>
+      <option value="大新MyAuto車主信用卡"></option>
+      <option value="大新英國航空白金卡"></option>
+      <option value="大新聯合航空World萬事達卡"></option>
+      <option value="AEON Visa 信用卡"></option>
+      <option value="AEON萬事達信用卡"></option>
+      <option value="AEON 銀聯信用卡"></option>
+      <option value="AEON JCB 信用卡"></option>
+      <option value="AEON CARD WAKUWAKU"></option>
+      <option value="AEON Card JAL 萬事達卡"></option>
+      <option value="AEON 愛護動物協會萬事達卡（小貓）"></option>
+      <option value="AEON 愛護動物協會萬事達卡（小狗）"></option>
+      <option value="中銀Go銀聯鑽石卡"></option>
+      <option value="中銀Go銀聯白金卡"></option>
+    </datalist>
+
+    <div id="settingsCards"></div>
+    <button id="addCard" class="add-card">＋ 新增信用卡</button>
+  </div>
+</div>
+
+<script>
+const KEY='cc_compact_goals_v3';
+
+function uid(){
+  return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random());
+}
+function localDateStr(){
+  const d=new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,'0'),
+    String(d.getDate()).padStart(2,'0')
+  ].join('-');
+}
+function localMonthStr(){return localDateStr().slice(0,7)}
+function defaultCard(){
+  return {
+    id:uid(),
+    name:'示例信用卡',
+    rebateRate:4,
+    spendRequirement:1500,
+    spendCap:5556,
+    rebateEndDate:'',
+    hasWelcome:true,
+    approvalDate:'',
+    welcomeDays:90,
+    welcomeRequirement:12000,
+    welcomeRewardType:'現金回贈',
+    welcomeReward:1000
+  };
+}
+function migrateCard(c){
+  return {
+    id:c.id || uid(),
+    name:c.name || '未命名信用卡',
+    rebateRate:
+      c.rebateRate ?? (Number(c.baseRate||0)+Number(c.bonusRate||0)) ?? 0,
+    spendRequirement:
+      c.spendRequirement ?? c.monthlyThreshold ?? 0,
+    spendCap:
+      c.spendCap ?? c.bonusSpendCap ?? 0,
+    rebateEndDate:c.rebateEndDate || '',
+    hasWelcome:
+      c.hasWelcome ?? !!(c.approvalDate || c.welcomeSpend || c.welcomeRequirement),
+    approvalDate:c.approvalDate || '',
+    welcomeDays:c.welcomeDays ?? 90,
+    welcomeRequirement:
+      c.welcomeRequirement ?? c.welcomeSpend ?? 0,
+    welcomeRewardType:c.welcomeRewardType || '現金回贈',
+    welcomeReward:
+      c.welcomeReward ?? c.welcomeCashback ?? 0
+  };
+}
+function load(){
+  try{
+    const x=JSON.parse(localStorage.getItem(KEY));
+    if(x && Array.isArray(x.cards) && x.cards.length){
+      x.cards=x.cards.map(migrateCard);
+      x.transactions ||= [];
+      x.month ||= localMonthStr();
+      return x;
+    }
+
+    // migrate older versions if found
+    for(const oldKey of ['cc_simple_rebate_v2','cc_rebate_calculator_v1']){
+      const old=JSON.parse(localStorage.getItem(oldKey));
+      if(old && Array.isArray(old.cards) && old.cards.length){
+        return {
+          cards:old.cards.map(migrateCard),
+          transactions:Array.isArray(old.transactions)?old.transactions:[],
+          month:old.month || old.selectedMonth || localMonthStr()
+        };
+      }
+    }
+  }catch(e){}
+  return {cards:[defaultCard()],transactions:[],month:localMonthStr()};
+}
+
+let state=load();
+
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function esc(s=''){
+  return String(s).replace(/[&<>"']/g,m=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  }[m]));
+}
+function money(n){
+  return '$'+Number(n||0).toLocaleString('en-HK',{
+    minimumFractionDigits:0,maximumFractionDigits:2
+  });
+}
+function pct(a,b){
+  return b ? Math.min(100,Math.max(0,Number(a)/Number(b)*100)) : 0;
+}
+function getMonthTx(cardId){
+  return state.transactions.filter(t=>
+    t.cardId===cardId && String(t.date).slice(0,7)===state.month
+  );
+}
+function addDays(dateStr,days){
+  const d=new Date(dateStr+'T00:00:00');
+  d.setDate(d.getDate()+Number(days)-1);
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,'0'),
+    String(d.getDate()).padStart(2,'0')
+  ].join('-');
+}
+function daysLeft(endStr){
+  const a=new Date(localDateStr()+'T00:00:00');
+  const b=new Date(endStr+'T00:00:00');
+  return Math.max(0,Math.ceil((b-a)/86400000)+1);
+}
+function monthEnd(month){
+  const [y,m]=month.split('-').map(Number);
+  const d=new Date(y,m,0);
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,'0'),
+    String(d.getDate()).padStart(2,'0')
+  ].join('-');
+}
+function currentMonthSpend(cardId){
+  return getMonthTx(cardId).reduce((s,t)=>s+Number(t.amount),0);
+}
+function rebateMonthSpend(card){
+  return getMonthTx(card.id)
+    .filter(t=>!card.rebateEndDate || t.date<=card.rebateEndDate)
+    .reduce((s,t)=>s+Number(t.amount),0);
+}
+function rewardLabel(card){
+  if(card.welcomeRewardType==='飛行里數'){
+    return `${Number(card.welcomeReward||0).toLocaleString('en-HK')} 里`;
+  }
+  return money(card.welcomeReward);
+}
+
+function getGoalRows(){
+  const rows=[];
+  const today=localDateStr();
+  const currentMonth=localMonthStr();
+
+  state.cards.forEach(c=>{
+    const spent=rebateMonthSpend(c);
+    const cap=Number(c.spendCap||0);
+    const req=Number(c.spendRequirement||0);
+    const monthlyEnd=monthEnd(state.month);
+    let end=monthlyEnd;
+
+    // If the rebate offer has an explicit end date, use the earlier of
+    // the selected month's end and the offer end date.
+    if(c.rebateEndDate && c.rebateEndDate < end){
+      end=c.rebateEndDate;
+    }
+
+    let remainDays=0;
+    let ended=false;
+    const selectedMonthStart=state.month+'-01';
+    if(c.rebateEndDate && selectedMonthStart>c.rebateEndDate){
+      ended=true;
+    }else if(state.month<currentMonth){
+      ended=true;
+    }else if(c.rebateEndDate && today>c.rebateEndDate){
+      ended=true;
+    }else{
+      remainDays=daysLeft(end);
+    }
+
+    let progressTarget=cap>0?cap:req;
+    let progress=pct(spent,progressTarget);
+    let status='';
+
+    if(spent<req){
+      status=`已簽 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻`;
+    }else if(cap>0 && spent<cap){
+      status=`已簽 ${money(spent)}，尚餘 ${money(cap-spent)} 消費額`;
+    }else if(cap>0 && spent>=cap){
+      status=`已簽 ${money(spent)}，已用盡本期額度`;
+    }else{
+      status=`已簽 ${money(spent)}，已達簽賬要求`;
+    }
+
+    rows.push({
+      card:c.name,
+      title:`簽賬回贈 · ${Number(c.rebateRate||0).toFixed(
+        Number.isInteger(Number(c.rebateRate||0))?0:1
+      )}%`,
+      meta:`下限 ${money(req)} · 上限 ${cap>0?money(cap):'—'}${c.rebateEndDate?` · 至 ${c.rebateEndDate}`:' · 每月重置'}`,
+      days:ended?'已完結':`${remainDays}日`,
+      dayClass:ended?'bad':(cap>0 && spent>=cap?'good':''),
+      progress,
+      percent:`${Math.round(progress)}%`,
+      status
+    });
+
+    if(c.hasWelcome){
+      const reqW=Number(c.welcomeRequirement||0);
+      let accum=0;
+      let endStr='';
+      let daysText='未設定日期';
+      let dayClass='';
+      let progressW=0;
+      let statusW='';
+
+      if(c.approvalDate){
+        endStr=addDays(c.approvalDate,Math.max(1,Number(c.welcomeDays||1)));
+        accum=state.transactions
+          .filter(t=>t.cardId===c.id && t.date>=c.approvalDate && t.date<=endStr)
+          .reduce((sum,t)=>sum+Number(t.amount),0);
+
+        progressW=pct(accum,reqW);
+
+        if(reqW>0 && accum>=reqW){
+          daysText='已完成';
+          dayClass='good';
+          statusW=`已簽 ${money(accum)}，已達迎新要求`;
+        }else if(today>endStr){
+          daysText='已完結';
+          dayClass='bad';
+          statusW=`已簽 ${money(accum)}，尚欠 ${money(Math.max(0,reqW-accum))}`;
+        }else{
+          daysText=`${daysLeft(endStr)}日`;
+          statusW=`已簽 ${money(accum)}，尚欠 ${money(Math.max(0,reqW-accum))} 簽賬要求`;
+        }
+      }else{
+        statusW=`尚未設定批卡日期`;
+      }
+
+      rows.push({
+        card:c.name,
+        title:`迎新簽賬 · ${esc(c.welcomeRewardType)} ${rewardLabel(c)}`,
+        meta:`要求 ${money(reqW)}`,
+        days:daysText,
+        dayClass,
+        progress:progressW,
+        percent:`${Math.round(progressW)}%`,
+        status:statusW
+      });
+    }
+  });
+
+  return rows;
+}
+
+function renderGoals(){
+  const rows=getGoalRows();
+  document.getElementById('goalCount').textContent=`${rows.length} 個目標`;
+
+  const box=document.getElementById('goals');
+  if(!rows.length){
+    box.innerHTML='<div class="empty">未設定任何目標</div>';
+    return;
+  }
+
+  box.innerHTML=rows.map(r=>`
+    <div class="goal">
+      <div class="goal-card">${esc(r.card)}</div>
+      <div class="goal-title">
+        ${r.title}
+        <span class="goal-days ${r.dayClass}">${esc(r.days)}</span>
+      </div>
+      <div class="goal-meta">${r.meta}</div>
+      <div class="goal-progress-row">
+        <div class="progress"><div style="width:${r.progress}%"></div></div>
+        <div class="goal-percent">${r.percent}</div>
+      </div>
+      <div class="goal-status">${r.status}</div>
+    </div>
+  `).join('');
+}
+
+function renderTransactions(){
+  const tx=state.transactions
+    .filter(t=>String(t.date).slice(0,7)===state.month)
+    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+
+  document.getElementById('txCount').textContent=`${tx.length} 筆`;
+  const box=document.getElementById('txList');
+
+  if(!tx.length){
+    box.innerHTML='<div class="empty">暫時未有消費紀錄</div>';
+    return;
+  }
+
+  box.innerHTML=tx.map(t=>{
+    const c=state.cards.find(c=>c.id===t.cardId);
+    return `
+      <div class="tx">
+        <div>
+          <div class="tx-card">${esc(c?.name||'已刪除信用卡')}</div>
+          <div class="tx-sub">
+            <span>${esc(t.date)}</span>
+            <span class="pill">${esc(t.category||'一般零售')}</span>
+          </div>
+        </div>
+        <div class="tx-amount">${money(t.amount)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderCardOptions(){
+  document.getElementById('txCard').innerHTML=state.cards
+    .map(c=>`<option value="${c.id}">${esc(c.name)}</option>`)
+    .join('');
+}
+
+function render(){
+  document.getElementById('monthPicker').value=state.month;
+  renderGoals();
+  renderTransactions();
+  renderCardOptions();
+}
+
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+
+document.querySelectorAll('[data-close]').forEach(b=>{
+  b.onclick=()=>closeModal(b.dataset.close);
+});
+document.querySelectorAll('.modal').forEach(m=>{
+  m.addEventListener('click',e=>{
+    if(e.target===m) closeModal(m.id);
+  });
+});
+
+document.getElementById('openAdd').onclick=()=>{
+  renderCardOptions();
+  document.getElementById('txAmount').value='';
+  document.getElementById('txCategory').value='一般零售';
+  openModal('addModal');
+  setTimeout(()=>document.getElementById('txAmount').focus(),100);
+};
+
+document.getElementById('confirmAdd').onclick=()=>{
+  const cardId=document.getElementById('txCard').value;
+  const amount=parseFloat(document.getElementById('txAmount').value);
+  const category=document.getElementById('txCategory').value;
+
+  if(!(amount>0)){
+    alert('請輸入消費金額');
+    return;
+  }
+
+  const date=localDateStr();
+  state.transactions.push({
+    id:uid(),
+    cardId,
+    amount,
+    category,
+    date,
+    createdAt:Date.now()
+  });
+  state.month=date.slice(0,7);
+  save();
+  render();
+  closeModal('addModal');
+};
+
+document.getElementById('monthPicker').onchange=e=>{
+  state.month=e.target.value||localMonthStr();
+  save();
+  render();
+};
+
+document.getElementById('settingsBtn').onclick=()=>{
+  renderSettings();
+  openModal('settingsModal');
+};
+
+let activeOfferTab='rebate';
+
+function setOfferTab(tab){
+  activeOfferTab=tab;
+  document.querySelectorAll('.offer-tab').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.tab===tab);
+  });
+  document.querySelectorAll('.offer-panel').forEach(panel=>{
+    panel.classList.toggle('hidden',panel.dataset.panel!==tab);
+  });
+}
+
+function renderSettings(){
+  document.getElementById('settingsCards').innerHTML=`
+    <div class="offer-tabs">
+      <button class="offer-tab ${activeOfferTab==='rebate'?'active':''}" data-tab="rebate" onclick="setOfferTab('rebate')">簽賬回贈</button>
+      <button class="offer-tab ${activeOfferTab==='welcome'?'active':''}" data-tab="welcome" onclick="setOfferTab('welcome')">迎新優惠</button>
+    </div>
+
+    <div class="offer-panel ${activeOfferTab==='rebate'?'':'hidden'}" data-panel="rebate">
+      <div class="tiny" style="margin:0 2px 10px">簽賬進度預設每月重新計算；如屬限時優惠，可另設結束日期。</div>
+      ${state.cards.map(c=>`
+        <div class="settings-card" data-id="${c.id}" data-type="rebate">
+          <div class="settings-title"><h4>${esc(c.name)}</h4></div>
+          <div class="grid2">
+            <div class="field full">
+              <label>信用卡名稱</label>
+              <input data-k="name" list="cardNameSuggestions" autocomplete="off" placeholder="輸入或選擇信用卡" value="${esc(c.name)}">
+            </div>
+
+            <div class="field">
+              <label>簽賬回贈 %</label>
+              <input data-k="rebateRate" type="number" min="0" step="0.1" value="${c.rebateRate}">
+            </div>
+
+            <div class="field">
+              <label>簽賬下限</label>
+              <input data-k="spendRequirement" type="number" min="0" value="${c.spendRequirement}">
+            </div>
+
+            <div class="field">
+              <label>簽賬上限</label>
+              <input data-k="spendCap" type="number" min="0" value="${c.spendCap}">
+            </div>
+
+            <div class="field">
+              <label>優惠結束日期（可選）</label>
+              <input data-k="rebateEndDate" type="date" value="${c.rebateEndDate||''}">
+            </div>
+          </div>
+
+          <div class="save-row">
+            <button class="save" onclick="saveOfferCard('${c.id}','rebate')">儲存</button>
+            <button class="remove" onclick="removeCard('${c.id}')">刪除</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="offer-panel ${activeOfferTab==='welcome'?'':'hidden'}" data-panel="welcome">
+      ${state.cards.map(c=>`
+        <div class="settings-card" data-id="${c.id}" data-type="welcome">
+          <div class="settings-title"><h4>${esc(c.name)}</h4></div>
+
+          <div class="toggle-row" style="padding-top:0;margin-bottom:8px">
+            <span>啟用迎新優惠</span>
+            <label class="switch">
+              <input type="checkbox" data-k="hasWelcome" ${c.hasWelcome?'checked':''}
+                onchange="toggleWelcomePanel('${c.id}',this.checked)">
+              <i></i>
+            </label>
+          </div>
+
+          <div class="welcome-fields ${c.hasWelcome?'':'hidden'}">
+            <div class="grid2">
+              <div class="field full">
+                <label>信用卡名稱</label>
+                <input data-k="name" list="cardNameSuggestions" autocomplete="off" placeholder="輸入或選擇信用卡" value="${esc(c.name)}">
+              </div>
+
+              <div class="field full">
+                <label>批卡日期</label>
+                <input data-k="approvalDate" type="date" value="${c.approvalDate||''}">
+              </div>
+
+              <div class="field">
+                <label>簽賬期限（日）</label>
+                <input data-k="welcomeDays" type="number" min="1" value="${c.welcomeDays}">
+              </div>
+
+              <div class="field">
+                <label>簽賬要求</label>
+                <input data-k="welcomeRequirement" type="number" min="0" value="${c.welcomeRequirement}">
+              </div>
+
+              <div class="field">
+                <label>獎賞類型</label>
+                <select data-k="welcomeRewardType">
+                  <option value="現金回贈" ${c.welcomeRewardType==='現金回贈'?'selected':''}>現金回贈</option>
+                  <option value="飛行里數" ${c.welcomeRewardType==='飛行里數'?'selected':''}>飛行里數</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>獎賞額</label>
+                <input data-k="welcomeReward" type="number" min="0" value="${c.welcomeReward}">
+              </div>
+            </div>
+          </div>
+
+          <div class="save-row">
+            <button class="save" onclick="saveOfferCard('${c.id}','welcome')">儲存</button>
+            <button class="remove" onclick="removeCard('${c.id}')">刪除</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  setOfferTab(activeOfferTab);
+}
+
+window.toggleWelcomePanel=(id,checked)=>{
+  const panel=[...document.querySelectorAll('.settings-card')]
+    .find(x=>x.dataset.id===id && x.dataset.type==='welcome');
+  if(panel){
+    panel.querySelector('.welcome-fields').classList.toggle('hidden',!checked);
+  }
+};
+
+window.saveOfferCard=(id,type)=>{
+  const panel=[...document.querySelectorAll('.settings-card')]
+    .find(x=>x.dataset.id===id && x.dataset.type===type);
+  const c=state.cards.find(x=>x.id===id);
+  if(!panel||!c)return;
+
+  panel.querySelectorAll('[data-k]').forEach(el=>{
+    const k=el.dataset.k;
+    if(el.type==='checkbox'){
+      c[k]=el.checked;
+    }else if(el.type==='number'){
+      c[k]=Math.max(0,parseFloat(el.value)||0);
+    }else{
+      c[k]=el.value;
+    }
+  });
+
+  c.name=c.name.trim()||'未命名信用卡';
+  save();
+  render();
+  renderSettings();
+};
+
+window.removeCard=id=>{
+  if(state.cards.length<=1){
+    alert('至少保留一張信用卡');
+    return;
+  }
+  const c=state.cards.find(x=>x.id===id);
+  if(!confirm(`刪除「${c.name}」及其消費紀錄？`))return;
+
+  state.cards=state.cards.filter(x=>x.id!==id);
+  state.transactions=state.transactions.filter(t=>t.cardId!==id);
+  save();
+  render();
+  renderSettings();
+};
+
+document.getElementById('addCard').onclick=()=>{
+  const c=defaultCard();
+  c.name='新信用卡';
+  c.hasWelcome=false;
+  c.approvalDate='';
+  c.rebateEndDate='';
+  state.cards.push(c);
+  save();
+  render();
+  renderSettings();
+};
+
+render();
+</script>
+<datalist id="cardNameList">
+  <option value="Citi Cash Back 信用卡"></option>
+  <option value="渣打國泰Mastercard"></option>
+  <option value="DBS Eminent Visa Platinum Card"></option>
+  <option value="渣打Smart信用卡"></option>
+  <option value="DBS Black World Mastercard®"></option>
+  <option value="信銀國際Motion信用卡"></option>
+  <option value="信銀國際大灣區雙幣信用卡"></option>
+  <option value="Mox 信用卡"></option>
+  <option value="sim Credit Card"></option>
+  <option value="滙豐Red信用卡"></option>
+  <option value="滙豐EveryMile信用卡"></option>
+  <option value="恒生MMPOWER World Mastercard"></option>
+  <option value="Airwallex雲匯Visa卡"></option>
+  <option value="sim World Mastercard®️"></option>
+  <option value="Citi Rewards 信用卡"></option>
+  <option value="美國運通白金卡"></option>
+  <option value="美國運通 Explorer® 信用卡"></option>
+  <option value="Citi PremierMiles 信用卡"></option>
+  <option value="渣打Simply Cash Visa卡"></option>
+  <option value="恒生enJoy卡"></option>
+  <option value="恒生Travel+ Visa Signature 卡"></option>
+  <option value="中銀Bliss Card"></option>
+  <option value="中信銀行(國際)香港航空Mastercard®卡"></option>
+  <option value="富邦iN ShopBack Visa 白金卡"></option>
+  <option value="安信WeWa Visa Signature卡"></option>
+  <option value="滙豐銀聯雙幣信用卡"></option>
+  <option value="Citi 八達通白金卡"></option>
+  <option value="滙豐easy信用卡"></option>
+  <option value="滙豐滙財金卡"></option>
+  <option value="中銀 Cheers Visa Signature Card"></option>
+  <option value="中銀Chill Platinum Mastercard"></option>
+  <option value="中銀Chill World Mastercard"></option>
+  <option value="安信EarnMORE銀聯鑽石卡"></option>
+  <option value="滙豐 Visa Signature卡"></option>
+  <option value="滙豐Pulse銀聯雙幣鑽石信用卡"></option>
+  <option value="中銀 Cheers Visa Infinite Card"></option>
+  <option value="渣打國泰Mastercard - 優先理財"></option>
+  <option value="渣打國泰Mastercard - 優先私人理財"></option>
+  <option value="美國運通白金信用卡"></option>
+  <option value="美國運通Blue Cash®信用卡"></option>
+  <option value="Citi Rewards 銀聯信用卡"></option>
+  <option value="DBS COMPASS VISA"></option>
+  <option value="DBS Eminent Visa Signature Card"></option>
+  <option value="DBS Live Fresh 大專生信用卡"></option>
+  <option value="DBS Live Fresh Card"></option>
+  <option value="安信WeWa Visa 白金卡"></option>
+  <option value="安信EarnMORE銀聯卡"></option>
+  <option value="Citi Prestige 信用卡"></option>
+  <option value="大新ONE+信用卡"></option>
+  <option value="美國運通商務金卡"></option>
+  <option value="大新ANA World萬事達卡"></option>
+  <option value="大新MyAuto車主信用卡"></option>
+  <option value="大新英國航空白金卡"></option>
+  <option value="大新聯合航空World萬事達卡"></option>
+  <option value="AEON Visa 信用卡"></option>
+  <option value="AEON萬事達信用卡"></option>
+  <option value="AEON 銀聯信用卡"></option>
+  <option value="AEON JCB 信用卡"></option>
+  <option value="AEON CARD WAKUWAKU"></option>
+  <option value="AEON Card JAL 萬事達卡"></option>
+  <option value="AEON 愛護動物協會萬事達卡"></option>
+  <option value="中銀Go銀聯鑽石卡"></option>
+  <option value="中銀Go銀聯白金卡"></option>
+</datalist>
+</body>
+</html>
