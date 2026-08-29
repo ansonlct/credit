@@ -228,21 +228,22 @@ button{cursor:pointer}
 .tx-amount{
   transition:transform .24s cubic-bezier(.22,.8,.2,1)
 }
-.tx-delete{
-  width:0;opacity:0;transform:translateX(16px) scale(.82);
+.tx-edit{
+  width:0;opacity:0;transform:translateX(16px) scale(.86);
   overflow:hidden;border:0;border-radius:10px;
-  background:#fff0f0;color:var(--bad);font-size:18px;font-weight:800;
-  padding:0;pointer-events:none;
+  background:#eef0f3;color:#30343a;font-size:11px;font-weight:850;
+  white-space:nowrap;padding:0;pointer-events:none;
   transition:
     width .24s cubic-bezier(.22,.8,.2,1),
     opacity .18s ease,
     transform .24s cubic-bezier(.22,.8,.2,1),
     padding .24s ease;
 }
-.tx.open .tx-delete{
-  width:38px;opacity:1;transform:translateX(0) scale(1);
-  padding:8px 0;pointer-events:auto
+.tx.open .tx-edit{
+  width:52px;opacity:1;transform:translateX(0) scale(1);
+  padding:9px 0;pointer-events:auto
 }
+.tx-edit:hover{background:#e3e6ea}
 .tx.open .tx-amount{transform:translateX(-2px)}
 .tx.deleting{
   animation:txDelete .3s cubic-bezier(.4,0,.2,1) forwards
@@ -293,6 +294,20 @@ button{cursor:pointer}
   from{transform:translateY(18px);opacity:.5}
   to{transform:translateY(0);opacity:1}
 }
+
+/* ===== 第九版：新增／修改消費由下方彈出 ===== */
+#addModal .sheet{animation:none;transform-origin:center bottom}
+#addModal.show .sheet{animation:addSheetBounceUp .38s cubic-bezier(.18,.86,.24,1.08) both}
+#addModal.closing .sheet{animation:addSheetDrop .22s cubic-bezier(.4,0,.2,1) both}
+#addModal.show{animation:addModalBackdropIn .24s ease both}
+@keyframes addSheetBounceUp{
+  0%{transform:translateY(105%);opacity:.72}
+  72%{transform:translateY(-8px);opacity:1}
+  100%{transform:translateY(0);opacity:1}
+}
+@keyframes addSheetDrop{to{transform:translateY(105%);opacity:.72}}
+@keyframes addModalBackdropIn{from{background:rgba(22,25,29,0);backdrop-filter:blur(0);-webkit-backdrop-filter:blur(0)}to{background:rgba(22,25,29,.34);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}}
+#addModal.is-editing .confirm{background:linear-gradient(135deg,#273242,#171b21)}
 .sheet-head{
   display:flex;justify-content:space-between;align-items:center;gap:10px;
   margin:0 -14px 14px;padding:0 14px 12px;
@@ -758,8 +773,213 @@ button,label.switch,.offer-tab,.cat-chip,.target-pick,.tx{
 .tx-target-summary.none{color:#8a8f97}
 .feature-note{font-size:10px;color:var(--muted);margin:-3px 0 8px;line-height:1.45}
 
+
+
+/* ===== 第七版：全屏 Survey Wizard ===== */
+#settingsModal{
+  align-items:stretch;justify-content:stretch;background:#f7f8fa;
+  backdrop-filter:none;-webkit-backdrop-filter:none
+}
+#settingsModal .sheet{
+  width:100%;height:100dvh;max-height:none;overflow:hidden;
+  border-radius:0;padding:0;background:#f7f8fa;box-shadow:none;
+  animation:none;transform-origin:center center
+}
+#settingsModal.show .sheet{animation:wizardFullScreenIn .38s cubic-bezier(.22,.78,.22,1) both}
+#settingsModal.closing .sheet{animation:wizardFullScreenOut .22s cubic-bezier(.4,0,.2,1) both}
+#settingsModal.show{animation:wizardBackdropIn .28s ease both}
+@keyframes wizardFullScreenIn{
+  from{opacity:0;transform:translateX(5.5vw) scale(.992)}
+  to{opacity:1;transform:translateX(0) scale(1)}
+}
+@keyframes wizardFullScreenOut{
+  to{opacity:0;transform:translateX(3.5vw) scale(.995)}
+}
+@keyframes wizardBackdropIn{from{opacity:.25}to{opacity:1}}
+#settingsModal .sheet-head{
+  position:relative;top:auto;z-index:20;
+  display:grid;grid-template-columns:48px minmax(0,1fr) 48px;align-items:center;
+  width:100%;height:72px;margin:0;padding:10px max(18px,env(safe-area-inset-left)) 10px max(18px,env(safe-area-inset-right));
+  background:rgba(247,248,250,.94);border-bottom:1px solid rgba(226,229,234,.92);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+}
+#settingsModal .sheet-head h3{font-size:18px;text-align:center;margin:0;font-weight:850}
+#settingsModal .close,#settingsModal .wizard-head-back{
+  width:42px;height:42px;border:0;border-radius:50%;background:#eceef2;color:#3e444c;
+  display:grid;place-items:center;font-size:25px;line-height:1;transition:.14s ease
+}
+#settingsModal .wizard-head-back{font-size:34px;padding-bottom:4px}
+#settingsModal .wizard-head-back.is-hidden{opacity:0;pointer-events:none}
+#settingsModal .close:hover,#settingsModal .wizard-head-back:hover{background:#e4e7eb;transform:scale(1.03)}
+#settingsCards{position:relative;height:calc(100dvh - 72px);overflow:hidden}
+.wizard-shell{
+  position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;
+  padding:clamp(26px,5vh,58px) max(22px,calc((100vw - 900px)/2)) calc(52px + env(safe-area-inset-bottom));
+  opacity:1;transform:translateX(0);will-change:transform,opacity
+}
+.wizard-shell.enter-forward{animation:wizardEnterRight .34s cubic-bezier(.22,.78,.22,1) both}
+.wizard-shell.enter-back{animation:wizardEnterLeft .30s cubic-bezier(.22,.78,.22,1) both}
+.wizard-shell.exit-forward{animation:wizardExitLeft .30s cubic-bezier(.4,0,.2,1) both;pointer-events:none}
+.wizard-shell.exit-back{animation:wizardExitRight .28s cubic-bezier(.4,0,.2,1) both;pointer-events:none}
+@keyframes wizardEnterRight{from{opacity:.25;transform:translateX(24%)}to{opacity:1;transform:translateX(0)}}
+@keyframes wizardEnterLeft{from{opacity:.25;transform:translateX(-18%)}to{opacity:1;transform:translateX(0)}}
+@keyframes wizardExitLeft{to{opacity:.08;transform:translateX(-28%)}}
+@keyframes wizardExitRight{to{opacity:.08;transform:translateX(24%)}}
+.wizard-shell .settings-card{
+  width:min(900px,100%);margin:0 auto;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;animation:none
+}
+.wizard-progress{display:flex;align-items:center;gap:14px;margin:0 0 clamp(28px,5vh,54px);padding:0 2px}
+.wizard-progress-track{height:7px;flex:1;background:#e8ebef;border-radius:999px;overflow:hidden}
+.wizard-progress-fill{height:100%;background:linear-gradient(90deg,#5967ff,#8c72ff);border-radius:999px;transition:width .26s ease}
+.wizard-progress-text{font-size:13px;color:var(--muted);font-weight:820;white-space:nowrap}
+.wizard-question{
+  max-width:820px;font-size:clamp(30px,4.2vw,46px);font-weight:900;letter-spacing:-1.2px;
+  line-height:1.12;margin:0 0 12px
+}
+.wizard-help{max-width:780px;font-size:clamp(14px,1.7vw,18px);color:var(--muted);line-height:1.55;margin:0 0 30px}
+.wizard-options,.wizard-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.wizard-option,.wizard-card-choice{
+  width:100%;height:112px;min-height:112px;border:1px solid #dde1e7;background:#fff;border-radius:20px;
+  padding:19px 20px;text-align:left;display:flex;gap:15px;align-items:center;color:var(--text);
+  box-shadow:0 8px 26px rgba(20,26,34,.045);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease,background .16s ease
+}
+.wizard-card-choice{font-size:18px;font-weight:850;line-height:1.35;justify-content:center;text-align:center}
+.wizard-option:hover,.wizard-card-choice:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(20,26,34,.075)}
+.wizard-option.active,.wizard-card-choice.active{border-color:rgba(75,89,230,.34);background:rgba(88,103,255,.075);box-shadow:0 8px 28px rgba(50,62,160,.08)}
+.wizard-option.welcome.active{border-color:rgba(194,132,27,.32);background:rgba(245,182,54,.10)}
+.wizard-option-icon{width:48px;height:48px;flex:0 0 48px;border-radius:15px;background:#f0f2f5;display:grid;place-items:center;font-size:24px;font-weight:900}
+.wizard-option.active .wizard-option-icon{background:rgba(89,103,255,.13);color:#3c49bd}
+.wizard-option-copy strong{display:block;font-size:clamp(17px,2vw,21px);line-height:1.25}
+.wizard-option-copy small{display:block;margin-top:5px;color:var(--muted);font-size:clamp(12px,1.45vw,15px);line-height:1.42;font-weight:620}
+.wizard-option.is-confirming,.wizard-card-choice.is-confirming,.wizard-answer.is-confirming{animation:answerFlash .42s ease both}
+@keyframes answerFlash{
+  0%{transform:scale(1);filter:brightness(1)}
+  18%{transform:scale(.985);filter:brightness(.88)}
+  36%{transform:scale(1.015);filter:brightness(1.14)}
+  55%{transform:scale(.985);filter:brightness(.90)}
+  74%{transform:scale(1.012);filter:brightness(1.12)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+.wizard-section{border:1px solid #e1e5ea;background:#fff;border-radius:20px;padding:20px;margin-bottom:18px;box-shadow:0 8px 26px rgba(20,26,34,.035)}
+.wizard-section-title{font-size:15px;font-weight:850;color:#555d67;margin-bottom:13px}
+.wizard-chip-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.wizard-category-btn{
+  border:1px solid #e0e4e9;border-radius:16px;background:#f8f9fb;padding:14px 10px;
+  font-size:15px;font-weight:800;text-align:center;color:#59606a;transition:.14s ease
+}
+.wizard-category-btn .emoji{display:block;font-size:25px;margin-bottom:5px}
+.wizard-category-btn.active{border-color:rgba(75,89,230,.30);background:rgba(88,103,255,.08);color:#3442ae;box-shadow:0 4px 14px rgba(50,62,160,.07)}
+.wizard-category-btn:active{transform:scale(.98)}
+.wizard-input-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.wizard-big-field{margin:0}
+.wizard-big-field label{display:block;font-size:15px;color:#59606a;font-weight:800;margin:0 0 8px}
+.wizard-big-field input,.wizard-big-field select,.wizard-name-input{
+  min-height:58px;border-radius:16px;border:1px solid #dfe3e8;background:#fff;padding:13px 15px;
+  font-size:19px;font-weight:720
+}
+.wizard-name-wrap{width:100%;max-width:700px;margin-left:auto;margin-right:auto}
+.wizard-name-input{width:100%;margin-bottom:14px}
+.wizard-answer{
+  display:block;width:100%;max-width:700px;min-height:58px;margin-left:auto;margin-right:auto;border:0;border-radius:18px;background:linear-gradient(135deg,#15171a,#30353c);
+  color:#fff;padding:17px 20px;font-size:17px;font-weight:880;text-align:center;box-shadow:0 10px 26px rgba(18,22,28,.15);transition:.15s ease
+}
+.wizard-answer.secondary{background:#eef0f3;color:#4f5660;box-shadow:none;border:1px solid #e0e3e7}
+.wizard-answer + .wizard-answer{margin-top:10px}
+.wizard-row-card{border:1px solid #e4e7eb;border-radius:18px;background:#fff;padding:16px;margin-bottom:10px}
+.wizard-row-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;font-size:14px;font-weight:850}
+.wizard-row-remove{border:0;background:#fff0f0;color:var(--bad);border-radius:10px;padding:7px 10px;font-size:12px;font-weight:850}
+.wizard-add-row{width:100%;border:1px dashed #cbd0d7;border-radius:15px;background:#fafbfc;padding:13px;font-size:14px;font-weight:820;color:#5e6570}
+.wizard-summary{border:1px solid #dfe3e8;border-radius:22px;background:#fff;padding:22px;margin-bottom:18px;box-shadow:0 9px 30px rgba(20,26,34,.045)}
+.wizard-summary h4{font-size:22px;margin:0 0 12px}
+.wizard-summary-line{font-size:16px;line-height:1.6;color:#505762;padding:9px 0;border-bottom:1px solid #edf0f3}
+.wizard-summary-line:last-child{border-bottom:0}.wizard-summary-line b{color:#17191d}
+.wizard-danger{margin-top:12px;width:100%;max-width:700px;border:0;border-radius:16px;background:#fff0f0;color:var(--bad);padding:13px;font-size:14px;font-weight:820}
+.mechanic-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;background:#f0f2f5;color:#616873;font-size:9.5px;font-weight:820;margin-left:5px}
+.wizard-mini-note{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
+.wizard-choice-stack{width:100%;max-width:700px;display:grid;gap:10px;margin:0 auto 16px}
+.wizard-choice-stack .wizard-option{height:112px;min-height:112px}
+.wizard-inline-actions{width:100%;max-width:700px;margin:18px auto 0}
+.custom-category-caption{font-size:13px;margin-top:15px}
+.category-input-row{grid-template-columns:1fr 52px;gap:9px}.category-add{border-radius:14px}
+.custom-category-tags{margin-top:10px}.cat-chip{font-size:13px;padding:8px 11px}
+
+
+
+/* ===== 第八版：修改優惠改為同風格全屏清單 ===== */
+.edit-shell{
+  position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;
+  padding:clamp(28px,4.5vh,52px) max(22px,calc((100vw - 900px)/2)) calc(74px + env(safe-area-inset-bottom));
+  animation:editListIn .34s cubic-bezier(.22,.78,.22,1) both
+}
+@keyframes editListIn{from{opacity:.25;transform:translateX(5vw)}to{opacity:1;transform:translateX(0)}}
+.edit-shell .settings-card{width:min(900px,100%);margin:0 auto;padding:0;border:0;background:transparent;box-shadow:none;animation:none}
+.edit-hero{margin:0 0 28px}
+.edit-eyebrow{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;background:#eceff4;color:#59606a;font-size:12px;font-weight:850;margin-bottom:13px}
+.edit-title{font-size:clamp(30px,4vw,44px);font-weight:920;letter-spacing:-1.1px;line-height:1.12;margin:0 0 9px}
+.edit-subtitle{font-size:clamp(14px,1.6vw,17px);line-height:1.55;color:var(--muted);margin:0}
+.edit-section{border:1px solid #e1e5ea;background:#fff;border-radius:22px;padding:0 22px;margin-bottom:16px;box-shadow:0 8px 28px rgba(20,26,34,.038);overflow:hidden}
+.edit-section-head{padding:20px 0 14px;border-bottom:1px solid #edf0f3}
+.edit-section-head strong{display:block;font-size:17px;font-weight:900;letter-spacing:-.15px}
+.edit-section-head small{display:block;margin-top:4px;font-size:12.5px;line-height:1.45;color:var(--muted);font-weight:650}
+.edit-row{display:grid;grid-template-columns:minmax(170px,34%) minmax(0,1fr);gap:22px;align-items:start;padding:18px 0;border-bottom:1px solid #edf0f3}
+.edit-row:last-child{border-bottom:0}
+.edit-copy{padding-top:7px}
+.edit-label{font-size:15px;font-weight:860;line-height:1.35;color:#2b3036}
+.edit-desc{font-size:11.8px;line-height:1.5;color:var(--muted);margin-top:4px}
+.edit-control input,.edit-control select,.edit-control .wizard-name-input{width:100%;min-height:56px;border-radius:15px;border:1px solid #dfe3e8;background:#fff;padding:12px 14px;font-size:17px;font-weight:720}
+.edit-control .wizard-name-input{margin:0}
+.edit-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.edit-pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#f0f2f5;padding:7px 11px;font-size:12px;font-weight:820;color:#59606a}
+.edit-pill.welcome{background:#fff4dd;color:#8a6118}
+.edit-categories{margin-top:12px}
+.edit-categories .wizard-chip-row{grid-template-columns:repeat(4,minmax(0,1fr))}
+.edit-actions{display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 0 0}
+.edit-save{display:block;width:100%;max-width:700px;min-height:60px;border:0;border-radius:18px;background:linear-gradient(135deg,#15171a,#30353c);color:#fff;padding:17px 20px;font-size:17px;font-weight:900;text-align:center;box-shadow:0 10px 26px rgba(18,22,28,.15)}
+.edit-danger{display:block;width:100%;max-width:700px;min-height:52px;border:1px solid #f3d5d5;border-radius:16px;background:#fff4f4;color:var(--bad);padding:14px 18px;font-size:14px;font-weight:850;text-align:center}
+.edit-rule-block{padding:18px 0}
+.edit-rule-block .wizard-section{box-shadow:none;margin-bottom:0;border-color:#e8ebef;background:#fafbfc}
+.edit-rule-block .wizard-row-card{background:#fff}
+.edit-note{font-size:12px;line-height:1.5;color:var(--muted);margin-top:8px}
+@media(max-width:720px){
+  .edit-shell{padding:26px 16px calc(54px + env(safe-area-inset-bottom))}
+  .edit-section{padding:0 16px;border-radius:19px}
+  .edit-row{grid-template-columns:1fr;gap:9px;padding:16px 0}
+  .edit-copy{padding-top:0}.edit-grid2{grid-template-columns:1fr}
+  .edit-categories .wizard-chip-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .edit-control input,.edit-control select,.edit-control .wizard-name-input{font-size:17px}
+}
+
+/* 第七版：印花優惠以印花格顯示進度 */
+.stamp-progress-row{display:flex;align-items:center;gap:12px;margin-top:2px}
+.stamp-track{flex:1;display:flex;flex-wrap:wrap;gap:7px;align-items:center;min-height:38px}
+.stamp-mark{
+  position:relative;width:34px;height:34px;border-radius:10px;border:1px dashed #cfd4db;
+  background:#f1f3f6;display:grid;place-items:center;font-size:18px;filter:grayscale(1);opacity:.52;
+  transition:transform .18s ease,opacity .18s ease,background .18s ease,border-color .18s ease
+}
+.stamp-mark.earned{filter:none;opacity:1;background:#fff5df;border-style:solid;border-color:#e1bd69;box-shadow:0 4px 12px rgba(177,126,23,.10)}
+.stamp-mark.milestone::after{content:"";position:absolute;inset:-3px;border:1.5px solid rgba(201,139,36,.48);border-radius:12px;pointer-events:none}
+.stamp-count-label{flex:0 0 auto;min-width:62px;text-align:right;font-size:13px;font-weight:880;color:#8a6410;white-space:nowrap}
+.stamp-scale-note{font-size:9px;color:var(--muted);margin-left:4px;font-weight:720}
+
+@media(max-width:720px){
+  #settingsModal .sheet-head{height:64px;grid-template-columns:44px minmax(0,1fr) 44px;padding:8px 14px}
+  #settingsCards{height:calc(100dvh - 64px)}
+  .wizard-shell{padding:26px 16px calc(42px + env(safe-area-inset-bottom))}
+  .wizard-progress{margin-bottom:30px}.wizard-question{font-size:30px}.wizard-help{font-size:14px;margin-bottom:22px}
+  .wizard-options,.wizard-card-grid{grid-template-columns:1fr;gap:10px}
+  .wizard-option,.wizard-card-choice{height:96px;min-height:96px;padding:15px 16px}.wizard-option-icon{width:42px;height:42px;flex-basis:42px;font-size:21px}
+  .wizard-option-copy strong{font-size:18px}.wizard-option-copy small{font-size:12.5px}
+  .wizard-chip-row{grid-template-columns:repeat(2,minmax(0,1fr))}.wizard-category-btn{font-size:14px;padding:12px 8px}
+  .wizard-input-grid{grid-template-columns:1fr}.wizard-big-field input,.wizard-big-field select,.wizard-name-input{font-size:18px}
+  .wizard-summary-line{font-size:14px}.wizard-summary h4{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){
+  .wizard-shell.enter-forward,.wizard-shell.enter-back,.wizard-shell.exit-forward,.wizard-shell.exit-back,.wizard-option.is-confirming,.wizard-card-choice.is-confirming,.wizard-answer.is-confirming{animation-duration:.01ms!important}
+}
+
 </style>
-<script type="text/javascript" nonce="13baad21ed754a568a18365a273" src="//injections.adguard.org?ts=1788019039091&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000053208211b86ce35631401cae%26ts%3D496672%26p%3Dfs%26cid%3D1%26sig%3D03f309a9d35c2809c11e9da50e9d6674ad05328b656239e326f21fc17f16a333%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="13baad21ed754a568a18365a273" src="//injections.adguard.org?ts=1788019039091&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+<script type="text/javascript" nonce="3d3b2b2b5bd442e3b02d5e8e454" src="//injections.adguard.org?ts=1788031199361&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000071ac81fa8652e5d9c4530ad3%26fn%3D%25E4%25BF%25A1%25E7%2594%25A8%25E5%258D%25A1%25E5%2584%25AA%25E6%2583%25A0%25E9%25A1%258D%25E5%25BA%25A6%25E8%25A8%2588%25E7%25AE%2597%25E5%2599%25A8_%25E6%25B6%2588%25E8%25B2%25BB%25E5%258F%25AF%25E4%25BF%25AE%25E6%2594%25B9_%25E7%25AC%25AC%25E4%25B9%259D%25E7%2589%2588.html%26cd%3Dattachment%26ts%3D496675%26p%3Dfs%26cid%3D1%26sig%3Dc6f79c6178e81c144d9343f35457928a0f1c6adc4a3af6c7217e1f91cd4a9272%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="3d3b2b2b5bd442e3b02d5e8e454" src="//injections.adguard.org?ts=1788031199361&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 
 <div class="app">
@@ -767,7 +987,7 @@ button,label.switch,.offer-tab,.cat-chip,.target-pick,.tx{
     <div class="title">信用卡優惠額度</div>
     <div class="top-actions">
       <input id="monthPicker" class="month" type="month">
-      <button id="settingsBtn" class="new-target-btn" aria-label="新增目標">＋ 新增目標</button>
+      <button id="settingsBtn" class="new-target-btn" aria-label="新增目標">＋ 新增優惠</button>
     </div>
   </div>
 
@@ -791,7 +1011,7 @@ button,label.switch,.offer-tab,.cat-chip,.target-pick,.tx{
 <div id="addModal" class="modal">
   <div class="sheet">
     <div class="sheet-head">
-      <h3>新增消費</h3>
+      <h3 id="addModalTitle">新增消費</h3>
       <button class="close" data-close="addModal">×</button>
     </div>
 
@@ -827,8 +1047,9 @@ button,label.switch,.offer-tab,.cat-chip,.target-pick,.tx{
 
 <div id="settingsModal" class="modal">
   <div class="sheet">
-    <div class="sheet-head">
-      <h3>回贈優惠設定</h3>
+    <div class="sheet-head wizard-full-head">
+      <button id="wizardHeaderBack" class="wizard-head-back" type="button" aria-label="返回上一題" onclick="wizardBack()">‹</button>
+      <h3 id="settingsTitle">優惠設定</h3>
       <button class="close" data-close="settingsModal">×</button>
     </div>
 
@@ -944,57 +1165,62 @@ function normalizeCardName(name=''){
 }
 
 function defaultTarget(type='rebate'){
+  const isWelcome=type==='welcome';
   return {
-    id:uid(),
-    cardKey:uid(),
-    name:'',
-    targetType:type,
-    rebateRate:4,
-    spendRequirement:1500,
-    spendCap:5556,
-    rebateCategories:[],
-    rebateEndDate:'',
-    approvalDate:'',
-    welcomeDays:90,
-    welcomeRequirement:12000,
-    welcomeRewardType:'現金回贈',
-    welcomeReward:1000,
-    createdAt:Date.now()
+    id:uid(),cardKey:uid(),name:'',targetType:isWelcome?'welcome':'rebate',
+    offerTitle:'',mechanic:isWelcome?'milestone':'standard',
+    eligibilityMode:'all',rebateCategories:[],minTransaction:0,
+    periodType:isWelcome?'approval_window':'monthly',startDate:'',endDate:'',resetRule:isWelcome?'none':'period',
+    rebateRate:4,spendRequirement:1500,spendCap:0,capType:'none',capAmount:0,
+    tiers:[{threshold:0,rate:0.56},{threshold:15000,rate:1.2}],
+    milestones:isWelcome?[{threshold:12000,rewardType:'現金回贈',reward:1000}]:[{threshold:8000,rewardType:'現金回贈',reward:600}],
+    recurringThreshold:800,recurringRewardType:'現金回贈',recurringReward:100,completionBonusType:'現金回贈',completionBonus:100,
+    stampTransactionMin:500,stampsPerTxn:1,stampMilestones:[{count:3,rewardType:'現金回贈',reward:50},{count:6,rewardType:'現金回贈',reward:100}],
+    approvalDate:'',welcomeDays:90,welcomeRequirement:12000,welcomeRewardType:'現金回贈',welcomeReward:1000,
+    rebateEndDate:'',createdAt:Date.now()
   };
 }
+function cleanRewardType(v='現金回贈'){return ['現金回贈','飛行里數','積分','獎賞錢','禮品','自訂獎賞'].includes(v)?v:'現金回贈'}
 function normalizeTarget(t){
   const type=t.targetType==='welcome'?'welcome':'rebate';
+  const mechanic=t.mechanic || (type==='welcome'?'milestone':'standard');
+  const legacyWelcomeMilestone={threshold:Number(t.welcomeRequirement ?? t.welcomeSpend ?? 0),rewardType:cleanRewardType(t.welcomeRewardType||'現金回贈'),reward:Number(t.welcomeReward ?? t.welcomeCashback ?? 0)};
+  const milestones=(Array.isArray(t.milestones)&&t.milestones.length?t.milestones:(type==='welcome'?[legacyWelcomeMilestone]:[])).map(x=>({threshold:Math.max(0,Number(x.threshold||0)),rewardType:cleanRewardType(x.rewardType),reward:Math.max(0,Number(x.reward||0))}));
+  const tiers=(Array.isArray(t.tiers)&&t.tiers.length?t.tiers:[{threshold:0,rate:Number(t.rebateRate||0)}]).map(x=>({threshold:Math.max(0,Number(x.threshold||0)),rate:Math.max(0,Number(x.rate||0))}));
+  const stampMilestones=(Array.isArray(t.stampMilestones)&&t.stampMilestones.length?t.stampMilestones:[{count:3,rewardType:'現金回贈',reward:50},{count:6,rewardType:'現金回贈',reward:100}]).map(x=>({count:Math.max(1,Number(x.count||1)),rewardType:cleanRewardType(x.rewardType),reward:Math.max(0,Number(x.reward||0))}));
   return {
-    id:t.id || uid(),
-    cardKey:t.cardKey || uid(),
-    name:t.name || '未命名信用卡',
-    targetType:type,
-    rebateRate:Number(t.rebateRate ?? (Number(t.baseRate||0)+Number(t.bonusRate||0)) ?? 0),
-    spendRequirement:Number(t.spendRequirement ?? t.monthlyThreshold ?? 0),
-    spendCap:Number(t.spendCap ?? t.bonusSpendCap ?? 0),
-    rebateCategories:Array.isArray(t.rebateCategories) ? t.rebateCategories.filter(Boolean) : (t.selectedCategory?[t.selectedCategory]:[]),
-    rebateEndDate:t.rebateEndDate || '',
-    approvalDate:t.approvalDate || '',
-    welcomeDays:Number(t.welcomeDays ?? 90),
-    welcomeRequirement:Number(t.welcomeRequirement ?? t.welcomeSpend ?? 0),
-    welcomeRewardType:t.welcomeRewardType || '現金回贈',
-    welcomeReward:Number(t.welcomeReward ?? t.welcomeCashback ?? 0),
-    createdAt:Number(t.createdAt||0),
-    ...(t._temporary?{_temporary:true}:{})
+    id:t.id||uid(),cardKey:t.cardKey||uid(),name:t.name||'未命名信用卡',targetType:type,offerTitle:t.offerTitle||'',mechanic,
+    eligibilityMode:t.eligibilityMode || ((Array.isArray(t.rebateCategories)&&t.rebateCategories.length)?'categories':'all'),
+    rebateCategories:Array.isArray(t.rebateCategories)?t.rebateCategories.filter(Boolean):(t.selectedCategory?[t.selectedCategory]:[]),
+    minTransaction:Math.max(0,Number(t.minTransaction||0)),
+    periodType:t.periodType || (type==='welcome'?'approval_window':'monthly'),startDate:t.startDate||'',endDate:t.endDate||t.rebateEndDate||'',resetRule:t.resetRule||((type==='welcome')?'none':'period'),
+    rebateRate:Math.max(0,Number(t.rebateRate ?? (Number(t.baseRate||0)+Number(t.bonusRate||0)) ?? 0)),
+    spendRequirement:Math.max(0,Number(t.spendRequirement ?? t.monthlyThreshold ?? 0)),spendCap:Math.max(0,Number(t.spendCap ?? t.bonusSpendCap ?? 0)),
+    capType:t.capType||((Number(t.spendCap||0)>0)?'spend':'none'),capAmount:Math.max(0,Number(t.capAmount ?? t.spendCap ?? 0)),
+    tiers,milestones,
+    recurringThreshold:Math.max(0,Number(t.recurringThreshold ?? 800)),recurringRewardType:cleanRewardType(t.recurringRewardType||'現金回贈'),recurringReward:Math.max(0,Number(t.recurringReward ?? 100)),
+    completionBonusType:cleanRewardType(t.completionBonusType||'現金回贈'),completionBonus:Math.max(0,Number(t.completionBonus ?? 0)),
+    stampTransactionMin:Math.max(0,Number(t.stampTransactionMin ?? 500)),stampsPerTxn:Math.max(1,Number(t.stampsPerTxn ?? 1)),stampMilestones,
+    rebateEndDate:t.rebateEndDate||t.endDate||'',approvalDate:t.approvalDate||'',welcomeDays:Math.max(1,Number(t.welcomeDays??90)),
+    welcomeRequirement:Math.max(0,Number(t.welcomeRequirement ?? t.welcomeSpend ?? legacyWelcomeMilestone.threshold ?? 0)),welcomeRewardType:cleanRewardType(t.welcomeRewardType||legacyWelcomeMilestone.rewardType),welcomeReward:Math.max(0,Number(t.welcomeReward ?? t.welcomeCashback ?? legacyWelcomeMilestone.reward ?? 0)),
+    createdAt:Number(t.createdAt||0),...(t._temporary?{_temporary:true}:{})
   };
 }
+function mechanicLabel(t){
+  return ({standard:'指定回贈',tier_rate:'門檻升級',milestone:'階段獎賞',recurring:'分期／連續達標',stamp:'印花／次數',custom:'自訂組合'})[t.mechanic]||'優惠';
+}
+function rewardValueLabel(type,value){
+  const n=Number(value||0);if(type==='飛行里數')return `${n.toLocaleString('en-HK')} 里`;if(type==='積分')return `${n.toLocaleString('en-HK')} 分`;if(type==='禮品'||type==='自訂獎賞')return `${n||1} 份`;return money(n);
+}
 function targetShortLabel(t){
-  if(t.targetType==='welcome') return `迎新 · ${t.welcomeRewardType==='飛行里數'?Number(t.welcomeReward||0).toLocaleString('en-HK')+' 里':money(t.welcomeReward)}`;
-  const rate=Number(t.rebateRate||0);
-  return `回贈 · ${rate.toFixed(Number.isInteger(rate)?0:1)}%`;
+  if(t.targetType==='welcome')return `迎新 · ${mechanicLabel(t)}`;
+  if(t.mechanic==='standard')return `回贈 · ${Number(t.rebateRate||0).toFixed(Number.isInteger(Number(t.rebateRate||0))?0:1)}%`;
+  return `回贈 · ${mechanicLabel(t)}`;
 }
 function targetDetailLabel(t){
-  if(t.targetType==='welcome'){
-    if(t.approvalDate) return `${t.approvalDate} 起 · ${Math.max(1,Number(t.welcomeDays||1))} 日內 · 要求 ${money(t.welcomeRequirement)}`;
-    return `未設定批卡日期 · 要求 ${money(t.welcomeRequirement)}`;
-  }
-  const cats=Array.isArray(t.rebateCategories)&&t.rebateCategories.length?t.rebateCategories.join('、'):'所有簽賬類別';
-  return `${cats}${t.rebateEndDate?' · 至 '+t.rebateEndDate:''}`;
+  const cats=t.eligibilityMode==='categories'&&t.rebateCategories.length?t.rebateCategories.join('、'):'所有合資格簽賬';
+  const p=({monthly:'每月',quarterly:'每季度',campaign:'整個推廣期',yearly:'全年',approval_window:`批卡後 ${t.welcomeDays} 日`})[t.periodType]||'自訂週期';
+  return `${cats} · ${p}${t.endDate?' · 至 '+t.endDate:''}`;
 }
 
 function migrateLegacyState(old){
@@ -1107,67 +1333,76 @@ function getPhysicalCards(){
 }
 function cardByKey(cardKey){return getPhysicalCards().find(c=>c.cardKey===cardKey)||null}
 function txIncludesTarget(t,targetId){return Array.isArray(t.targetIds)&&t.targetIds.includes(targetId)}
-function targetMonthSpend(target){
-  return state.transactions
-    .filter(t=>txIncludesTarget(t,target.id) && String(t.date).slice(0,7)===state.month)
-    .filter(t=>target.targetType!=='rebate' || !target.rebateEndDate || t.date<=target.rebateEndDate)
-    .reduce((s,t)=>s+Number(t.amount||0),0);
+function dateInRange(date,start,end){return (!start||date>=start)&&(!end||date<=end)}
+function quarterBounds(month){
+  const [y,m]=month.split('-').map(Number),q=Math.floor((m-1)/3)*3+1,last=q+2;
+  const start=`${y}-${String(q).padStart(2,'0')}-01`,d=new Date(y,last,0),end=`${y}-${String(last).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;return {start,end};
 }
-function rewardLabel(target){
-  return target.welcomeRewardType==='飛行里數'
-    ? `${Number(target.welcomeReward||0).toLocaleString('en-HK')} 里`
-    : money(target.welcomeReward);
+function yearBounds(month){const y=String(month).slice(0,4);return {start:`${y}-01-01`,end:`${y}-12-31`}}
+function offerBounds(t){
+  if(t.periodType==='approval_window')return t.approvalDate?{start:t.approvalDate,end:addDays(t.approvalDate,t.welcomeDays)}:{start:'',end:''};
+  if(t.periodType==='campaign')return {start:t.startDate||'',end:t.endDate||''};
+  let b=t.periodType==='quarterly'?quarterBounds(state.month):t.periodType==='yearly'?yearBounds(state.month):{start:state.month+'-01',end:monthEnd(state.month)};
+  if(t.startDate&&t.startDate>b.start)b.start=t.startDate;if(t.endDate&&t.endDate<b.end)b.end=t.endDate;return b;
 }
-
+function txForOffer(t,bounds=offerBounds(t)){
+  return state.transactions.filter(tx=>txIncludesTarget(tx,t.id)&&dateInRange(tx.date,bounds.start,bounds.end));
+}
+function spendForOffer(t,bounds=offerBounds(t)){return txForOffer(t,bounds).reduce((s,tx)=>s+Number(tx.amount||0),0)}
+function campaignMonths(start,end){
+  if(!start||!end)return [];
+  const out=[],a=new Date(start+'T00:00:00'),b=new Date(end+'T00:00:00');a.setDate(1);
+  while(a<=b&&out.length<60){out.push(`${a.getFullYear()}-${String(a.getMonth()+1).padStart(2,'0')}`);a.setMonth(a.getMonth()+1)}return out;
+}
+function rewardLabel(target){return rewardValueLabel(target.welcomeRewardType,target.welcomeReward)}
+function offerEndStatus(t,bounds){
+  const today=localDateStr(),end=bounds.end;if(!end)return {days:'進行中',dayClass:'',ended:false};
+  if(today>end)return {days:'已完結',dayClass:'bad',ended:true};
+  return {days:`${daysLeft(end)}日`,dayClass:'',ended:false};
+}
+function offerMeta(t){
+  const cats=t.eligibilityMode==='categories'&&t.rebateCategories.length?t.rebateCategories.join('、'):'所有合資格簽賬';
+  const period=({monthly:'每月重置',quarterly:'每季度',campaign:'整個推廣期',yearly:'全年',approval_window:`批卡後 ${t.welcomeDays} 日`})[t.periodType]||'自訂週期';
+  return `${cats} · ${period}${t.capType!=='none'&&t.capAmount>0?` · 上限 ${money(t.capAmount)}`:''}`;
+}
 function getGoalRows(){
   const rows=[];
-  const today=localDateStr();
-  const currentMonth=localMonthStr();
-
   state.cards.filter(t=>!t._temporary).forEach(t=>{
-    if(t.targetType==='rebate'){
-      const spent=targetMonthSpend(t);
-      const cap=Number(t.spendCap||0);
-      const req=Number(t.spendRequirement||0);
-      const monthlyEnd=monthEnd(state.month);
-      let end=monthlyEnd;
-      if(t.rebateEndDate && t.rebateEndDate<end) end=t.rebateEndDate;
-      const selectedMonthStart=state.month+'-01';
-      const ended=(t.rebateEndDate && selectedMonthStart>t.rebateEndDate) || state.month<currentMonth || (t.rebateEndDate && today>t.rebateEndDate);
-      const remainDays=ended?0:daysLeft(end);
-      const progressTarget=cap>0?cap:req;
-      const progress=pct(spent,progressTarget);
-      let status='';
-      if(spent<req) status=`已簽 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻`;
-      else if(cap>0 && spent<cap) status=`已簽 ${money(spent)}，尚餘 ${money(cap-spent)} 消費額`;
-      else if(cap>0 && spent>=cap) status=`已簽 ${money(spent)}，已用盡本期額度`;
-      else status=`已簽 ${money(spent)}，已達簽賬要求`;
-      const rate=Number(t.rebateRate||0);
-      rows.push({
-        targetId:t.id,card:t.name,title:`簽賬回贈 · ${rate.toFixed(Number.isInteger(rate)?0:1)}%`,
-        meta:`下限 ${money(req)} · 上限 ${cap>0?money(cap):'—'}${t.rebateEndDate?` · 至 ${t.rebateEndDate}`:' · 每月重置'}`,
-        days:ended?'已完結':`${remainDays}日`,dayClass:ended?'bad':(cap>0&&spent>=cap?'good':''),
-        progress,percent:`${Math.round(progress)}%`,status,completed:progressTarget>0&&spent>=progressTarget
-      });
+    const b=offerBounds(t),time=offerEndStatus(t,b),spent=spendForOffer(t,b);let title='',status='',progress=0,percent='0%',completed=false,meta=offerMeta(t),stampCurrent=0,stampTarget=0,stampMilestones=[];
+    if(t.mechanic==='tier_rate'){
+      const tiers=[...t.tiers].sort((a,b)=>a.threshold-b.threshold),current=[...tiers].reverse().find(x=>spent>=x.threshold)||tiers[0],next=tiers.find(x=>x.threshold>spent);
+      const target=next?.threshold || tiers.at(-1)?.threshold || 0;progress=target?pct(spent,target):100;completed=!next&&tiers.length>0;
+      title=`${t.targetType==='welcome'?'迎新':'簽賬'} · 回贈率升級 ${current?Number(current.rate||0).toFixed(2).replace(/0+$/,'').replace(/\.$/,''):0}%`;
+      status=next?`已簽 ${money(spent)}，尚欠 ${money(next.threshold-spent)} 升級至 ${next.rate}%`:`已簽 ${money(spent)}，已到最高 ${current?.rate||0}% 回贈級別`;
+    }else if(t.mechanic==='milestone'||t.mechanic==='custom'){
+      const ms=[...t.milestones].sort((a,b)=>a.threshold-b.threshold),done=ms.filter(x=>spent>=x.threshold),next=ms.find(x=>spent<x.threshold),target=next?.threshold||ms.at(-1)?.threshold||0;
+      progress=target?pct(spent,target):0;completed=!next&&ms.length>0;
+      title=`${t.targetType==='welcome'?'迎新':'簽賬'} · 階段獎賞 ${done.length}/${ms.length}`;
+      status=next?`已簽 ${money(spent)}，尚欠 ${money(next.threshold-spent)} 解鎖 ${rewardValueLabel(next.rewardType,next.reward)}`:`已簽 ${money(spent)}，全部 ${ms.length} 個階段已解鎖`;
+      meta=`${meta}${ms.length?` · ${ms.length} 個階段`:''}`;
+    }else if(t.mechanic==='recurring'){
+      const months=campaignMonths(t.startDate,t.endDate),selected=state.month,monthStart=selected+'-01',monthEndStr=monthEnd(selected),thisSpent=spendForOffer(t,{start:monthStart,end:monthEndStr}),threshold=Number(t.recurringThreshold||0);
+      const achieved=months.filter(m=>spendForOffer(t,{start:m+'-01',end:monthEnd(m)})>=threshold).length,total=months.length||1;
+      progress=threshold?pct(thisSpent,threshold):0;completed=months.length>0&&achieved===months.length;
+      title=`簽賬 · 分期達標 ${achieved}/${total}`;
+      status=thisSpent>=threshold?`${selected} 已達標 ${money(thisSpent)}；${months.length&&achieved===months.length&&t.completionBonus>0?'已解鎖完成獎賞 '+rewardValueLabel(t.completionBonusType,t.completionBonus):'每期獎賞 '+rewardValueLabel(t.recurringRewardType,t.recurringReward)}`:`${selected} 已簽 ${money(thisSpent)}，尚欠 ${money(Math.max(0,threshold-thisSpent))}`;
+      meta=`每期 ${money(threshold)} → ${rewardValueLabel(t.recurringRewardType,t.recurringReward)}${t.completionBonus>0?` · 全期完成再 ${rewardValueLabel(t.completionBonusType,t.completionBonus)}`:''}`;
+    }else if(t.mechanic==='stamp'){
+      const txs=txForOffer(t,b),eligible=txs.filter(tx=>Number(tx.amount||0)>=Number(t.stampTransactionMin||0)),stamps=eligible.length*Math.max(1,Number(t.stampsPerTxn||1)),ms=[...t.stampMilestones].sort((a,b)=>a.count-b.count),done=ms.filter(x=>stamps>=x.count),next=ms.find(x=>stamps<x.count),target=next?.count||ms.at(-1)?.count||0;
+      progress=target?pct(stamps,target):0;completed=!next&&ms.length>0;percent=`${stamps}/${target||stamps||0}`;stampCurrent=stamps;stampTarget=target||stamps||0;stampMilestones=ms.map(x=>x.count);
+      title=`簽賬 · 印花／次數 ${stamps} 個`;
+      status=next?`再 ${Math.max(0,next.count-stamps)} 個即可解鎖 ${rewardValueLabel(next.rewardType,next.reward)}`:`所有印花獎賞已解鎖`;
+      meta=`單次滿 ${money(t.stampTransactionMin)} = ${t.stampsPerTxn} 個印花 · ${ms.length} 個獎賞階段`;
     }else{
-      const req=Number(t.welcomeRequirement||0);
-      let accum=0,endStr='',daysText='未設定日期',dayClass='',progress=0,status='尚未設定批卡日期';
-      if(t.approvalDate){
-        endStr=addDays(t.approvalDate,Math.max(1,Number(t.welcomeDays||1)));
-        accum=state.transactions
-          .filter(tx=>txIncludesTarget(tx,t.id) && tx.date>=t.approvalDate && tx.date<=endStr)
-          .reduce((s,tx)=>s+Number(tx.amount||0),0);
-        progress=pct(accum,req);
-        if(req>0&&accum>=req){daysText='已完成';dayClass='good';status=`已簽 ${money(accum)}，已達迎新要求`}
-        else if(today>endStr){daysText='已完結';dayClass='bad';status=`已簽 ${money(accum)}，尚欠 ${money(Math.max(0,req-accum))}`}
-        else{daysText=`${daysLeft(endStr)}日`;status=`已簽 ${money(accum)}，尚欠 ${money(Math.max(0,req-accum))} 簽賬要求`}
-      }
-      rows.push({
-        targetId:t.id,card:t.name,title:`迎新簽賬 · ${esc(t.welcomeRewardType)} ${rewardLabel(t)}`,
-        meta:`要求 ${money(req)}`,days:daysText,dayClass,progress,percent:`${Math.round(progress)}%`,status,
-        completed:req>0&&accum>=req
-      });
+      const req=Number(t.spendRequirement||0),rate=Number(t.rebateRate||0);let target=req;
+      if(t.capType==='spend'&&t.capAmount>0)target=t.capAmount;else if(t.capType==='reward'&&t.capAmount>0&&rate>0)target=t.capAmount/(rate/100);
+      progress=target?pct(spent,target):(spent>0?100:0);completed=target>0&&spent>=target;
+      title=`簽賬回贈 · ${rate.toFixed(Number.isInteger(rate)?0:1)}%`;
+      const est=spent>=req?spent*rate/100:0,capped=t.capType==='reward'&&t.capAmount>0?Math.min(est,t.capAmount):est;
+      status=spent<req?`已簽 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻`:`已簽 ${money(spent)}，估算回贈 ${money(capped)}`;
     }
+    if(percent==='0%')percent=`${Math.round(progress)}%`;
+    rows.push({targetId:t.id,mechanic:t.mechanic,card:t.name,title:`${esc(title)} <span class="mechanic-badge">${esc(mechanicLabel(t))}</span>`,meta,days:time.days,dayClass:completed?'good':time.dayClass,progress,percent,status,completed,stampCurrent,stampTarget,stampMilestones});
   });
   return rows;
 }
@@ -1179,6 +1414,16 @@ const goalPalettes=[
   ['#cf5f4b','#ef8a6d','rgba(207,95,75,.22)'],['#3d8b7d','#6bb8a9','rgba(61,139,125,.22)']
 ];
 function goalPalette(i){return goalPalettes[i%goalPalettes.length]}
+function renderStampProgress(current,target,milestones=[]){
+  const total=Math.max(1,Number(target||1)),cur=Math.max(0,Number(current||0)),exact=total<=12,slots=exact?total:12;
+  const earned=exact?Math.min(slots,cur):Math.min(slots,Math.round(Math.min(cur,total)/total*slots));
+  const milestoneSet=new Set((milestones||[]).map(Number));
+  const marks=Array.from({length:slots},(_,i)=>{
+    const logical=exact?i+1:Math.round((i+1)/slots*total),isMilestone=exact&&milestoneSet.has(logical);
+    return `<span class="stamp-mark ${i<earned?'earned':''} ${isMilestone?'milestone':''}" title="${exact?`第 ${logical} 個印花`:`印花進度`}">🔖</span>`;
+  }).join('');
+  return `<div class="stamp-progress-row"><div class="stamp-track">${marks}${!exact?'<span class="stamp-scale-note">比例顯示</span>':''}</div><div class="stamp-count-label">${cur}/${total} 個</div></div>`;
+}
 function renderGoals(){
   const rows=getGoalRows();
   document.getElementById('goalCount').textContent=`${rows.length} 個目標`;
@@ -1191,7 +1436,7 @@ function renderGoals(){
         <div class="goal-card">${esc(r.card)}</div>
         <div class="goal-title">${r.title}${r.completed?'<span class="trophy" title="目標達成">🏆</span>':''}<span class="goal-days ${r.dayClass}">${esc(r.days)}</span></div>
         <div class="goal-meta">${r.meta}</div>
-        <div class="goal-progress-row"><div class="progress"><div style="--target-width:${r.progress}%"></div></div><div class="goal-percent">${r.percent}</div></div>
+        ${r.mechanic==='stamp'?renderStampProgress(r.stampCurrent,r.stampTarget,r.stampMilestones):`<div class="goal-progress-row"><div class="progress"><div style="--target-width:${r.progress}%"></div></div><div class="goal-percent">${r.percent}</div></div>`}
         <div class="goal-status">${r.status}</div>
       </div>
       <button class="goal-modify" type="button" aria-label="修改" title="修改">✎</button>
@@ -1211,7 +1456,7 @@ function bindGoalActions(){
     modify?.addEventListener('click',e=>{
       e.stopPropagation();
       const id=row.dataset.targetId;if(!id)return;
-      editingTargetId=id;creatingNewTarget=false;renderSettings();openModal('settingsModal');
+      editingTargetId=id;creatingNewTarget=false;editingBackup=JSON.parse(JSON.stringify(state.cards.find(x=>x.id===id)));wizardStep=1;wizardEntering='';renderSettings();openModal('settingsModal');
     });
   });
 }
@@ -1231,22 +1476,21 @@ function renderTransactions(){
           ${refs.map(r=>`<span class="tx-target ${r.type==='welcome'?'welcome':''}">${esc(r.label||'目標')}</span>`).join('')}
         </div>
       </div>
-      <div class="tx-amount">${money(t.amount)}</div><button class="tx-delete" type="button" aria-label="刪除消費">×</button>
+      <div class="tx-amount">${money(t.amount)}</div><button class="tx-edit" type="button" aria-label="修改消費">修改</button>
     </div>`;
   }).join('');
   bindTransactionActions();
 }
 function bindTransactionActions(){
   document.querySelectorAll('.tx').forEach(row=>{
-    const del=row.querySelector('.tx-delete');
+    const edit=row.querySelector('.tx-edit');
     row.addEventListener('click',e=>{
-      if(e.target.closest('.tx-delete'))return;
+      if(e.target.closest('.tx-edit'))return;
       const wasOpen=row.classList.contains('open');document.querySelectorAll('.tx.open').forEach(x=>x.classList.remove('open'));
       if(!wasOpen)requestAnimationFrame(()=>row.classList.add('open'));
     });
-    del?.addEventListener('click',e=>{
-      e.stopPropagation();const id=row.dataset.id;if(!id)return;row.classList.add('deleting');
-      setTimeout(()=>{state.transactions=state.transactions.filter(t=>t.id!==id);save();render()},260);
+    edit?.addEventListener('click',e=>{
+      e.stopPropagation();const id=row.dataset.id;if(!id)return;openTransactionEditor(id);
     });
   });
 }
@@ -1255,12 +1499,12 @@ let txCardScrollFrame=0,txCardCommitTimer=0;
 function txCardTone(cardKey=''){
   let hash=0;for(const ch of String(cardKey))hash=(hash*31+ch.charCodeAt(0))>>>0;return hash%6;
 }
-function renderCardOptions(){
+function renderCardOptions(preferredCardKey=''){
   const input=document.getElementById('txCard'),carousel=document.getElementById('txCardCarousel'),label=document.getElementById('txCardSelectedLabel');
   if(!input||!carousel)return;
   const cards=getPhysicalCards();
   if(!cards.length){
-    input.value='';carousel.innerHTML='<div class="tx-card-empty">未有信用卡目標<br><small>請先按「新增目標」建立第一個目標</small></div>';
+    input.value='';carousel.innerHTML='<div class="tx-card-empty">未有信用卡優惠<br><small>請先按「新增優惠」建立第一個優惠</small></div>';
     if(label){label.className='tx-card-selected-label';label.textContent=''}
     renderTxCategories();return;
   }
@@ -1270,9 +1514,15 @@ function renderCardOptions(){
       <div class="tx-wallet-name">${esc(c.name)}</div>
       <div class="tx-wallet-bottom"><span>${c.targets.length} 個目標</span><span>${i+1} / ${cards.length}</span></div>
     </div></button>`).join('');
-  input.value=cards[0].cardKey;
-  if(label){label.className='tx-card-selected-label has-card';label.textContent=cards[0].name}
-  carousel.scrollLeft=0;bindTxCardCarousel();requestAnimationFrame(()=>updateTxCardCarouselVisual(true));
+  const chosen=cards.find(c=>c.cardKey===preferredCardKey)||cards[0];
+  input.value=chosen.cardKey;
+  if(label){label.className='tx-card-selected-label has-card';label.textContent=chosen.name}
+  carousel.scrollLeft=0;bindTxCardCarousel();renderTxCategories();
+  requestAnimationFrame(()=>{
+    const slide=carousel.querySelector(`.tx-card-slide[data-card-key="${CSS.escape(chosen.cardKey)}"]`);
+    if(slide){carousel.scrollLeft=Math.max(0,slide.offsetLeft-(carousel.clientWidth-slide.offsetWidth)/2)}
+    updateTxCardCarouselVisual(false);
+  });
 }
 function selectedTxCard(){return cardByKey(document.getElementById('txCard')?.value||'')}
 function updateTxCardCarouselVisual(commit=true){
@@ -1303,33 +1553,34 @@ function bindTxCardCarousel(){
 
 function renderTxCategories(){
   const card=selectedTxCard(),select=document.getElementById('txCategory');if(!select)return;
-  if(!card){select.innerHTML='<option value="">請先新增信用卡目標</option>';select.disabled=true;renderTxTargetPicks();return}
+  if(!card){select.innerHTML='<option value="">請先新增信用卡優惠</option>';select.disabled=true;renderTxTargetPicks();return}
   select.disabled=false;
-  const cats=[...new Set(card.targets.filter(t=>t.targetType==='rebate').flatMap(t=>Array.isArray(t.rebateCategories)?t.rebateCategories:[]).map(x=>String(x).trim()).filter(Boolean))];
+  const cats=[...new Set(card.targets.flatMap(t=>Array.isArray(t.rebateCategories)?t.rebateCategories:[]).map(x=>String(x).trim()).filter(Boolean))];
   const options=cats.length?cats:['一般簽賬'];
+  const desired=txInitialCategory;
+  if(desired&&desired!=='其他簽賬'&&!options.includes(desired))options.push(desired);
   select.innerHTML=[...options.map(cat=>`<option value="${esc(cat)}">${esc(cat)}</option>`),'<option value="__other__">其他／不屬已設定類別</option>'].join('');
+  if(desired){select.value=desired==='其他簽賬'?'__other__':desired;txInitialCategory=null}
   renderTxTargetPicks();
 }
-function targetAutoMatches(t,category,date=localDateStr()){
-  if(t.targetType==='welcome'){
-    if(!t.approvalDate)return false;
-    const end=addDays(t.approvalDate,Math.max(1,Number(t.welcomeDays||1)));
-    return date>=t.approvalDate && date<=end;
-  }
-  if(t.rebateEndDate && date>t.rebateEndDate)return false;
+function targetAutoMatches(t,category,date=localDateStr(),amount=0){
+  const b=offerBounds(t);if(b.start&&date<b.start)return false;if(b.end&&date>b.end)return false;
+  if(Number(t.minTransaction||0)>0&&Number(amount||0)<Number(t.minTransaction))return false;
+  if(t.mechanic==='stamp'&&Number(amount||0)<Number(t.stampTransactionMin||0))return false;
   const cats=Array.isArray(t.rebateCategories)?t.rebateCategories.filter(Boolean):[];
-  if(!cats.length)return category!=='__other__';
-  return category!=='__other__' && cats.includes(category);
+  if(t.eligibilityMode==='categories')return category!=='__other__'&&cats.includes(category);
+  return category!=='__other__';
 }
+
 function renderTxTargetPicks(){
   const card=selectedTxCard(),box=document.getElementById('txTargetPicks'),summary=document.getElementById('txTargetSummary');if(!box||!summary)return;
   if(!card){box.innerHTML='';summary.className='tx-target-summary none';summary.textContent='';return}
   const category=document.getElementById('txCategory')?.value||'';
   const targets=card.targets;
   if(!targets.length){box.innerHTML='';summary.className='tx-target-summary none';summary.textContent='此信用卡暫時未有目標';return}
-  let hit=0;
+  let hit=0;const preferredIds=Array.isArray(txInitialTargetIds)?txInitialTargetIds:null;
   box.innerHTML=targets.map(t=>{
-    const active=targetAutoMatches(t,category);if(active)hit++;
+    const amount=parseFloat(document.getElementById('txAmount')?.value||0);const active=preferredIds?preferredIds.includes(t.id):targetAutoMatches(t,category,localDateStr(),amount);if(active)hit++;
     return `<div class="target-pick ${t.targetType==='welcome'?'welcome':''} ${active?'active':''}" data-target-id="${t.id}" role="button" tabindex="0" aria-pressed="${active?'true':'false'}">
       <span class="target-dot"></span><span class="target-copy"><strong>${esc(targetShortLabel(t))}</strong><small>${esc(targetDetailLabel(t))}</small></span>
     </div>`;
@@ -1338,8 +1589,9 @@ function renderTxTargetPicks(){
     const toggle=()=>{el.classList.toggle('active');el.setAttribute('aria-pressed',el.classList.contains('active')?'true':'false');updateTxTargetSummary()};
     el.addEventListener('click',toggle);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
   });
+  if(preferredIds)txInitialTargetIds=null;
   summary.className=`tx-target-summary ${hit?'hit':'none'}`;
-  summary.textContent=hit?`系統自動命中 ${hit} 個目標；可按下個別目標亮起／熄滅`:'系統未自動命中目標；如需要仍可手動按下亮起';
+  summary.textContent=hit?`${editingTransactionId?'已載入':'系統自動命中'} ${hit} 個目標；可按下個別目標亮起／熄滅`:'系統未自動命中目標；如需要仍可手動按下亮起';
 }
 function updateTxTargetSummary(){
   const box=document.getElementById('txTargetPicks'),summary=document.getElementById('txTargetSummary');if(!box||!summary)return;
@@ -1349,128 +1601,242 @@ function updateTxTargetSummary(){
 function render(){
   document.getElementById('monthPicker').value=state.month;renderGoals();renderTransactions();
 }
+let editingTransactionId=null,txInitialCategory=null,txInitialTargetIds=null;
+function resetTransactionEditor(){
+  editingTransactionId=null;txInitialCategory=null;txInitialTargetIds=null;
+  document.getElementById('addModal')?.classList.remove('is-editing');
+  const title=document.getElementById('addModalTitle'),confirm=document.getElementById('confirmAdd');
+  if(title)title.textContent='新增消費';if(confirm)confirm.textContent='新增消費';
+}
+function openTransactionEditor(id=null){
+  const title=document.getElementById('addModalTitle'),confirm=document.getElementById('confirmAdd'),amountInput=document.getElementById('txAmount'),modal=document.getElementById('addModal');
+  if(id){
+    const tx=state.transactions.find(t=>t.id===id);if(!tx)return;
+    editingTransactionId=id;txInitialCategory=tx.category||'一般簽賬';txInitialTargetIds=[...(tx.targetIds||[])];
+    if(title)title.textContent='修改消費';if(confirm)confirm.textContent='儲存修改';modal?.classList.add('is-editing');
+    amountInput.value=String(Number(tx.amount||0));amountInput.style.width=`${Math.min(10,Math.max(1,amountInput.value.length||1))}ch`;
+    openModal('addModal');requestAnimationFrame(()=>renderCardOptions(tx.cardKey));
+  }else{
+    resetTransactionEditor();amountInput.value='';amountInput.style.width='1ch';
+    openModal('addModal');requestAnimationFrame(()=>renderCardOptions());
+  }
+}
 function openModal(id){const el=document.getElementById(id);el.classList.remove('closing');el.classList.add('show')}
 function closeModal(id){
   const el=document.getElementById(id);if(!el.classList.contains('show'))return;
-  if(id==='settingsModal'&&creatingNewTarget&&editingTargetId){const unsaved=editingTargetId;state.cards=state.cards.filter(t=>t.id!==unsaved);creatingNewTarget=false;editingTargetId=null}
-  el.classList.add('closing');setTimeout(()=>el.classList.remove('show','closing'),190);
+  if(id==='settingsModal'&&creatingNewTarget&&editingTargetId){const unsaved=editingTargetId;state.cards=state.cards.filter(t=>t.id!==unsaved);creatingNewTarget=false;editingTargetId=null;editingBackup=null}
+  else if(id==='settingsModal'&&!creatingNewTarget&&editingTargetId&&editingBackup){const idx=state.cards.findIndex(t=>t.id===editingTargetId);if(idx>=0)state.cards[idx]=normalizeTarget(editingBackup);editingTargetId=null;editingBackup=null;render()}
+  el.classList.add('closing');setTimeout(()=>{el.classList.remove('show','closing');if(id==='addModal')resetTransactionEditor()},id==='addModal'?230:190);
 }
 document.querySelectorAll('[data-close]').forEach(b=>{b.onclick=()=>closeModal(b.dataset.close)});
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id)}));
 
-document.getElementById('openAdd').onclick=()=>{
-  document.getElementById('txAmount').value='';document.getElementById('txAmount').style.width='1ch';
-  openModal('addModal');
-  requestAnimationFrame(()=>renderCardOptions());
-};
+document.getElementById('openAdd').onclick=()=>openTransactionEditor();
 document.getElementById('amountEntry')?.addEventListener('click',()=>document.getElementById('txAmount')?.focus());
 document.getElementById('txAmount')?.addEventListener('input',e=>{
-  let v=String(e.target.value||'').replace(/[^0-9.]/g,'');const dot=v.indexOf('.');if(dot>=0)v=v.slice(0,dot+1)+v.slice(dot+1).replace(/\./g,'').slice(0,2);v=v.replace(/^0+(?=\d)/,'');e.target.value=v;e.target.style.width=`${Math.min(10,Math.max(1,v.length||1))}ch`;
+  let v=String(e.target.value||'').replace(/[^0-9.]/g,'');const dot=v.indexOf('.');if(dot>=0)v=v.slice(0,dot+1)+v.slice(dot+1).replace(/\./g,'').slice(0,2);v=v.replace(/^0+(?=\d)/,'');e.target.value=v;e.target.style.width=`${Math.min(10,Math.max(1,v.length||1))}ch`;renderTxTargetPicks();
 });
 document.getElementById('txCard').addEventListener('change',renderTxCategories);
 document.getElementById('txCategory').addEventListener('change',renderTxTargetPicks);
 document.getElementById('confirmAdd').onclick=()=>{
   const card=selectedTxCard(),amount=parseFloat(document.getElementById('txAmount').value),raw=document.getElementById('txCategory').value;
-  if(!card){alert('請先新增及選擇信用卡目標');return}
+  if(!card){alert('請先新增及選擇信用卡優惠');return}
   if(!(amount>0)){alert('請輸入消費金額');return}
   const category=raw==='__other__'?'其他簽賬':raw;
   const selectedIds=[...document.querySelectorAll('#txTargetPicks .target-pick.active')].map(x=>x.dataset.targetId).filter(Boolean);
   const selectedTargets=selectedIds.map(id=>state.cards.find(t=>t.id===id)).filter(Boolean);
-  const date=localDateStr();
-  state.transactions.push({
-    id:uid(),cardKey:card.cardKey,cardName:card.name,amount,category,targetIds:selectedIds,
-    targetRefs:selectedTargets.map(t=>({id:t.id,type:t.targetType,label:targetShortLabel(t)})),date,createdAt:Date.now()
-  });
+  const existing=editingTransactionId?state.transactions.find(t=>t.id===editingTransactionId):null;
+  const date=existing?.date||localDateStr();
+  const record={
+    id:existing?.id||uid(),cardKey:card.cardKey,cardName:card.name,amount,category,targetIds:selectedIds,
+    targetRefs:selectedTargets.map(t=>({id:t.id,type:t.targetType,label:targetShortLabel(t)})),date,createdAt:existing?.createdAt||Date.now()
+  };
+  if(existing){const idx=state.transactions.findIndex(t=>t.id===existing.id);if(idx>=0)state.transactions[idx]=record}else state.transactions.push(record);
   state.month=date.slice(0,7);save();render();closeModal('addModal');
 };
 document.getElementById('monthPicker').onchange=e=>{state.month=e.target.value||localMonthStr();save();render()};
 
-let editingTargetId=null,creatingNewTarget=false;
+let editingTargetId=null,creatingNewTarget=false,wizardStep=1,wizardEntering='',editingBackup=null;
+const WIZARD_TOTAL=9;
 const PRESET_CATEGORIES=['一般零售','網上簽賬','手機支付','感應式支付','海外簽賬','外幣簽賬','餐飲','超市','便利店','旅遊商戶','酒店','航空公司','交通','八達通','娛樂','指定商戶'];
+const CATEGORY_EMOJI={
+  '一般零售':'🛍️','網上簽賬':'💻','手機支付':'📱','感應式支付':'📶','海外簽賬':'✈️','外幣簽賬':'💱',
+  '餐飲':'🍽️','超市':'🛒','便利店':'🏪','旅遊商戶':'🧳','酒店':'🏨','航空公司':'🛫','交通':'🚆','八達通':'🐙','娛樂':'🎬','指定商戶':'🏷️'
+};
+const REWARD_TYPES=['現金回贈','飛行里數','積分','獎賞錢','禮品','自訂獎賞'];
+const MECHANICS=[
+  ['standard','💳','指定簽賬回贈','固定回贈率，可配最低簽賬、指定類別、每期或全年上限'],
+  ['tier_rate','📈','門檻升級','累積簽得愈多，回贈率按門檻升級'],
+  ['milestone','🎯','階段獎賞','達到不同累積簽賬額，逐級解鎖現金、里數或積分'],
+  ['recurring','🗓️','分期／連續達標','每月或每期分開達標，全部完成可再有額外獎賞'],
+  ['stamp','🔖','印花／次數','每次符合單筆條件取得印花／次數，再按數量解鎖獎賞'],
+  ['custom','🧩','自訂組合','以階段規則建立較特殊的銀行推廣玩法']
+];
 
 document.getElementById('settingsBtn').onclick=()=>{
-  const t=defaultTarget('rebate');t._temporary=true;state.cards.push(t);editingTargetId=t.id;creatingNewTarget=true;renderSettings();openModal('settingsModal');
+  const t=defaultTarget('rebate');t._temporary=true;state.cards.push(t);editingTargetId=t.id;creatingNewTarget=true;editingBackup=null;wizardStep=1;wizardEntering='';renderSettings();openModal('settingsModal');
 };
 function renderSettings(){
-  const current=state.cards.find(t=>t.id===editingTargetId);document.getElementById('settingsCards').innerHTML=current?renderEditorTarget(current):'';
+  const current=state.cards.find(t=>t.id===editingTargetId),title=document.getElementById('settingsTitle'),back=document.getElementById('wizardHeaderBack');
+  if(title)title.textContent=creatingNewTarget?'新增優惠':'修改優惠';
+  if(back)back.classList.toggle('is-hidden',!creatingNewTarget||wizardStep<=1);
+  document.getElementById('settingsCards').innerHTML=current?(creatingNewTarget?renderWizard(current,wizardEntering):renderEditList(current)):'';
+  wizardEntering='';
 }
-function cardNameChoices(){
-  const existing=getPhysicalCards().map(c=>c.name);
-  const suggestions=[...document.querySelectorAll('#cardNameSuggestions option')].map(o=>o.value).filter(Boolean);
-  return [...new Set([...existing,...suggestions])];
+function wizardProgress(){const pctv=Math.round(wizardStep/WIZARD_TOTAL*100);return `<div class="wizard-progress"><div class="wizard-progress-track"><div class="wizard-progress-fill" style="width:${pctv}%"></div></div><div class="wizard-progress-text">${wizardStep} / ${WIZARD_TOTAL}</div></div>`}
+function optionButton(active,icon,title,desc,onclick,extra=''){return `<button class="wizard-option ${active?'active':''} ${extra}" type="button" onclick="${onclick}"><span class="wizard-option-icon">${icon}</span><span class="wizard-option-copy"><strong>${title}</strong><small>${desc}</small></span></button>`}
+function rewardTypeOptions(selected){return REWARD_TYPES.map(x=>`<option value="${x}" ${selected===x?'selected':''}>${x}</option>`).join('')}
+function renderWizard(t,enter=''){const cls=enter==='forward'?' enter-forward':enter==='back'?' enter-back':'';return `<div class="wizard-shell${cls}"><div class="settings-card" data-id="${t.id}">${wizardProgress()}${renderWizardStep(t)}</div></div>`}
+function editSelectOptions(items,selected){return items.map(([v,label])=>`<option value="${v}" ${selected===v?'selected':''}>${label}</option>`).join('')}
+function renderEditRuleFields(t){
+  if(t.mechanic==='tier_rate')return `<div class="wizard-section"><div class="wizard-section-title">回贈率階梯</div>${t.tiers.map((x,i)=>`<div class="wizard-row-card" data-tier-row><div class="wizard-row-head"><span>級別 ${i+1}</span>${t.tiers.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('tier',${i})">刪除</button>`:''}</div><div class="wizard-input-grid"><div class="wizard-big-field"><label>累積簽滿 HK$</label><input data-tier-threshold type="number" min="0" value="${x.threshold}"></div><div class="wizard-big-field"><label>回贈率 %</label><input data-tier-rate type="number" min="0" step="0.01" value="${x.rate}"></div></div></div>`).join('')}<button class="wizard-add-row" type="button" onclick="addRuleRow('tier')">＋ 加一個回贈級別</button></div>`;
+  if(t.mechanic==='milestone'||t.mechanic==='custom')return `<div class="wizard-section"><div class="wizard-section-title">達標階段</div>${t.milestones.map((x,i)=>`<div class="wizard-row-card" data-milestone-row><div class="wizard-row-head"><span>階段 ${i+1}</span>${t.milestones.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('milestone',${i})">刪除</button>`:''}</div><div class="wizard-big-field"><label>累積簽滿 HK$</label><input data-ms-threshold type="number" min="0" value="${x.threshold}"></div><div class="wizard-input-grid" style="margin-top:12px"><div class="wizard-big-field"><label>獎賞類型</label><select data-ms-type>${rewardTypeOptions(x.rewardType)}</select></div><div class="wizard-big-field"><label>今階段新增獎賞額／數量</label><input data-ms-reward type="number" min="0" value="${x.reward}"></div></div></div>`).join('')}<button class="wizard-add-row" type="button" onclick="addRuleRow('milestone')">＋ 加一個階段</button></div>`;
+  if(t.mechanic==='recurring')return `<div class="wizard-section"><div class="wizard-section-title">每期達標</div><div class="wizard-big-field"><label>每期簽賬要求 HK$</label><input data-k="recurringThreshold" type="number" min="0" value="${t.recurringThreshold}"></div><div class="wizard-input-grid" style="margin-top:12px"><div class="wizard-big-field"><label>每期獎賞類型</label><select data-k="recurringRewardType">${rewardTypeOptions(t.recurringRewardType)}</select></div><div class="wizard-big-field"><label>每期獎賞額</label><input data-k="recurringReward" type="number" min="0" value="${t.recurringReward}"></div><div class="wizard-big-field"><label>全部完成額外獎賞</label><select data-k="completionBonusType">${rewardTypeOptions(t.completionBonusType)}</select></div><div class="wizard-big-field"><label>額外獎賞額</label><input data-k="completionBonus" type="number" min="0" value="${t.completionBonus}"></div></div><div class="wizard-mini-note">系統按每月分開計算，再判斷整段推廣期有冇全部完成。</div></div>`;
+  if(t.mechanic==='stamp')return `<div class="wizard-section"><div class="wizard-section-title">取得印花</div><div class="wizard-input-grid"><div class="wizard-big-field"><label>單次簽滿 HK$</label><input data-k="stampTransactionMin" type="number" min="0" value="${t.stampTransactionMin}"></div><div class="wizard-big-field"><label>每筆獲得印花</label><input data-k="stampsPerTxn" type="number" min="1" value="${t.stampsPerTxn}"></div></div></div><div class="wizard-section"><div class="wizard-section-title">印花獎賞</div>${t.stampMilestones.map((x,i)=>`<div class="wizard-row-card" data-stamp-row><div class="wizard-row-head"><span>階段 ${i+1}</span>${t.stampMilestones.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('stamp',${i})">刪除</button>`:''}</div><div class="wizard-big-field"><label>集齊幾多個印花</label><input data-stamp-count type="number" min="1" value="${x.count}"></div><div class="wizard-input-grid" style="margin-top:12px"><div class="wizard-big-field"><label>獎賞類型</label><select data-stamp-type>${rewardTypeOptions(x.rewardType)}</select></div><div class="wizard-big-field"><label>今階段新增獎賞額</label><input data-stamp-reward type="number" min="0" value="${x.reward}"></div></div></div>`).join('')}<button class="wizard-add-row" type="button" onclick="addRuleRow('stamp')">＋ 加一個印花階段</button></div>`;
+  return `<div class="wizard-section"><div class="wizard-input-grid"><div class="wizard-big-field"><label>最低累積簽賬 HK$</label><input data-k="spendRequirement" type="number" min="0" value="${t.spendRequirement}"></div><div class="wizard-big-field"><label>回贈率 %</label><input data-k="rebateRate" type="number" min="0" step="0.1" value="${t.rebateRate}"></div></div></div>`;
 }
-function renderCardNamePicker(t){
-  const options=cardNameChoices().map(name=>`<button class="card-name-option" type="button" onclick="chooseCardName(this,'${encodeURIComponent(name)}')">${esc(name)}</button>`).join('');
-  return `<div class="field full card-name-picker"><label>信用卡名稱</label><div class="card-name-row">
-    <input class="card-name-input" data-k="name" autocomplete="off" placeholder="輸入信用卡名稱" value="${esc(t.name)}">
-    <button class="card-name-picker-btn" type="button" aria-label="選擇信用卡名稱" title="選擇信用卡名稱" onclick="toggleCardNameMenu(this)">⌄</button>
-  </div><div class="card-name-menu hidden">${options}</div></div>`;
-}
-function renderEditorTarget(t){
-  const selected=new Set(Array.isArray(t.rebateCategories)?t.rebateCategories:[]),custom=[...selected].filter(x=>!PRESET_CATEGORIES.includes(x));
-  return `<div class="settings-editor"><div class="settings-card" data-id="${t.id}">
-    <div class="settings-title"><h4>${creatingNewTarget?'新增目標':`修改目標 · ${esc(t.name)}`}</h4></div>
-    <div class="grid2">${renderCardNamePicker(t)}</div>
-    <div class="feature-label">目標類型</div><div class="feature-note">每次「新增目標」只建立一個目標；同一張信用卡如有多個優惠，請分開新增。</div>
-    <div class="feature-picks">
-      <button class="feature-pick ${t.targetType==='rebate'?'active':''}" type="button" onclick="setTargetType('${t.id}','rebate')"><span class="feature-icon">%</span>簽賬回贈</button>
-      <button class="feature-pick welcome ${t.targetType==='welcome'?'active':''}" type="button" onclick="setTargetType('${t.id}','welcome')"><span class="feature-icon">★</span>迎新優惠</button>
-    </div>
-    <div class="offer-config ${t.targetType==='rebate'?'':'hidden'}" data-offer="rebate"><div class="offer-config-title">簽賬回贈設定</div><div class="grid2">
-      <div class="field"><label>簽賬下限</label><input data-k="spendRequirement" type="number" min="0" value="${t.spendRequirement}"></div>
-      <div class="field"><label>簽賬上限</label><input data-k="spendCap" type="number" min="0" value="${t.spendCap}"></div>
-      <div class="field full"><label>簽賬回贈 %</label><input data-k="rebateRate" type="number" min="0" step="0.1" value="${t.rebateRate}"></div>
-      <div class="field full"><label>簽賬類別 · 點按可亮起／取消</label><div class="category-preset-tags">
-        ${PRESET_CATEGORIES.map(cat=>`<button class="cat-select ${selected.has(cat)?'active':''}" type="button" data-value="${esc(cat)}" onclick="togglePresetCategory(this)">${esc(cat)}</button>`).join('')}
-      </div><div class="custom-category-caption">自定義類別</div><div class="category-input-row"><input class="category-new" autocomplete="off" placeholder="輸入自定義類別"><button class="category-add" type="button" onclick="addCategoryTag(this)">＋</button></div>
-      <div class="custom-category-tags">${custom.map(cat=>`<button class="cat-chip" type="button" data-value="${esc(cat)}" onclick="this.remove()">${esc(cat)} <span>×</span></button>`).join('')}</div></div>
-      <div class="field full"><label>優惠結束日期（可選）</label><input data-k="rebateEndDate" type="date" value="${t.rebateEndDate||''}"></div>
-    </div></div>
-    <div class="offer-config ${t.targetType==='welcome'?'':'hidden'}" data-offer="welcome"><div class="offer-config-title">迎新優惠設定</div><div class="grid2">
-      <div class="field full"><label>批卡日期</label><input data-k="approvalDate" type="date" value="${t.approvalDate||''}"></div>
-      <div class="field"><label>簽賬期限（日）</label><input data-k="welcomeDays" type="number" min="1" value="${t.welcomeDays}"></div>
-      <div class="field"><label>簽賬要求</label><input data-k="welcomeRequirement" type="number" min="0" value="${t.welcomeRequirement}"></div>
-      <div class="field"><label>獎賞類型</label><select data-k="welcomeRewardType"><option value="現金回贈" ${t.welcomeRewardType==='現金回贈'?'selected':''}>現金回贈</option><option value="飛行里數" ${t.welcomeRewardType==='飛行里數'?'selected':''}>飛行里數</option></select></div>
-      <div class="field"><label>獎賞額</label><input data-k="welcomeReward" type="number" min="0" value="${t.welcomeReward}"></div>
-    </div></div>
-    <div class="save-row"><button class="save" onclick="saveTarget('${t.id}')">儲存</button>${creatingNewTarget?'':`<button class="remove" onclick="removeTarget('${t.id}')">刪除</button>`}</div>
+function renderEditList(t){
+  const selected=new Set(t.rebateCategories||[]),custom=[...selected].filter(x=>!PRESET_CATEGORIES.includes(x));
+  const typeLabel=t.targetType==='welcome'?'迎新優惠':'簽賬回贈';
+  const periodOptions=[['monthly','每月'],['campaign','整個推廣期'],['yearly','全年'],['approval_window','批卡後指定日數']];
+  const mechanicOptions=MECHANICS.map(([k,,n])=>[k,n]);
+  const capOptions=[['none','不設上限'],['reward','回贈／獎賞金額上限'],['spend','合資格簽賬金額上限']];
+  return `<div class="edit-shell"><div class="settings-card" data-id="${t.id}">
+    <div class="edit-hero"><div class="edit-eyebrow">✎ 清單式修改 · ${esc(typeLabel)}</div><h2 class="edit-title">${esc(t.name||'未命名信用卡')}</h2><p class="edit-subtitle">一次過查看及修改呢個優惠所有設定；只會顯示目前玩法需要嘅欄位，唔需要重新行問卷。</p></div>
+
+    <section class="edit-section"><div class="edit-section-head"><strong>基本資料</strong><small>信用卡、優惠大類同計算玩法。</small></div>
+      <div class="edit-row"><div class="edit-copy"><div class="edit-label">信用卡</div><div class="edit-desc">輸入現有卡名可以移去同一張實體信用卡。</div></div><div class="edit-control"><input data-k="name" class="card-name-input wizard-name-input" list="cardNameList" autocomplete="off" value="${esc(t.name)}"></div></div>
+      <div class="edit-row"><div class="edit-copy"><div class="edit-label">優惠大類</div><div class="edit-desc">簽賬回贈或迎新優惠。</div></div><div class="edit-control"><select data-k="targetType" onchange="editListRefresh('${t.id}','targetType')"><option value="rebate" ${t.targetType==='rebate'?'selected':''}>簽賬回贈</option><option value="welcome" ${t.targetType==='welcome'?'selected':''}>迎新優惠</option></select></div></div>
+      <div class="edit-row"><div class="edit-copy"><div class="edit-label">達標玩法</div><div class="edit-desc">改變玩法後，下方「達標規則」會即時轉成相應清單。</div></div><div class="edit-control"><select data-k="mechanic" onchange="editListRefresh('${t.id}','mechanic')">${editSelectOptions(mechanicOptions,t.mechanic)}</select></div></div>
+    </section>
+
+    <section class="edit-section"><div class="edit-section-head"><strong>合資格簽賬</strong><small>決定邊啲交易可以計入呢個優惠。</small></div>
+      <div class="edit-row"><div class="edit-copy"><div class="edit-label">計入範圍</div><div class="edit-desc">所有合資格簽賬，或者只限指定類別。</div></div><div class="edit-control"><select data-k="eligibilityMode" onchange="editListRefresh('${t.id}','eligibilityMode')"><option value="all" ${t.eligibilityMode==='all'?'selected':''}>所有合資格簽賬</option><option value="categories" ${t.eligibilityMode==='categories'?'selected':''}>指定類別</option></select>${t.eligibilityMode==='categories'?`<div class="edit-categories"><div class="wizard-chip-row">${PRESET_CATEGORIES.map(cat=>categoryButton(cat,selected.has(cat))).join('')}</div><div class="custom-category-caption">其他自定義類別</div><div class="category-input-row"><input class="category-new" autocomplete="off" placeholder="輸入自定義類別"><button class="category-add" type="button" onclick="addCategoryTag(this)">＋</button></div><div class="custom-category-tags">${custom.map(cat=>`<button class="cat-chip" type="button" data-value="${esc(cat)}" onclick="this.remove()">${esc(cat)} <span>×</span></button>`).join('')}</div></div>`:''}</div></div>
+      <div class="edit-row"><div class="edit-copy"><div class="edit-label">每筆最低簽賬</div><div class="edit-desc">留 0 代表唔設單筆最低金額。</div></div><div class="edit-control"><input data-k="minTransaction" type="number" min="0" value="${t.minTransaction}"></div></div>
+    </section>
+
+    <section class="edit-section"><div class="edit-section-head"><strong>上限及週期</strong><small>優惠上限、計算週期及有效日期。</small></div>
+      <div class="edit-row"><div class="edit-copy"><div class="edit-label">優惠上限</div><div class="edit-desc">可以限制回贈金額或合資格簽賬金額。</div></div><div class="edit-control"><div class="edit-grid2"><select data-k="capType" onchange="editListRefresh('${t.id}','capType')">${editSelectOptions(capOptions,t.capType)}</select><input data-k="capAmount" type="number" min="0" value="${t.capAmount}" ${t.capType==='none'?'disabled':''} placeholder="HK$"></div></div></div>
+      <div class="edit-row"><div class="edit-copy"><div class="edit-label">幾耐計一次</div><div class="edit-desc">修改後會按新週期重新判斷交易進度。</div></div><div class="edit-control"><select data-k="periodType" onchange="editListRefresh('${t.id}','periodType')">${editSelectOptions(periodOptions,t.periodType)}</select></div></div>
+      ${t.periodType==='approval_window'?`<div class="edit-row"><div class="edit-copy"><div class="edit-label">批卡日期及有效日數</div><div class="edit-desc">由批卡日起計指定日數。</div></div><div class="edit-control"><div class="edit-grid2"><input data-k="approvalDate" type="date" value="${t.approvalDate||''}"><input data-k="welcomeDays" type="number" min="1" value="${t.welcomeDays}"></div></div></div>`:`<div class="edit-row"><div class="edit-copy"><div class="edit-label">推廣開始及結束日期</div><div class="edit-desc">兩者都可以留空。</div></div><div class="edit-control"><div class="edit-grid2"><input data-k="startDate" type="date" value="${t.startDate||''}"><input data-k="endDate" type="date" value="${t.endDate||''}"></div></div></div>`}
+    </section>
+
+    <section class="edit-section"><div class="edit-section-head"><strong>達標規則</strong><small>${esc(mechanicLabel(t))} 專用設定。</small></div><div class="edit-rule-block">${renderEditRuleFields(t)}</div></section>
+
+    <div class="edit-actions"><button class="edit-save" type="button" onclick="saveTarget('${t.id}')">儲存修改</button><button class="edit-danger" type="button" onclick="removeTarget('${t.id}')">刪除呢個優惠</button></div>
   </div></div>`;
+}
+function rerenderEditPreserveScroll(){
+  const shell=document.querySelector('#settingsCards .edit-shell'),y=shell?.scrollTop||0;
+  renderSettings();requestAnimationFrame(()=>{const next=document.querySelector('#settingsCards .edit-shell');if(next)next.scrollTop=y});
+}
+window.editListRefresh=(id,field)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);if(field==='targetType'&&t.targetType==='welcome'&&t.periodType==='monthly')t.periodType='approval_window';if(field==='mechanic'&&t.mechanic==='recurring')t.periodType='campaign';if(field==='capType'&&t.capType==='none')t.capAmount=0;rerenderEditPreserveScroll()};
+
+function transitionWizard(nextStep,direction='forward',syncCurrent=true){
+  const t=state.cards.find(x=>x.id===editingTargetId);if(syncCurrent&&t)syncEditorDraft(t.id);
+  const target=Math.max(1,Math.min(WIZARD_TOTAL,nextStep));if(target===wizardStep)return;
+  const shell=document.querySelector('#settingsCards .wizard-shell');const finish=()=>{wizardStep=target;wizardEntering=direction;renderSettings()};
+  if(!shell){finish();return}shell.classList.add(direction==='back'?'exit-back':'exit-forward');setTimeout(finish,260);
+}
+function flashThen(btn,callback){
+  if(!btn){callback();return}btn.disabled=true;btn.classList.add('is-confirming');setTimeout(()=>{callback()},420);
+}
+function answerAdvance(btn,mutate,next=wizardStep+1){const t=state.cards.find(x=>x.id===editingTargetId);if(!t)return;syncEditorDraft(t.id);mutate?.(t);flashThen(btn,()=>transitionWizard(next,'forward',false))}
+function categoryButton(cat,selected){const em=CATEGORY_EMOJI[cat]||'🏷️';return `<button class="wizard-category-btn ${selected?'active':''}" type="button" data-value="${esc(cat)}" onclick="togglePresetCategory(this)"><span class="emoji">${em}</span>${esc(cat)}</button>`}
+
+function renderWizardStep(t){
+  if(wizardStep===1){
+    const existing=getPhysicalCards();return `<div class="wizard-question">你想為邊張信用卡新增優惠？</div><div class="wizard-help">揀已存在信用卡會直接進入下一題；如果係新卡，就輸入卡名再確認。</div>
+      ${existing.length?`<div class="wizard-card-grid">${existing.map(c=>`<button type="button" class="wizard-card-choice ${t.cardKey===c.cardKey||normalizeCardName(t.name)===normalizeCardName(c.name)?'active':''}" onclick="chooseWizardCard(this,'${encodeURIComponent(c.cardKey)}','${encodeURIComponent(c.name)}')">${esc(c.name)}</button>`).join('')}</div>`:''}
+      <div class="wizard-name-wrap"><input data-k="name" class="card-name-input wizard-name-input" list="cardNameList" autocomplete="off" placeholder="輸入或選擇信用卡名稱" value="${esc(t.name)}"><button class="wizard-answer" type="button" onclick="useWizardCardName(this,'${t.id}')">使用呢張信用卡</button></div>`;
+  }
+  if(wizardStep===2)return `<div class="wizard-question">呢個係咩優惠？</div><div class="wizard-help">按答案後會自動進入下一題。</div><div class="wizard-options">
+    ${optionButton(t.targetType==='rebate','💰','簽賬回贈','日常或推廣期簽賬取得現金、里數、積分或額外回贈',`selectTargetType(this,'${t.id}','rebate')`)}
+    ${optionButton(t.targetType==='welcome','🎁','迎新優惠','新卡批核後指定期限內完成一個或多個簽賬階段',`selectTargetType(this,'${t.id}','welcome')`,'welcome')}
+    </div>`;
+  if(wizardStep===3)return `<div class="wizard-question">呢個優惠點樣達標？</div><div class="wizard-help">按實際計算方式揀，唔需要理會銀行用咩 marketing 名稱。</div><div class="wizard-options">${MECHANICS.map(([k,i,n,d])=>optionButton(t.mechanic===k,i,n,d,`selectMechanic(this,'${t.id}','${k}')`,t.targetType==='welcome'?'welcome':'')).join('')}</div>`;
+  if(wizardStep===4){
+    const selected=new Set(t.rebateCategories||[]),custom=[...selected].filter(x=>!PRESET_CATEGORIES.includes(x));
+    return `<div class="wizard-question">邊啲簽賬先計入？</div><div class="wizard-help">揀「所有合資格簽賬」會直接進入下一題；揀「指定類別」就會喺同一頁下方展開類別選擇。</div><div class="wizard-options">
+      ${optionButton(t.eligibilityMode==='all','✅','所有合資格簽賬','一般合資格簽賬都可以計入',`selectEligibility(this,'${t.id}','all')`)}
+      ${optionButton(t.eligibilityMode==='categories','🏷️','指定類別','只計餐飲、網購、海外、交通等你指定嘅簽賬',`openCategoryPicker(this,'${t.id}')`)}
+      </div>
+      ${t.eligibilityMode==='categories'?`<div class="wizard-section"><div class="wizard-section-title">要計入嘅指定類別</div><div class="wizard-chip-row">${PRESET_CATEGORIES.map(cat=>categoryButton(cat,selected.has(cat))).join('')}</div><div class="custom-category-caption">其他自定義類別</div><div class="category-input-row"><input class="category-new" autocomplete="off" placeholder="輸入自定義類別"><button class="category-add" type="button" onclick="addCategoryTag(this)">＋</button></div><div class="custom-category-tags">${custom.map(cat=>`<button class="cat-chip" type="button" data-value="${esc(cat)}" onclick="this.remove()">${esc(cat)} <span>×</span></button>`).join('')}</div></div><button class="wizard-answer" type="button" onclick="finishCategories(this,'${t.id}')">完成類別選擇</button>`:''}`;
+  }
+  if(wizardStep===5)return `<div class="wizard-question">有冇每筆最低簽賬或優惠上限？</div><div class="wizard-help">兩個限制放埋同一題；冇限制可以直接揀「沒有額外限制」。</div>
+    <div class="wizard-choice-stack">${optionButton(t.minTransaction===0&&t.capType==='none','∞','沒有額外限制','不設每筆最低簽賬，亦不設額外上限',`clearLimitsAndAdvance(this,'${t.id}')`)}</div>
+    <div class="wizard-section"><div class="wizard-input-grid"><div class="wizard-big-field"><label>每筆最低簽賬 HK$（可選）</label><input data-k="minTransaction" type="number" min="0" value="${t.minTransaction}"></div><div class="wizard-big-field"><label>上限金額 HK$（如適用）</label><input data-k="capAmount" type="number" min="0" value="${t.capAmount}"></div></div><div class="wizard-big-field" style="margin-top:16px"><label>上限代表</label><select data-k="capType"><option value="none" ${t.capType==='none'?'selected':''}>不設上限</option><option value="reward" ${t.capType==='reward'?'selected':''}>回贈／獎賞金額上限</option><option value="spend" ${t.capType==='spend'?'selected':''}>合資格簽賬金額上限</option></select></div></div><button class="wizard-answer" type="button" onclick="finishLimits(this,'${t.id}')">套用呢個限制設定</button>`;
+  if(wizardStep===6)return `<div class="wizard-question">幾耐計一次？</div><div class="wizard-help">決定進度係每月重新計算、整個推廣期累積、全年累積，或者由批卡日起計指定日數。</div><div class="wizard-options">
+    ${[['monthly','🗓️','每月','每月重新計算'],['campaign','⏳','整個推廣期','由開始日至結束日累積，不中途重置'],['yearly','🧾','全年','按曆年累積'],['approval_window','✅','批卡後指定日數','適合迎新或批卡日起 N 日內優惠']].map(([k,i,n,d])=>optionButton(t.periodType===k,i,n,d,`selectPeriod(this,'${t.id}','${k}')`,t.targetType==='welcome'?'welcome':'')).join('')}</div>`;
+  if(wizardStep===7){
+    if(t.periodType==='approval_window')return `<div class="wizard-question">批卡日期同有效日數係幾多？</div><div class="wizard-help">迎新優惠通常由批卡日起計指定日數。</div><div class="wizard-section"><div class="wizard-input-grid"><div class="wizard-big-field"><label>批卡日期</label><input data-k="approvalDate" type="date" value="${t.approvalDate||''}"></div><div class="wizard-big-field"><label>有效日數</label><input data-k="welcomeDays" type="number" min="1" value="${t.welcomeDays}"></div></div></div><button class="wizard-answer" type="button" onclick="finishDates(this,'${t.id}')">使用呢個期限</button>`;
+    return `<div class="wizard-question">推廣期由幾時到幾時？</div><div class="wizard-help">開始及結束日期放埋同一題；如果銀行冇指定日期，可以直接略過。</div><div class="wizard-choice-stack">${optionButton(!t.startDate&&!t.endDate,'—','沒有指定推廣日期','保留空白，不限制開始及結束日期',`clearDatesAndAdvance(this,'${t.id}')`)}</div><div class="wizard-section"><div class="wizard-input-grid"><div class="wizard-big-field"><label>推廣開始日期（可選）</label><input data-k="startDate" type="date" value="${t.startDate||''}"></div><div class="wizard-big-field"><label>推廣結束日期（可選）</label><input data-k="endDate" type="date" value="${t.endDate||''}"></div></div></div><button class="wizard-answer" type="button" onclick="finishDates(this,'${t.id}')">套用推廣日期</button>`;
+  }
+  if(wizardStep===8)return renderRuleStep(t);
+  return renderSummaryStep(t);
+}
+function renderRuleStep(t){
+  let html=`<div class="wizard-question">達標條件同獎賞係點？</div><div class="wizard-help">只顯示你揀咗嗰種玩法需要嘅欄位。</div>`;
+  if(t.mechanic==='tier_rate')html+=`<div class="wizard-section"><div class="wizard-section-title">回贈率階梯</div>${t.tiers.map((x,i)=>`<div class="wizard-row-card" data-tier-row><div class="wizard-row-head"><span>級別 ${i+1}</span>${t.tiers.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('tier',${i})">刪除</button>`:''}</div><div class="wizard-input-grid"><div class="wizard-big-field"><label>累積簽滿 HK$</label><input data-tier-threshold type="number" min="0" value="${x.threshold}"></div><div class="wizard-big-field"><label>回贈率 %</label><input data-tier-rate type="number" min="0" step="0.01" value="${x.rate}"></div></div></div>`).join('')}<button class="wizard-add-row" type="button" onclick="addRuleRow('tier')">＋ 加一個回贈級別</button></div>`;
+  else if(t.mechanic==='milestone'||t.mechanic==='custom')html+=`<div class="wizard-section"><div class="wizard-section-title">達標階段</div>${t.milestones.map((x,i)=>`<div class="wizard-row-card" data-milestone-row><div class="wizard-row-head"><span>階段 ${i+1}</span>${t.milestones.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('milestone',${i})">刪除</button>`:''}</div><div class="wizard-big-field"><label>累積簽滿 HK$</label><input data-ms-threshold type="number" min="0" value="${x.threshold}"></div><div class="wizard-input-grid" style="margin-top:12px"><div class="wizard-big-field"><label>獎賞類型</label><select data-ms-type>${rewardTypeOptions(x.rewardType)}</select></div><div class="wizard-big-field"><label>今階段新增獎賞額／數量</label><input data-ms-reward type="number" min="0" value="${x.reward}"></div></div></div>`).join('')}<button class="wizard-add-row" type="button" onclick="addRuleRow('milestone')">＋ 加一個階段</button></div>`;
+  else if(t.mechanic==='recurring')html+=`<div class="wizard-section"><div class="wizard-section-title">每期達標</div><div class="wizard-big-field"><label>每期簽賬要求 HK$</label><input data-k="recurringThreshold" type="number" min="0" value="${t.recurringThreshold}"></div><div class="wizard-input-grid" style="margin-top:12px"><div class="wizard-big-field"><label>每期獎賞類型</label><select data-k="recurringRewardType">${rewardTypeOptions(t.recurringRewardType)}</select></div><div class="wizard-big-field"><label>每期獎賞額</label><input data-k="recurringReward" type="number" min="0" value="${t.recurringReward}"></div><div class="wizard-big-field"><label>全部完成額外獎賞</label><select data-k="completionBonusType">${rewardTypeOptions(t.completionBonusType)}</select></div><div class="wizard-big-field"><label>額外獎賞額</label><input data-k="completionBonus" type="number" min="0" value="${t.completionBonus}"></div></div><div class="wizard-mini-note">系統會按每個月分開計算，再判斷整段推廣期有冇全部完成。</div></div>`;
+  else if(t.mechanic==='stamp')html+=`<div class="wizard-section"><div class="wizard-section-title">取得印花</div><div class="wizard-input-grid"><div class="wizard-big-field"><label>單次簽滿 HK$</label><input data-k="stampTransactionMin" type="number" min="0" value="${t.stampTransactionMin}"></div><div class="wizard-big-field"><label>每筆獲得印花</label><input data-k="stampsPerTxn" type="number" min="1" value="${t.stampsPerTxn}"></div></div></div><div class="wizard-section"><div class="wizard-section-title">印花獎賞</div>${t.stampMilestones.map((x,i)=>`<div class="wizard-row-card" data-stamp-row><div class="wizard-row-head"><span>階段 ${i+1}</span>${t.stampMilestones.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('stamp',${i})">刪除</button>`:''}</div><div class="wizard-big-field"><label>集齊幾多個印花</label><input data-stamp-count type="number" min="1" value="${x.count}"></div><div class="wizard-input-grid" style="margin-top:12px"><div class="wizard-big-field"><label>獎賞類型</label><select data-stamp-type>${rewardTypeOptions(x.rewardType)}</select></div><div class="wizard-big-field"><label>今階段新增獎賞額</label><input data-stamp-reward type="number" min="0" value="${x.reward}"></div></div></div>`).join('')}<button class="wizard-add-row" type="button" onclick="addRuleRow('stamp')">＋ 加一個印花階段</button></div>`;
+  else html+=`<div class="wizard-section"><div class="wizard-input-grid"><div class="wizard-big-field"><label>最低累積簽賬 HK$</label><input data-k="spendRequirement" type="number" min="0" value="${t.spendRequirement}"></div><div class="wizard-big-field"><label>回贈率 %</label><input data-k="rebateRate" type="number" min="0" step="0.1" value="${t.rebateRate}"></div></div></div>`;
+  return html+`<button class="wizard-answer" type="button" onclick="finishRules(this,'${t.id}')">完成達標規則</button>`;
+}
+function renderSummaryStep(t){
+  const cats=t.eligibilityMode==='categories'&&t.rebateCategories.length?t.rebateCategories.join('、'):'所有合資格簽賬',period=({monthly:'每月',quarterly:'每季度',campaign:'整個推廣期',yearly:'全年',approval_window:`批卡後 ${t.welcomeDays} 日`})[t.periodType]||'自訂';
+  let rule='';if(t.mechanic==='standard')rule=`累積簽滿 ${money(t.spendRequirement)} 後，回贈 ${t.rebateRate}%`;
+  else if(t.mechanic==='tier_rate')rule=[...t.tiers].sort((a,b)=>a.threshold-b.threshold).map(x=>`${money(x.threshold)} → ${x.rate}%`).join('；');
+  else if(t.mechanic==='milestone'||t.mechanic==='custom')rule=[...t.milestones].sort((a,b)=>a.threshold-b.threshold).map(x=>`${money(x.threshold)} → ${rewardValueLabel(x.rewardType,x.reward)}`).join('；');
+  else if(t.mechanic==='recurring')rule=`每期簽滿 ${money(t.recurringThreshold)} → ${rewardValueLabel(t.recurringRewardType,t.recurringReward)}${t.completionBonus>0?`；全部完成再 ${rewardValueLabel(t.completionBonusType,t.completionBonus)}`:''}`;
+  else if(t.mechanic==='stamp')rule=`單次滿 ${money(t.stampTransactionMin)} 得 ${t.stampsPerTxn} 印花；`+[...t.stampMilestones].sort((a,b)=>a.count-b.count).map(x=>`${x.count} 個 → ${rewardValueLabel(x.rewardType,x.reward)}`).join('；');
+  return `<div class="wizard-question">確認優惠</div><div class="wizard-help">系統已將之前答案翻譯成人話；確認無誤就儲存。</div><div class="wizard-summary"><h4>${esc(t.name||'未命名信用卡')} · ${esc(t.targetType==='welcome'?'迎新優惠':'簽賬回贈')}</h4><div class="wizard-summary-line"><b>玩法：</b>${esc(mechanicLabel(t))}</div><div class="wizard-summary-line"><b>合資格：</b>${esc(cats)}${t.minTransaction>0?`；每筆至少 ${money(t.minTransaction)}`:''}</div><div class="wizard-summary-line"><b>計算週期：</b>${esc(period)}${t.startDate?`；${t.startDate} 起`:''}${t.endDate?` 至 ${t.endDate}`:''}</div><div class="wizard-summary-line"><b>達標規則：</b>${esc(rule||'—')}</div><div class="wizard-summary-line"><b>上限：</b>${t.capType==='none'||!t.capAmount?'沒有另外設定':`${t.capType==='reward'?'獎賞／回贈':'合資格簽賬'}每期最多 ${money(t.capAmount)}`}</div></div><button class="wizard-answer" type="button" onclick="saveTarget('${t.id}')">確認新增／儲存</button>${creatingNewTarget?'':`<button class="wizard-danger" type="button" onclick="removeTarget('${t.id}')">刪除呢個優惠</button>`}`;
 }
 function syncEditorDraft(id){
   const panel=document.querySelector(`.settings-card[data-id="${id}"]`),t=state.cards.find(x=>x.id===id);if(!panel||!t)return;
   panel.querySelectorAll('[data-k]').forEach(el=>{const k=el.dataset.k;if(el.type==='number')t[k]=Math.max(0,parseFloat(el.value)||0);else t[k]=el.value});
-  const active=[...panel.querySelectorAll('.cat-select.active')].map(x=>x.dataset.value),custom=[...panel.querySelectorAll('.custom-category-tags .cat-chip')].map(x=>x.dataset.value);t.rebateCategories=[...new Set([...active,...custom].filter(Boolean))];
+  const name=panel.querySelector('.card-name-input');if(name)t.name=name.value;
+  const active=[...panel.querySelectorAll('.wizard-category-btn.active')].map(x=>x.dataset.value),custom=[...panel.querySelectorAll('.custom-category-tags .cat-chip')].map(x=>x.dataset.value);if(panel.querySelector('.wizard-category-btn'))t.rebateCategories=[...new Set([...active,...custom].filter(Boolean))];
+  const tierRows=[...panel.querySelectorAll('[data-tier-row]')];if(tierRows.length)t.tiers=tierRows.map(r=>({threshold:Math.max(0,Number(r.querySelector('[data-tier-threshold]')?.value||0)),rate:Math.max(0,Number(r.querySelector('[data-tier-rate]')?.value||0))}));
+  const msRows=[...panel.querySelectorAll('[data-milestone-row]')];if(msRows.length)t.milestones=msRows.map(r=>({threshold:Math.max(0,Number(r.querySelector('[data-ms-threshold]')?.value||0)),rewardType:cleanRewardType(r.querySelector('[data-ms-type]')?.value),reward:Math.max(0,Number(r.querySelector('[data-ms-reward]')?.value||0))}));
+  const stampRows=[...panel.querySelectorAll('[data-stamp-row]')];if(stampRows.length)t.stampMilestones=stampRows.map(r=>({count:Math.max(1,Number(r.querySelector('[data-stamp-count]')?.value||1)),rewardType:cleanRewardType(r.querySelector('[data-stamp-type]')?.value),reward:Math.max(0,Number(r.querySelector('[data-stamp-reward]')?.value||0))}));
 }
-window.setTargetType=(id,type)=>{syncEditorDraft(id);const t=state.cards.find(x=>x.id===id);if(!t)return;t.targetType=type==='welcome'?'welcome':'rebate';renderSettings()};
-window.toggleCardNameMenu=btn=>{const picker=btn.closest('.card-name-picker'),menu=picker?.querySelector('.card-name-menu');if(!menu)return;document.querySelectorAll('.card-name-menu').forEach(x=>{if(x!==menu)x.classList.add('hidden')});menu.classList.toggle('hidden')};
-window.chooseCardName=(btn,encoded)=>{const picker=btn.closest('.card-name-picker'),input=picker?.querySelector('.card-name-input');if(!input)return;input.value=decodeURIComponent(encoded);picker.querySelector('.card-name-menu')?.classList.add('hidden');input.focus()};
+function validateWizardStep(t,step=wizardStep){
+  if(step===1&&!String(t.name||'').trim()){alert('請先選擇或輸入信用卡名稱');return false}
+  if(step===4&&t.eligibilityMode==='categories'&&!(t.rebateCategories||[]).length){alert('請至少選擇一個簽賬類別');return false}
+  if(step===7&&t.periodType==='approval_window'&&!t.approvalDate){alert('請輸入批卡日期');return false}
+  if(step===8&&t.mechanic==='recurring'&&(!t.startDate||!t.endDate)){alert('分期／連續達標需要設定推廣開始及結束日期');return false}
+  return true;
+}
+window.wizardBack=()=>{if(!creatingNewTarget||wizardStep<=1)return;transitionWizard(wizardStep-1,'back',true)};
+window.chooseWizardCard=(btn,key,name)=>answerAdvance(btn,t=>{t.cardKey=decodeURIComponent(key);t.name=decodeURIComponent(name)},2);
+window.useWizardCardName=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.name=String(t.name||'').trim();if(!validateWizardStep(t,1))return;flashThen(btn,()=>transitionWizard(2,'forward',false))};
+window.selectTargetType=(btn,id,type)=>answerAdvance(btn,t=>{t.targetType=type==='welcome'?'welcome':'rebate';if(t.targetType==='welcome'&&t.periodType==='monthly')t.periodType='approval_window'},3);
+window.selectMechanic=(btn,id,k)=>answerAdvance(btn,t=>{t.mechanic=MECHANICS.some(x=>x[0]===k)?k:'standard';if(t.mechanic==='custom'&&!t.milestones.length)t.milestones=[{threshold:0,rewardType:'現金回贈',reward:0}];if(t.mechanic==='recurring')t.periodType='campaign'},4);
+window.selectEligibility=(btn,id,m)=>answerAdvance(btn,t=>{t.eligibilityMode=m==='categories'?'categories':'all'},5);
+window.openCategoryPicker=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.eligibilityMode='categories';flashThen(btn,()=>renderSettings())};
+window.finishCategories=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);if(!validateWizardStep(t,4))return;flashThen(btn,()=>transitionWizard(5,'forward',false))};
+window.clearLimitsAndAdvance=(btn,id)=>answerAdvance(btn,t=>{t.minTransaction=0;t.capType='none';t.capAmount=0},6);
+window.finishLimits=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);if(t.capType==='none')t.capAmount=0;flashThen(btn,()=>transitionWizard(6,'forward',false))};
+window.selectPeriod=(btn,id,p)=>answerAdvance(btn,t=>{t.periodType=['monthly','campaign','yearly','approval_window'].includes(p)?p:'monthly'},7);
+window.clearDatesAndAdvance=(btn,id)=>answerAdvance(btn,t=>{t.startDate='';t.endDate=''},8);
+window.finishDates=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);if(!validateWizardStep(t,7))return;flashThen(btn,()=>transitionWizard(8,'forward',false))};
+window.finishRules=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);if(!validateWizardStep(t,8))return;flashThen(btn,()=>transitionWizard(9,'forward',false))};
 window.togglePresetCategory=btn=>btn.classList.toggle('active');
-window.addCategoryTag=btn=>{
-  const panel=btn.closest('.settings-card'),input=panel?.querySelector('.category-new');if(!input)return;const value=input.value.trim();if(!value)return;
-  const preset=[...panel.querySelectorAll('.cat-select')].find(x=>x.dataset.value===value);if(preset){preset.classList.add('active');input.value='';input.focus();return}
-  const tags=panel.querySelector('.custom-category-tags'),exists=[...tags.querySelectorAll('.cat-chip')].some(x=>x.dataset.value===value);
-  if(!exists){const chip=document.createElement('button');chip.type='button';chip.className='cat-chip';chip.dataset.value=value;chip.innerHTML=`${esc(value)} <span>×</span>`;chip.onclick=()=>chip.remove();tags.appendChild(chip)}input.value='';input.focus();
-};
-function resolveCardKeyForTarget(t,name){
-  const norm=normalizeCardName(name);
-  const sameName=state.cards.find(x=>!x._temporary&&x.id!==t.id&&normalizeCardName(x.name)===norm);
-  if(sameName)return sameName.cardKey;
-  const siblings=state.cards.filter(x=>!x._temporary&&x.id!==t.id&&x.cardKey===t.cardKey);
-  if(!t.cardKey)return uid();
-  if(siblings.length && siblings.some(x=>normalizeCardName(x.name)!==norm))return uid();
-  return t.cardKey;
-}
+window.addCategoryTag=btn=>{const panel=btn.closest('.settings-card'),input=panel?.querySelector('.category-new');if(!input)return;const value=input.value.trim();if(!value)return;const preset=[...panel.querySelectorAll('.wizard-category-btn')].find(x=>x.dataset.value===value);if(preset){preset.classList.add('active');input.value='';return}const tags=panel.querySelector('.custom-category-tags'),exists=[...tags.querySelectorAll('.cat-chip')].some(x=>x.dataset.value===value);if(!exists){const chip=document.createElement('button');chip.type='button';chip.className='cat-chip';chip.dataset.value=value;chip.innerHTML=`${esc(value)} <span>×</span>`;chip.onclick=()=>chip.remove();tags.appendChild(chip)}input.value=''};
+window.addRuleRow=kind=>{const t=state.cards.find(x=>x.id===editingTargetId);if(!t)return;syncEditorDraft(t.id);if(kind==='tier')t.tiers.push({threshold:0,rate:0});if(kind==='milestone')t.milestones.push({threshold:0,rewardType:'現金回贈',reward:0});if(kind==='stamp')t.stampMilestones.push({count:1,rewardType:'現金回贈',reward:0});creatingNewTarget?renderSettings():rerenderEditPreserveScroll()};
+window.removeRuleRow=(kind,i)=>{const t=state.cards.find(x=>x.id===editingTargetId);if(!t)return;syncEditorDraft(t.id);const arr=kind==='tier'?t.tiers:kind==='stamp'?t.stampMilestones:t.milestones;if(arr.length>1)arr.splice(i,1);creatingNewTarget?renderSettings():rerenderEditPreserveScroll()};
+function resolveCardKeyForTarget(t,name){const norm=normalizeCardName(name),sameName=state.cards.find(x=>!x._temporary&&x.id!==t.id&&normalizeCardName(x.name)===norm);if(sameName)return sameName.cardKey;const siblings=state.cards.filter(x=>!x._temporary&&x.id!==t.id&&x.cardKey===t.cardKey);if(!t.cardKey)return uid();if(siblings.length&&siblings.some(x=>normalizeCardName(x.name)!==norm))return uid();return t.cardKey}
 window.saveTarget=id=>{
-  syncEditorDraft(id);const t=state.cards.find(x=>x.id===id);if(!t)return;t.name=t.name.trim();
-  if(!t.name){alert('請輸入或選擇信用卡名稱');document.querySelector('.card-name-input')?.focus();return}
-  t.cardKey=resolveCardKeyForTarget(t,t.name);delete t._temporary;save();creatingNewTarget=false;editingTargetId=null;render();renderSettings();closeModal('settingsModal');
+  syncEditorDraft(id);const t=state.cards.find(x=>x.id===id);if(!t)return;t.name=String(t.name||'').trim();if(!t.name){wizardStep=1;renderSettings();alert('請輸入或選擇信用卡名稱');return}
+  if(t.periodType==='approval_window'&&!t.approvalDate){wizardStep=7;renderSettings();alert('請輸入批卡日期');return}
+  if(t.mechanic==='recurring'&&(!t.startDate||!t.endDate)){wizardStep=7;renderSettings();alert('請設定分期優惠開始及結束日期');return}
+  if(t.capType==='none')t.capAmount=0;t.rebateEndDate=t.endDate||'';if(t.milestones.length){const first=[...t.milestones].sort((a,b)=>a.threshold-b.threshold)[0];t.welcomeRequirement=first.threshold;t.welcomeRewardType=first.rewardType;t.welcomeReward=first.reward}
+  t.cardKey=resolveCardKeyForTarget(t,t.name);delete t._temporary;save();creatingNewTarget=false;editingTargetId=null;editingBackup=null;wizardStep=1;render();renderSettings();closeModal('settingsModal');
 };
-window.removeTarget=id=>{
-  const t=state.cards.find(x=>x.id===id);if(!t)return;if(!confirm(`刪除「${t.name}」的這個目標？消費紀錄會保留。`))return;
-  state.cards=state.cards.filter(x=>x.id!==id);
-  state.transactions.forEach(tx=>{tx.targetIds=(tx.targetIds||[]).filter(x=>x!==id);tx.targetRefs=(tx.targetRefs||[]).filter(x=>x.id!==id)});
-  save();editingTargetId=null;creatingNewTarget=false;render();renderSettings();closeModal('settingsModal');
-};
+window.removeTarget=id=>{const t=state.cards.find(x=>x.id===id);if(!t)return;if(!confirm(`刪除「${t.name}」呢個優惠？消費紀錄會保留。`))return;state.cards=state.cards.filter(x=>x.id!==id);state.transactions.forEach(tx=>{tx.targetIds=(tx.targetIds||[]).filter(x=>x!==id);tx.targetRefs=(tx.targetRefs||[]).filter(x=>x.id!==id)});save();editingTargetId=null;creatingNewTarget=false;editingBackup=null;wizardStep=1;render();renderSettings();closeModal('settingsModal')};
+
 document.addEventListener('click',e=>{if(!e.target.closest('.card-name-picker'))document.querySelectorAll('.card-name-menu').forEach(x=>x.classList.add('hidden'))});
 window.addEventListener('scroll',()=>document.querySelector('.top')?.classList.toggle('is-scrolled',window.scrollY>6),{passive:true});
 render();
