@@ -556,9 +556,210 @@ button,label.switch,.offer-tab,.cat-chip,.target-pick,.tx{
   }
 }
 
+
+/* ===== 2026 UI refinements ===== */
+.goal-modify{
+  display:grid;place-items:center;font-size:18px;line-height:1;
+}
+.goal.open .goal-modify{width:40px;padding:8px 0}
+
+.card-name-row{display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:7px}
+.card-name-picker-btn{
+  border:1px solid var(--line);border-radius:12px;background:#fff;color:#4f5660;
+  font-size:20px;font-weight:900;display:grid;place-items:center;
+  transition:background .15s ease,transform .15s ease,border-color .15s ease
+}
+.card-name-picker-btn:hover{background:#f6f7f9;border-color:#d9dde3;transform:translateY(-1px)}
+.card-name-picker{position:relative}
+.card-name-menu{
+  position:absolute;z-index:25;left:0;right:0;top:calc(100% + 6px);
+  max-height:230px;overflow:auto;padding:6px;background:#fff;
+  border:1px solid rgba(220,224,230,.98);border-radius:13px;
+  box-shadow:0 14px 36px rgba(20,26,34,.14)
+}
+.card-name-menu.hidden{display:none}
+.card-name-option{
+  width:100%;border:0;background:transparent;border-radius:9px;padding:9px 10px;
+  text-align:left;font-size:11.5px;color:var(--text)
+}
+.card-name-option:hover{background:#f1f3f5}
+
+.feature-label{font-size:11px;color:var(--muted);font-weight:700;margin:2px 0 6px}
+.feature-picks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.feature-pick{
+  border:1px solid var(--line);border-radius:12px;background:#f7f8fa;color:#8a9099;
+  padding:10px 11px;text-align:left;font-weight:820;font-size:11.5px;
+  transition:border-color .15s ease,background .15s ease,color .15s ease,box-shadow .15s ease,transform .15s ease
+}
+.feature-pick:hover{transform:translateY(-1px)}
+.feature-pick.active{
+  color:#303cad;border-color:rgba(70,85,230,.25);background:rgba(88,103,255,.075);
+  box-shadow:0 3px 12px rgba(50,62,160,.06)
+}
+.feature-pick.welcome.active{
+  color:#8b5d0f;border-color:rgba(194,132,27,.27);background:rgba(245,182,54,.10)
+}
+.feature-pick .feature-icon{display:inline-grid;place-items:center;width:21px;height:21px;margin-right:5px;border-radius:7px;background:rgba(0,0,0,.055)}
+.offer-config{border-top:1px solid var(--line);padding-top:12px;margin-top:2px}
+.offer-config + .offer-config{margin-top:14px}
+.offer-config.hidden{display:none}
+.offer-config-title{font-size:12px;font-weight:850;margin:0 0 10px}
+
+.category-preset-tags,.custom-category-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.cat-select,.cat-chip{
+  display:inline-flex;align-items:center;gap:5px;border:1px solid #e1e4e9;
+  border-radius:999px;background:#f6f7f9;padding:6px 9px;font-size:10.5px;
+  font-weight:760;color:#6c727b;transition:.15s ease
+}
+.cat-select.active{
+  border-color:rgba(70,85,230,.25);background:rgba(88,103,255,.075);color:#3946b5;
+  box-shadow:0 2px 8px rgba(50,62,160,.05)
+}
+.custom-category-caption{font-size:10px;color:var(--muted);margin-top:9px}
+
+/* 新增消費：Apple Pay 式大字金額輸入 */
+.amount-entry{
+  margin:2px 0 18px;padding:20px 12px 18px;text-align:center;
+  border-bottom:1px solid rgba(230,232,236,.9)
+}
+.amount-caption{font-size:11px;color:var(--muted);font-weight:760;margin-bottom:4px}
+.amount-line{
+  display:flex;align-items:baseline;justify-content:center;gap:5px;
+  min-height:76px;cursor:text
+}
+.amount-currency{font-size:31px;font-weight:720;letter-spacing:-1.2px;color:#17191d}
+#txAmount{
+  width:auto;min-width:28px;max-width:76%;border:0!important;border-radius:0!important;
+  background:transparent!important;padding:0!important;box-shadow:none!important;
+  outline:0;text-align:left;font-size:64px;line-height:1;font-weight:650;
+  letter-spacing:-3.2px;color:#050607;font-variant-numeric:tabular-nums
+}
+#txAmount::placeholder{color:#050607;opacity:1}
+#txAmount::-webkit-outer-spin-button,#txAmount::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.amount-hint{font-size:11px;color:#9a9ea5;font-weight:650;margin-top:6px}
+
+/* 新增消費：Apple Pay 式左右掃信用卡 */
+.tx-card-carousel-field{margin-bottom:14px}
+.tx-card-carousel{
+  --wallet-card-w:min(72vw,300px);
+  display:flex;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  padding:7px calc(50% - (var(--wallet-card-w) / 2)) 14px;
+  margin:0 -10px;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  touch-action:pan-x pan-y;cursor:grab
+}
+.tx-card-carousel:active{cursor:grabbing}
+.tx-card-carousel::-webkit-scrollbar{display:none}
+.tx-card-slide{
+  --card-scale:.91;--card-y:7px;--card-opacity:.46;
+  flex:0 0 var(--wallet-card-w);scroll-snap-align:center;scroll-snap-stop:always;
+  border:0;background:transparent;padding:0;text-align:left;opacity:var(--card-opacity);
+  transform:translateY(var(--card-y)) scale(var(--card-scale));
+  transform-origin:center center;transition:box-shadow .18s ease;
+  -webkit-tap-highlight-color:transparent
+}
+.tx-card-slide:focus-visible{outline:3px solid rgba(89,103,255,.20);outline-offset:5px;border-radius:22px}
+.tx-wallet-card{
+  position:relative;height:174px;border-radius:20px;padding:19px 20px 17px;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;color:#fff;
+  background:linear-gradient(145deg,#17191d,#383e48);
+  box-shadow:0 14px 30px rgba(20,26,34,.16);
+  border:1px solid rgba(255,255,255,.14)
+}
+.tx-wallet-card::before{
+  content:"";position:absolute;width:180px;height:180px;border-radius:50%;
+  right:-70px;top:-85px;background:rgba(255,255,255,.10);pointer-events:none
+}
+.tx-wallet-card::after{
+  content:"";position:absolute;inset:auto -20px -75px auto;width:190px;height:140px;
+  border-radius:50%;background:rgba(255,255,255,.065);transform:rotate(-18deg);pointer-events:none
+}
+.tx-card-slide.tone-1 .tx-wallet-card{background:linear-gradient(145deg,#253569,#647bd2)}
+.tx-card-slide.tone-2 .tx-wallet-card{background:linear-gradient(145deg,#123f3b,#2d8b76)}
+.tx-card-slide.tone-3 .tx-wallet-card{background:linear-gradient(145deg,#5a321f,#c57b47)}
+.tx-card-slide.tone-4 .tx-wallet-card{background:linear-gradient(145deg,#4c254a,#a35c91)}
+.tx-card-slide.tone-5 .tx-wallet-card{background:linear-gradient(145deg,#22384e,#4a83a9)}
+.tx-wallet-top,.tx-wallet-bottom{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tx-wallet-chip{
+  width:36px;height:27px;border-radius:7px;background:linear-gradient(135deg,#f5e2a9,#b9934d);
+  box-shadow:inset 0 0 0 1px rgba(65,45,12,.17);position:relative
+}
+.tx-wallet-chip::before,.tx-wallet-chip::after{content:"";position:absolute;background:rgba(103,76,24,.22)}
+.tx-wallet-chip::before{width:1px;top:0;bottom:0;left:50%}
+.tx-wallet-chip::after{height:1px;left:0;right:0;top:50%}
+.tx-wallet-type{font-size:10px;font-weight:820;letter-spacing:.08em;opacity:.76}
+.tx-wallet-name{position:relative;z-index:2;font-size:19px;font-weight:820;line-height:1.25;letter-spacing:-.25px;max-width:92%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tx-wallet-bottom{font-size:10.5px;font-weight:760;opacity:.76}
+.tx-card-placeholder .tx-wallet-card{
+  color:#6f7580;background:linear-gradient(145deg,#fbfbfc,#eef0f3);
+  border:1px dashed #cfd3d9;box-shadow:0 10px 24px rgba(20,26,34,.06)
+}
+.tx-card-placeholder .tx-wallet-card::before,.tx-card-placeholder .tx-wallet-card::after{display:none}
+.tx-card-placeholder .tx-wallet-icon{font-size:32px;line-height:1;margin-bottom:8px;color:#8c929b}
+.tx-card-placeholder .tx-wallet-name{font-size:16px;color:#555c66}
+.tx-card-placeholder .tx-wallet-bottom{color:#8d939c}
+.tx-card-slide.is-active .tx-wallet-card{box-shadow:0 18px 38px rgba(20,26,34,.20)}
+.tx-card-selected-label{
+  margin-top:-3px;text-align:center;min-height:20px;font-size:11px;color:var(--muted);font-weight:730;
+  transition:color .16s ease,transform .16s ease
+}
+.tx-card-selected-label.has-card{color:#30343a;transform:translateY(-1px)}
+.tx-card-swipe-hint{display:inline-block;animation:cardSwipeHint 1.6s ease-in-out 1}
+@keyframes cardSwipeHint{0%,100%{transform:translateX(0)}35%{transform:translateX(5px)}65%{transform:translateX(-3px)}}
+
+/* 新增消費：可按下亮起／熄滅，不顯示 checkbox 或 tick */
+.target-picks{margin-top:2px}
+.target-pick{
+  cursor:pointer;opacity:1;background:#f5f6f8;color:#7b818a;
+  border-color:#e3e6ea;user-select:none;
+  transition:border-color .15s ease,background .15s ease,color .15s ease,box-shadow .15s ease,transform .12s ease,opacity .15s ease
+}
+.target-pick:hover{transform:translateY(-1px)}
+.target-pick:active{transform:scale(.985)}
+.target-pick.active{
+  color:#303cad;border-color:rgba(70,85,230,.28);background:rgba(88,103,255,.085);
+  box-shadow:0 3px 12px rgba(50,62,160,.07)
+}
+.target-pick.welcome.active{
+  color:#8b5d0f;border-color:rgba(194,132,27,.28);background:rgba(245,182,54,.11)
+}
+.target-dot{
+  width:11px;height:11px;border:0;border-radius:50%;background:#cfd3d9;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.025)
+}
+.target-pick.active .target-dot{background:#5967ff;box-shadow:0 0 0 4px rgba(89,103,255,.10)}
+.target-pick.welcome.active .target-dot{background:#c98b24;box-shadow:0 0 0 4px rgba(201,139,36,.11)}
+.target-pick.disabled{opacity:.38;cursor:not-allowed;box-shadow:none;transform:none}
+.target-pick.disabled .target-dot{background:#d7dae0;box-shadow:none}
+
+@media(max-width:460px){
+  .feature-picks,.target-picks{grid-template-columns:1fr 1fr}
+}
+
 .hidden{display:none!important}
+
+
+/* 第四版：新增消費先選信用卡，再輸入金額；第一張實際信用卡直接置中 */
+#addModal .tx-card-carousel-field{margin-top:0;margin-bottom:5px}
+#addModal .amount-entry{margin:0 0 14px;padding:11px 12px 18px}
+#addModal .tx-card-selected-label{margin-top:-5px;margin-bottom:5px}
+.tx-card-empty{
+  width:100%;margin:7px 0 10px;padding:24px 14px;border:1px dashed #cfd3d9;
+  border-radius:18px;background:#f8f9fa;color:var(--muted);text-align:center;
+  font-size:12px;font-weight:720
+}
+.multi-target-picks{grid-template-columns:1fr;gap:8px;margin-bottom:7px}
+.multi-target-picks .target-pick{padding:11px 12px}
+.multi-target-picks .target-pick strong{display:block;font-size:12px;line-height:1.28}
+.multi-target-picks .target-pick small{display:block;margin-top:2px;font-size:9.8px;color:inherit;opacity:.72;line-height:1.35}
+.multi-target-picks .target-pick.welcome{background:#f6f6f7}
+.tx-target-summary{min-height:18px;margin:-1px 1px 12px;font-size:10.5px;color:var(--muted);font-weight:690}
+.tx-target-summary.hit{color:#3f4bb0}
+.tx-target-summary.none{color:#8a8f97}
+.feature-note{font-size:10px;color:var(--muted);margin:-3px 0 8px;line-height:1.45}
+
 </style>
-<script type="text/javascript" nonce="db67d173f66441678a8dd740458" src="//injections.adguard.org?ts=1787940510889&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000e1ec820b9e6f3b41775b1033%26ts%3D496651%26p%3Dfs%26cid%3D1%26sig%3Dd51a3a44ca95884cce4ead343f6ea51b44e67c7597b7e11b8497e2292b60f2ee%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="db67d173f66441678a8dd740458" src="//injections.adguard.org?ts=1787940510889&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+<script type="text/javascript" nonce="13baad21ed754a568a18365a273" src="//injections.adguard.org?ts=1788019039091&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000053208211b86ce35631401cae%26ts%3D496672%26p%3Dfs%26cid%3D1%26sig%3D03f309a9d35c2809c11e9da50e9d6674ad05328b656239e326f21fc17f16a333%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="13baad21ed754a568a18365a273" src="//injections.adguard.org?ts=1788019039091&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 
 <div class="app">
@@ -594,14 +795,21 @@ button,label.switch,.offer-tab,.cat-chip,.target-pick,.tx{
       <button class="close" data-close="addModal">×</button>
     </div>
 
-    <div class="field">
+    
+    <div class="field tx-card-carousel-field">
       <label>信用卡</label>
-      <select id="txCard"></select>
+      <div id="txCardCarousel" class="tx-card-carousel" aria-label="信用卡選擇，可左右掃動"></div>
+      <input id="txCard" type="hidden" value="">
+      <div id="txCardSelectedLabel" class="tx-card-selected-label"></div>
     </div>
 
-    <div class="field">
-      <label>金額</label>
-      <input id="txAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="$0">
+    <div class="amount-entry" id="amountEntry">
+      <div class="amount-caption">消費金額</div>
+      <div class="amount-line">
+        <span class="amount-currency">HK$</span>
+        <input id="txAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="消費金額">
+      </div>
+      <div class="amount-hint">輸入金額及簽賬類別後，系統會自動找出同一張卡命中的所有目標</div>
     </div>
 
     <div class="field">
@@ -609,21 +817,11 @@ button,label.switch,.offer-tab,.cat-chip,.target-pick,.tx{
       <select id="txCategory"></select>
     </div>
 
-    <div class="target-label">計入目標</div>
-    <div class="target-picks">
-      <label class="target-pick">
-        <input id="txQualifyRebate" type="checkbox">
-        <span class="target-dot"></span>
-        <span><strong>簽賬回贈</strong><small>計入每月回贈進度</small></span>
-      </label>
-      <label id="welcomeTargetPick" class="target-pick welcome">
-        <input id="txQualifyWelcome" type="checkbox">
-        <span class="target-dot"></span>
-        <span><strong>迎新簽賬</strong><small>計入迎新進度</small></span>
-      </label>
-    </div>
+    <div class="target-label">命中目標</div>
+    <div id="txTargetPicks" class="target-picks multi-target-picks"></div>
+    <div id="txTargetSummary" class="tx-target-summary"></div>
 
-    <button id="confirmAdd" class="confirm">確定</button>
+    <button id="confirmAdd" class="confirm">新增消費</button>
   </div>
 </div>
 
@@ -708,125 +906,28 @@ button,label.switch,.offer-tab,.cat-chip,.target-pick,.tx{
 </div>
 
 <script>
-const KEY='cc_compact_goals_v3';
+const KEY='cc_compact_goals_v4';
+const LEGACY_KEYS=['cc_compact_goals_v3','cc_simple_rebate_v2','cc_rebate_calculator_v1'];
 
 function uid(){
   return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random());
 }
 function localDateStr(){
   const d=new Date();
-  return [
-    d.getFullYear(),
-    String(d.getMonth()+1).padStart(2,'0'),
-    String(d.getDate()).padStart(2,'0')
-  ].join('-');
+  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
 }
 function localMonthStr(){return localDateStr().slice(0,7)}
-function defaultCard(){
-  return {
-    id:uid(),
-    name:'示例信用卡',
-    rebateRate:4,
-    spendRequirement:1500,
-    spendCap:5556,
-    rebateCategories:[],
-    rebateEndDate:'',
-    hasWelcome:true,
-    approvalDate:'',
-    welcomeDays:90,
-    welcomeRequirement:12000,
-    welcomeRewardType:'現金回贈',
-    welcomeReward:1000
-  };
-}
-function migrateCard(c){
-  return {
-    id:c.id || uid(),
-    name:c.name || '未命名信用卡',
-    rebateRate:
-      c.rebateRate ?? (Number(c.baseRate||0)+Number(c.bonusRate||0)) ?? 0,
-    spendRequirement:
-      c.spendRequirement ?? c.monthlyThreshold ?? 0,
-    spendCap:
-      c.spendCap ?? c.bonusSpendCap ?? 0,
-    rebateCategories:Array.isArray(c.rebateCategories) && c.rebateCategories.length
-      ? c.rebateCategories
-      : (c.selectedCategory ? [c.selectedCategory] : []),
-    rebateEndDate:c.rebateEndDate || '',
-    hasWelcome:
-      c.hasWelcome ?? !!(c.approvalDate || c.welcomeSpend || c.welcomeRequirement),
-    approvalDate:c.approvalDate || '',
-    welcomeDays:c.welcomeDays ?? 90,
-    welcomeRequirement:
-      c.welcomeRequirement ?? c.welcomeSpend ?? 0,
-    welcomeRewardType:c.welcomeRewardType || '現金回贈',
-    welcomeReward:
-      c.welcomeReward ?? c.welcomeCashback ?? 0
-  };
-}
-function load(){
-  try{
-    const x=JSON.parse(localStorage.getItem(KEY));
-    if(x && Array.isArray(x.cards) && x.cards.length){
-      x.cards=x.cards.map(migrateCard);
-      x.transactions ||= [];
-      x.transactions=x.transactions.map(t=>({
-        ...t,
-        qualifiesRebate:t.qualifiesRebate ?? true,
-        qualifiesWelcome:t.qualifiesWelcome ?? true
-      }));
-      x.month ||= localMonthStr();
-      return x;
-    }
-
-    // migrate older versions if found
-    for(const oldKey of ['cc_simple_rebate_v2','cc_rebate_calculator_v1']){
-      const old=JSON.parse(localStorage.getItem(oldKey));
-      if(old && Array.isArray(old.cards) && old.cards.length){
-        return {
-          cards:old.cards.map(migrateCard),
-          transactions:(Array.isArray(old.transactions)?old.transactions:[]).map(t=>({
-            ...t,
-            qualifiesRebate:t.qualifiesRebate ?? true,
-            qualifiesWelcome:t.qualifiesWelcome ?? true
-          })),
-          month:old.month || old.selectedMonth || localMonthStr()
-        };
-      }
-    }
-  }catch(e){}
-  return {cards:[defaultCard()],transactions:[],month:localMonthStr()};
-}
-
-let state=load();
-
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function esc(s=''){
-  return String(s).replace(/[&<>"']/g,m=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
-  }[m]));
+  return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 }
 function money(n){
-  return '$'+Number(n||0).toLocaleString('en-HK',{
-    minimumFractionDigits:0,maximumFractionDigits:2
-  });
+  return '$'+Number(n||0).toLocaleString('en-HK',{minimumFractionDigits:0,maximumFractionDigits:2});
 }
-function pct(a,b){
-  return b ? Math.min(100,Math.max(0,Number(a)/Number(b)*100)) : 0;
-}
-function getMonthTx(cardId){
-  return state.transactions.filter(t=>
-    t.cardId===cardId && String(t.date).slice(0,7)===state.month
-  );
-}
+function pct(a,b){return b ? Math.min(100,Math.max(0,Number(a)/Number(b)*100)) : 0}
 function addDays(dateStr,days){
   const d=new Date(dateStr+'T00:00:00');
-  d.setDate(d.getDate()+Number(days)-1);
-  return [
-    d.getFullYear(),
-    String(d.getMonth()+1).padStart(2,'0'),
-    String(d.getDate()).padStart(2,'0')
-  ].join('-');
+  d.setDate(d.getDate()+Math.max(1,Number(days)||1)-1);
+  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
 }
 function daysLeft(endStr){
   const a=new Date(localDateStr()+'T00:00:00');
@@ -836,26 +937,186 @@ function daysLeft(endStr){
 function monthEnd(month){
   const [y,m]=month.split('-').map(Number);
   const d=new Date(y,m,0);
-  return [
-    d.getFullYear(),
-    String(d.getMonth()+1).padStart(2,'0'),
-    String(d.getDate()).padStart(2,'0')
-  ].join('-');
+  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
 }
-function currentMonthSpend(cardId){
-  return getMonthTx(cardId).reduce((s,t)=>s+Number(t.amount),0);
+function normalizeCardName(name=''){
+  return String(name).trim().toLocaleLowerCase('zh-HK').replace(/\s+/g,' ');
 }
-function rebateMonthSpend(card){
-  return getMonthTx(card.id)
-    .filter(t=>t.qualifiesRebate !== false)
-    .filter(t=>!card.rebateEndDate || t.date<=card.rebateEndDate)
-    .reduce((s,t)=>s+Number(t.amount),0);
+
+function defaultTarget(type='rebate'){
+  return {
+    id:uid(),
+    cardKey:uid(),
+    name:'',
+    targetType:type,
+    rebateRate:4,
+    spendRequirement:1500,
+    spendCap:5556,
+    rebateCategories:[],
+    rebateEndDate:'',
+    approvalDate:'',
+    welcomeDays:90,
+    welcomeRequirement:12000,
+    welcomeRewardType:'現金回贈',
+    welcomeReward:1000,
+    createdAt:Date.now()
+  };
 }
-function rewardLabel(card){
-  if(card.welcomeRewardType==='飛行里數'){
-    return `${Number(card.welcomeReward||0).toLocaleString('en-HK')} 里`;
+function normalizeTarget(t){
+  const type=t.targetType==='welcome'?'welcome':'rebate';
+  return {
+    id:t.id || uid(),
+    cardKey:t.cardKey || uid(),
+    name:t.name || '未命名信用卡',
+    targetType:type,
+    rebateRate:Number(t.rebateRate ?? (Number(t.baseRate||0)+Number(t.bonusRate||0)) ?? 0),
+    spendRequirement:Number(t.spendRequirement ?? t.monthlyThreshold ?? 0),
+    spendCap:Number(t.spendCap ?? t.bonusSpendCap ?? 0),
+    rebateCategories:Array.isArray(t.rebateCategories) ? t.rebateCategories.filter(Boolean) : (t.selectedCategory?[t.selectedCategory]:[]),
+    rebateEndDate:t.rebateEndDate || '',
+    approvalDate:t.approvalDate || '',
+    welcomeDays:Number(t.welcomeDays ?? 90),
+    welcomeRequirement:Number(t.welcomeRequirement ?? t.welcomeSpend ?? 0),
+    welcomeRewardType:t.welcomeRewardType || '現金回贈',
+    welcomeReward:Number(t.welcomeReward ?? t.welcomeCashback ?? 0),
+    createdAt:Number(t.createdAt||0),
+    ...(t._temporary?{_temporary:true}:{})
+  };
+}
+function targetShortLabel(t){
+  if(t.targetType==='welcome') return `迎新 · ${t.welcomeRewardType==='飛行里數'?Number(t.welcomeReward||0).toLocaleString('en-HK')+' 里':money(t.welcomeReward)}`;
+  const rate=Number(t.rebateRate||0);
+  return `回贈 · ${rate.toFixed(Number.isInteger(rate)?0:1)}%`;
+}
+function targetDetailLabel(t){
+  if(t.targetType==='welcome'){
+    if(t.approvalDate) return `${t.approvalDate} 起 · ${Math.max(1,Number(t.welcomeDays||1))} 日內 · 要求 ${money(t.welcomeRequirement)}`;
+    return `未設定批卡日期 · 要求 ${money(t.welcomeRequirement)}`;
   }
-  return money(card.welcomeReward);
+  const cats=Array.isArray(t.rebateCategories)&&t.rebateCategories.length?t.rebateCategories.join('、'):'所有簽賬類別';
+  return `${cats}${t.rebateEndDate?' · 至 '+t.rebateEndDate:''}`;
+}
+
+function migrateLegacyState(old){
+  const legacyCards=Array.isArray(old?.cards)?old.cards:[];
+  const targets=[];
+  const sourceMap=new Map();
+  const nameKeyMap=new Map();
+
+  legacyCards.forEach((c,index)=>{
+    const name=c.name || '未命名信用卡';
+    const n=normalizeCardName(name) || `legacy-${index}`;
+    if(!nameKeyMap.has(n)) nameKeyMap.set(n,c.cardKey || uid());
+    const cardKey=nameKeyMap.get(n);
+    const targetIds=[];
+
+    const hasRebate=c.targetType ? c.targetType==='rebate' : (c.hasRebate ?? true);
+    const hasWelcome=c.targetType ? c.targetType==='welcome' : !!(c.hasWelcome ?? (c.approvalDate || c.welcomeSpend || c.welcomeRequirement));
+
+    if(hasRebate){
+      const t=normalizeTarget({...c,id:c.targetType?c.id:`${c.id||uid()}__rebate`,cardKey,name,targetType:'rebate'});
+      targets.push(t);targetIds.push({id:t.id,type:'rebate'});
+    }
+    if(hasWelcome){
+      const t=normalizeTarget({...c,id:c.targetType?c.id:`${c.id||uid()}__welcome`,cardKey,name,targetType:'welcome'});
+      // Avoid duplicate id if a malformed legacy item says both types while already targetType.
+      if(targets.some(x=>x.id===t.id)) t.id=uid();
+      targets.push(t);targetIds.push({id:t.id,type:'welcome'});
+    }
+    sourceMap.set(c.id,{cardKey,name,targetIds});
+  });
+
+  const transactions=(Array.isArray(old?.transactions)?old.transactions:[]).map(t=>{
+    const src=sourceMap.get(t.cardId);
+    let ids=[];
+    if(src){
+      src.targetIds.forEach(x=>{
+        if(x.type==='rebate' && t.qualifiesRebate!==false) ids.push(x.id);
+        if(x.type==='welcome' && t.qualifiesWelcome!==false) ids.push(x.id);
+      });
+    }
+    const refs=ids.map(id=>{
+      const target=targets.find(x=>x.id===id);
+      return target?{id:target.id,type:target.targetType,label:targetShortLabel(target)}:null;
+    }).filter(Boolean);
+    return {
+      id:t.id || uid(),
+      cardKey:src?.cardKey || t.cardKey || uid(),
+      cardName:src?.name || t.cardName || '已刪除信用卡',
+      amount:Number(t.amount||0),
+      category:t.category || '一般簽賬',
+      targetIds:ids,
+      targetRefs:refs,
+      date:t.date || localDateStr(),
+      createdAt:Number(t.createdAt||Date.now())
+    };
+  });
+
+  return {cards:targets,transactions,month:old?.month || old?.selectedMonth || localMonthStr()};
+}
+function normalizeV4State(x){
+  const cards=(Array.isArray(x?.cards)?x.cards:[]).map(normalizeTarget);
+  const transactions=(Array.isArray(x?.transactions)?x.transactions:[]).map(t=>{
+    const ids=Array.isArray(t.targetIds)?t.targetIds.filter(Boolean):[];
+    const refs=Array.isArray(t.targetRefs)?t.targetRefs.filter(Boolean):ids.map(id=>{
+      const target=cards.find(x=>x.id===id);
+      return target?{id:target.id,type:target.targetType,label:targetShortLabel(target)}:null;
+    }).filter(Boolean);
+    return {
+      id:t.id || uid(),
+      cardKey:t.cardKey || cards.find(c=>c.id===t.cardId)?.cardKey || uid(),
+      cardName:t.cardName || cards.find(c=>c.cardKey===t.cardKey)?.name || cards.find(c=>c.id===t.cardId)?.name || '已刪除信用卡',
+      amount:Number(t.amount||0),
+      category:t.category || '一般簽賬',
+      targetIds:ids,
+      targetRefs:refs,
+      date:t.date || localDateStr(),
+      createdAt:Number(t.createdAt||Date.now())
+    };
+  });
+  return {cards,transactions,month:x?.month || localMonthStr()};
+}
+function load(){
+  try{
+    const current=JSON.parse(localStorage.getItem(KEY));
+    if(current && Array.isArray(current.cards)) return normalizeV4State(current);
+    for(const k of LEGACY_KEYS){
+      const old=JSON.parse(localStorage.getItem(k));
+      if(old && Array.isArray(old.cards)){
+        const migrated=migrateLegacyState(old);
+        localStorage.setItem(KEY,JSON.stringify(migrated));
+        return migrated;
+      }
+    }
+  }catch(e){console.warn('load failed',e)}
+  return {cards:[],transactions:[],month:localMonthStr()};
+}
+let state=load();
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+
+function getPhysicalCards(){
+  const map=new Map();
+  state.cards.filter(t=>!t._temporary).forEach(t=>{
+    const key=t.cardKey || t.id;
+    if(!map.has(key)) map.set(key,{cardKey:key,name:t.name,targets:[]});
+    const card=map.get(key);
+    if(t.name) card.name=t.name;
+    card.targets.push(t);
+  });
+  return [...map.values()];
+}
+function cardByKey(cardKey){return getPhysicalCards().find(c=>c.cardKey===cardKey)||null}
+function txIncludesTarget(t,targetId){return Array.isArray(t.targetIds)&&t.targetIds.includes(targetId)}
+function targetMonthSpend(target){
+  return state.transactions
+    .filter(t=>txIncludesTarget(t,target.id) && String(t.date).slice(0,7)===state.month)
+    .filter(t=>target.targetType!=='rebate' || !target.rebateEndDate || t.date<=target.rebateEndDate)
+    .reduce((s,t)=>s+Number(t.amount||0),0);
+}
+function rewardLabel(target){
+  return target.welcomeRewardType==='飛行里數'
+    ? `${Number(target.welcomeReward||0).toLocaleString('en-HK')} 里`
+    : money(target.welcomeReward);
 }
 
 function getGoalRows(){
@@ -863,660 +1124,355 @@ function getGoalRows(){
   const today=localDateStr();
   const currentMonth=localMonthStr();
 
-  state.cards.filter(c=>!c._temporary).forEach(c=>{
-    const spent=rebateMonthSpend(c);
-    const cap=Number(c.spendCap||0);
-    const req=Number(c.spendRequirement||0);
-    const monthlyEnd=monthEnd(state.month);
-    let end=monthlyEnd;
-
-    // If the rebate offer has an explicit end date, use the earlier of
-    // the selected month's end and the offer end date.
-    if(c.rebateEndDate && c.rebateEndDate < end){
-      end=c.rebateEndDate;
-    }
-
-    let remainDays=0;
-    let ended=false;
-    const selectedMonthStart=state.month+'-01';
-    if(c.rebateEndDate && selectedMonthStart>c.rebateEndDate){
-      ended=true;
-    }else if(state.month<currentMonth){
-      ended=true;
-    }else if(c.rebateEndDate && today>c.rebateEndDate){
-      ended=true;
-    }else{
-      remainDays=daysLeft(end);
-    }
-
-    let progressTarget=cap>0?cap:req;
-    let progress=pct(spent,progressTarget);
-    let status='';
-
-    if(spent<req){
-      status=`已簽 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻`;
-    }else if(cap>0 && spent<cap){
-      status=`已簽 ${money(spent)}，尚餘 ${money(cap-spent)} 消費額`;
-    }else if(cap>0 && spent>=cap){
-      status=`已簽 ${money(spent)}，已用盡本期額度`;
-    }else{
-      status=`已簽 ${money(spent)}，已達簽賬要求`;
-    }
-
-    rows.push({
-      cardId:c.id,
-      goalType:'rebate',
-      card:c.name,
-      title:`簽賬回贈 · ${Number(c.rebateRate||0).toFixed(
-        Number.isInteger(Number(c.rebateRate||0))?0:1
-      )}%`,
-      meta:`下限 ${money(req)} · 上限 ${cap>0?money(cap):'—'}${c.rebateEndDate?` · 至 ${c.rebateEndDate}`:' · 每月重置'}`,
-      days:ended?'已完結':`${remainDays}日`,
-      dayClass:ended?'bad':(cap>0 && spent>=cap?'good':''),
-      progress,
-      percent:`${Math.round(progress)}%`,
-      status,
-      completed:progressTarget>0 && spent>=progressTarget
-    });
-
-    if(c.hasWelcome){
-      const reqW=Number(c.welcomeRequirement||0);
-      let accum=0;
-      let endStr='';
-      let daysText='未設定日期';
-      let dayClass='';
-      let progressW=0;
-      let statusW='';
-
-      if(c.approvalDate){
-        endStr=addDays(c.approvalDate,Math.max(1,Number(c.welcomeDays||1)));
-        accum=state.transactions
-          .filter(t=>
-            t.cardId===c.id &&
-            t.qualifiesWelcome !== false &&
-            t.date>=c.approvalDate &&
-            t.date<=endStr
-          )
-          .reduce((sum,t)=>sum+Number(t.amount),0);
-
-        progressW=pct(accum,reqW);
-
-        if(reqW>0 && accum>=reqW){
-          daysText='已完成';
-          dayClass='good';
-          statusW=`已簽 ${money(accum)}，已達迎新要求`;
-        }else if(today>endStr){
-          daysText='已完結';
-          dayClass='bad';
-          statusW=`已簽 ${money(accum)}，尚欠 ${money(Math.max(0,reqW-accum))}`;
-        }else{
-          daysText=`${daysLeft(endStr)}日`;
-          statusW=`已簽 ${money(accum)}，尚欠 ${money(Math.max(0,reqW-accum))} 簽賬要求`;
-        }
-      }else{
-        statusW=`尚未設定批卡日期`;
-      }
-
+  state.cards.filter(t=>!t._temporary).forEach(t=>{
+    if(t.targetType==='rebate'){
+      const spent=targetMonthSpend(t);
+      const cap=Number(t.spendCap||0);
+      const req=Number(t.spendRequirement||0);
+      const monthlyEnd=monthEnd(state.month);
+      let end=monthlyEnd;
+      if(t.rebateEndDate && t.rebateEndDate<end) end=t.rebateEndDate;
+      const selectedMonthStart=state.month+'-01';
+      const ended=(t.rebateEndDate && selectedMonthStart>t.rebateEndDate) || state.month<currentMonth || (t.rebateEndDate && today>t.rebateEndDate);
+      const remainDays=ended?0:daysLeft(end);
+      const progressTarget=cap>0?cap:req;
+      const progress=pct(spent,progressTarget);
+      let status='';
+      if(spent<req) status=`已簽 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻`;
+      else if(cap>0 && spent<cap) status=`已簽 ${money(spent)}，尚餘 ${money(cap-spent)} 消費額`;
+      else if(cap>0 && spent>=cap) status=`已簽 ${money(spent)}，已用盡本期額度`;
+      else status=`已簽 ${money(spent)}，已達簽賬要求`;
+      const rate=Number(t.rebateRate||0);
       rows.push({
-        cardId:c.id,
-        goalType:'welcome',
-        card:c.name,
-        title:`迎新簽賬 · ${esc(c.welcomeRewardType)} ${rewardLabel(c)}`,
-        meta:`要求 ${money(reqW)}`,
-        days:daysText,
-        dayClass,
-        progress:progressW,
-        percent:`${Math.round(progressW)}%`,
-        status:statusW,
-        completed:reqW>0 && accum>=reqW
+        targetId:t.id,card:t.name,title:`簽賬回贈 · ${rate.toFixed(Number.isInteger(rate)?0:1)}%`,
+        meta:`下限 ${money(req)} · 上限 ${cap>0?money(cap):'—'}${t.rebateEndDate?` · 至 ${t.rebateEndDate}`:' · 每月重置'}`,
+        days:ended?'已完結':`${remainDays}日`,dayClass:ended?'bad':(cap>0&&spent>=cap?'good':''),
+        progress,percent:`${Math.round(progress)}%`,status,completed:progressTarget>0&&spent>=progressTarget
+      });
+    }else{
+      const req=Number(t.welcomeRequirement||0);
+      let accum=0,endStr='',daysText='未設定日期',dayClass='',progress=0,status='尚未設定批卡日期';
+      if(t.approvalDate){
+        endStr=addDays(t.approvalDate,Math.max(1,Number(t.welcomeDays||1)));
+        accum=state.transactions
+          .filter(tx=>txIncludesTarget(tx,t.id) && tx.date>=t.approvalDate && tx.date<=endStr)
+          .reduce((s,tx)=>s+Number(tx.amount||0),0);
+        progress=pct(accum,req);
+        if(req>0&&accum>=req){daysText='已完成';dayClass='good';status=`已簽 ${money(accum)}，已達迎新要求`}
+        else if(today>endStr){daysText='已完結';dayClass='bad';status=`已簽 ${money(accum)}，尚欠 ${money(Math.max(0,req-accum))}`}
+        else{daysText=`${daysLeft(endStr)}日`;status=`已簽 ${money(accum)}，尚欠 ${money(Math.max(0,req-accum))} 簽賬要求`}
+      }
+      rows.push({
+        targetId:t.id,card:t.name,title:`迎新簽賬 · ${esc(t.welcomeRewardType)} ${rewardLabel(t)}`,
+        meta:`要求 ${money(req)}`,days:daysText,dayClass,progress,percent:`${Math.round(progress)}%`,status,
+        completed:req>0&&accum>=req
       });
     }
   });
-
   return rows;
 }
 
 const goalPalettes=[
-  ['#5967ff','#8c72ff','rgba(89,103,255,.25)'],
-  ['#0f9f78','#42c99c','rgba(15,159,120,.22)'],
-  ['#f08a24','#f6b44a','rgba(240,138,36,.22)'],
-  ['#d4528f','#ef7daf','rgba(212,82,143,.22)'],
-  ['#3f8fd8','#63b2ef','rgba(63,143,216,.22)'],
-  ['#7b61c9','#ae8bea','rgba(123,97,201,.22)'],
-  ['#cf5f4b','#ef8a6d','rgba(207,95,75,.22)'],
-  ['#3d8b7d','#6bb8a9','rgba(61,139,125,.22)']
+  ['#5967ff','#8c72ff','rgba(89,103,255,.25)'],['#0f9f78','#42c99c','rgba(15,159,120,.22)'],
+  ['#f08a24','#f6b44a','rgba(240,138,36,.22)'],['#d4528f','#ef7daf','rgba(212,82,143,.22)'],
+  ['#3f8fd8','#63b2ef','rgba(63,143,216,.22)'],['#7b61c9','#ae8bea','rgba(123,97,201,.22)'],
+  ['#cf5f4b','#ef8a6d','rgba(207,95,75,.22)'],['#3d8b7d','#6bb8a9','rgba(61,139,125,.22)']
 ];
-function goalPalette(i){
-  return goalPalettes[i % goalPalettes.length];
-}
-
+function goalPalette(i){return goalPalettes[i%goalPalettes.length]}
 function renderGoals(){
   const rows=getGoalRows();
   document.getElementById('goalCount').textContent=`${rows.length} 個目標`;
-
   const box=document.getElementById('goals');
-  if(!rows.length){
-    box.innerHTML='<div class="empty">未設定任何目標</div>';
-    return;
-  }
-
+  if(!rows.length){box.innerHTML='<div class="empty">未設定任何目標</div>';return}
   box.innerHTML=rows.map((r,i)=>{
-    const [barStart,barEnd,barGlow]=goalPalette(i);
-    const delay=Math.min(i*70,420);
-    return `
-    <div class="goal ${r.completed?'completed':''}" data-card-id="${r.cardId}" data-goal-type="${r.goalType}" style="--bar-start:${barStart};--bar-end:${barEnd};--bar-glow:${barGlow};--bar-delay:${delay}ms">
+    const [barStart,barEnd,barGlow]=goalPalette(i),delay=Math.min(i*70,420);
+    return `<div class="goal ${r.completed?'completed':''}" data-target-id="${r.targetId}" style="--bar-start:${barStart};--bar-end:${barEnd};--bar-glow:${barGlow};--bar-delay:${delay}ms">
       <div class="goal-body">
         <div class="goal-card">${esc(r.card)}</div>
-        <div class="goal-title">
-          ${r.title}${r.completed?'<span class="trophy" title="目標達成">🏆</span>':''}
-          <span class="goal-days ${r.dayClass}">${esc(r.days)}</span>
-        </div>
+        <div class="goal-title">${r.title}${r.completed?'<span class="trophy" title="目標達成">🏆</span>':''}<span class="goal-days ${r.dayClass}">${esc(r.days)}</span></div>
         <div class="goal-meta">${r.meta}</div>
-        <div class="goal-progress-row">
-          <div class="progress"><div style="--target-width:${r.progress}%"></div></div>
-          <div class="goal-percent">${r.percent}</div>
-        </div>
+        <div class="goal-progress-row"><div class="progress"><div style="--target-width:${r.progress}%"></div></div><div class="goal-percent">${r.percent}</div></div>
         <div class="goal-status">${r.status}</div>
       </div>
-      <button class="goal-modify" type="button">修改</button>
-    </div>
-  `}).join('');
-
+      <button class="goal-modify" type="button" aria-label="修改" title="修改">✎</button>
+    </div>`;
+  }).join('');
   bindGoalActions();
 }
-
 function bindGoalActions(){
   document.querySelectorAll('.goal').forEach(row=>{
     const modify=row.querySelector('.goal-modify');
-
     row.addEventListener('click',e=>{
       if(e.target.closest('.goal-modify'))return;
       const wasOpen=row.classList.contains('open');
       document.querySelectorAll('.goal.open').forEach(x=>x.classList.remove('open'));
       if(!wasOpen)requestAnimationFrame(()=>row.classList.add('open'));
     });
-
     modify?.addEventListener('click',e=>{
       e.stopPropagation();
-      const cardId=row.dataset.cardId;
-      const type=row.dataset.goalType || 'rebate';
-      if(!cardId)return;
-
-      editingCardId=cardId;
-      creatingNewTarget=false;
-      activeOfferTab=type;
-      renderSettings();
-      openModal('settingsModal');
+      const id=row.dataset.targetId;if(!id)return;
+      editingTargetId=id;creatingNewTarget=false;renderSettings();openModal('settingsModal');
     });
   });
 }
 
 function renderTransactions(){
-  const tx=state.transactions
-    .filter(t=>String(t.date).slice(0,7)===state.month)
-    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-
+  const tx=state.transactions.filter(t=>String(t.date).slice(0,7)===state.month).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   document.getElementById('txCount').textContent=`${tx.length} 筆`;
   const box=document.getElementById('txList');
-
-  if(!tx.length){
-    box.innerHTML='<div class="empty">暫時未有消費紀錄</div>';
-    return;
-  }
-
+  if(!tx.length){box.innerHTML='<div class="empty">暫時未有消費紀錄</div>';return}
   box.innerHTML=tx.map(t=>{
-    const c=state.cards.find(c=>c.id===t.cardId);
-    return `
-      <div class="tx" data-id="${t.id}">
-        <div class="tx-content">
-          <div class="tx-card">${esc(c?.name||'已刪除信用卡')}</div>
-          <div class="tx-sub">
-            <span>${esc(t.date)}</span>
-            <span class="pill">${esc(t.category||'一般簽賬')}</span>
-            ${t.qualifiesRebate!==false?'<span class="tx-target">回贈</span>':''}
-            ${t.qualifiesWelcome!==false?'<span class="tx-target welcome">迎新</span>':''}
-          </div>
+    const currentCard=cardByKey(t.cardKey);
+    const refs=Array.isArray(t.targetRefs)?t.targetRefs:[];
+    return `<div class="tx" data-id="${t.id}">
+      <div class="tx-content">
+        <div class="tx-card">${esc(currentCard?.name||t.cardName||'已刪除信用卡')}</div>
+        <div class="tx-sub"><span>${esc(t.date)}</span><span class="pill">${esc(t.category||'一般簽賬')}</span>
+          ${refs.map(r=>`<span class="tx-target ${r.type==='welcome'?'welcome':''}">${esc(r.label||'目標')}</span>`).join('')}
         </div>
-        <div class="tx-amount">${money(t.amount)}</div>
-        <button class="tx-delete" type="button" aria-label="刪除消費">×</button>
       </div>
-    `;
+      <div class="tx-amount">${money(t.amount)}</div><button class="tx-delete" type="button" aria-label="刪除消費">×</button>
+    </div>`;
   }).join('');
-
   bindTransactionActions();
 }
-
-
 function bindTransactionActions(){
   document.querySelectorAll('.tx').forEach(row=>{
     const del=row.querySelector('.tx-delete');
-
     row.addEventListener('click',e=>{
       if(e.target.closest('.tx-delete'))return;
-
-      const wasOpen=row.classList.contains('open');
-      document.querySelectorAll('.tx.open').forEach(x=>x.classList.remove('open'));
-      if(!wasOpen){
-        requestAnimationFrame(()=>row.classList.add('open'));
-      }
+      const wasOpen=row.classList.contains('open');document.querySelectorAll('.tx.open').forEach(x=>x.classList.remove('open'));
+      if(!wasOpen)requestAnimationFrame(()=>row.classList.add('open'));
     });
-
     del?.addEventListener('click',e=>{
-      e.stopPropagation();
-      const id=row.dataset.id;
-      if(!id)return;
-
-      row.classList.add('deleting');
-      setTimeout(()=>{
-        state.transactions=state.transactions.filter(t=>t.id!==id);
-        save();
-        render();
-      },260);
+      e.stopPropagation();const id=row.dataset.id;if(!id)return;row.classList.add('deleting');
+      setTimeout(()=>{state.transactions=state.transactions.filter(t=>t.id!==id);save();render()},260);
     });
   });
 }
 
+let txCardScrollFrame=0,txCardCommitTimer=0;
+function txCardTone(cardKey=''){
+  let hash=0;for(const ch of String(cardKey))hash=(hash*31+ch.charCodeAt(0))>>>0;return hash%6;
+}
 function renderCardOptions(){
-  document.getElementById('txCard').innerHTML=state.cards
-    .filter(c=>!c._temporary)
-    .map(c=>`<option value="${c.id}">${esc(c.name)}</option>`)
-    .join('');
-}
-
-function selectedTxCard(){
-  return state.cards.find(c=>c.id===document.getElementById('txCard').value) || state.cards[0];
-}
-function renderTxCategories(){
-  const c=selectedTxCard();
-  const select=document.getElementById('txCategory');
-  if(!c || !select)return;
-
-  const cats=[...(Array.isArray(c.rebateCategories)?c.rebateCategories:[])];
-  const unique=[...new Set(cats.map(x=>String(x).trim()).filter(Boolean))];
-  select.innerHTML=[
-    ...unique.map(cat=>`<option value="${esc(cat)}">${esc(cat)}</option>`),
-    '<option value="__other__">其他／不屬回贈類別</option>'
-  ].join('');
-
-  syncTxQualificationDefaults(true);
-}
-function syncTxQualificationDefaults(resetWelcome=false){
-  const c=selectedTxCard();
-  if(!c)return;
-
-  const category=document.getElementById('txCategory').value;
-  const rebateCats=Array.isArray(c.rebateCategories)?c.rebateCategories:[];
-  const rebateBox=document.getElementById('txQualifyRebate');
-  const welcomeBox=document.getElementById('txQualifyWelcome');
-  const welcomePick=document.getElementById('welcomeTargetPick');
-
-  rebateBox.checked=
-    category!=='__other__' && rebateCats.includes(category);
-
-  const hasWelcome=!!c.hasWelcome;
-  welcomePick?.classList.toggle('hidden',!hasWelcome);
-
-  if(!hasWelcome){
-    welcomeBox.checked=false;
-  }else if(resetWelcome){
-    welcomeBox.checked=true;
+  const input=document.getElementById('txCard'),carousel=document.getElementById('txCardCarousel'),label=document.getElementById('txCardSelectedLabel');
+  if(!input||!carousel)return;
+  const cards=getPhysicalCards();
+  if(!cards.length){
+    input.value='';carousel.innerHTML='<div class="tx-card-empty">未有信用卡目標<br><small>請先按「新增目標」建立第一個目標</small></div>';
+    if(label){label.className='tx-card-selected-label';label.textContent=''}
+    renderTxCategories();return;
   }
+  carousel.innerHTML=cards.map((c,i)=>`<button class="tx-card-slide tone-${txCardTone(c.cardKey)}" type="button" data-card-key="${c.cardKey}" aria-label="選擇 ${esc(c.name)}">
+    <div class="tx-wallet-card">
+      <div class="tx-wallet-top"><span class="tx-wallet-chip"></span><span class="tx-wallet-type">CREDIT CARD</span></div>
+      <div class="tx-wallet-name">${esc(c.name)}</div>
+      <div class="tx-wallet-bottom"><span>${c.targets.length} 個目標</span><span>${i+1} / ${cards.length}</span></div>
+    </div></button>`).join('');
+  input.value=cards[0].cardKey;
+  if(label){label.className='tx-card-selected-label has-card';label.textContent=cards[0].name}
+  carousel.scrollLeft=0;bindTxCardCarousel();requestAnimationFrame(()=>updateTxCardCarouselVisual(true));
+}
+function selectedTxCard(){return cardByKey(document.getElementById('txCard')?.value||'')}
+function updateTxCardCarouselVisual(commit=true){
+  const carousel=document.getElementById('txCardCarousel'),input=document.getElementById('txCard'),label=document.getElementById('txCardSelectedLabel');
+  if(!carousel||!input)return;
+  const slides=[...carousel.querySelectorAll('.tx-card-slide')];if(!slides.length)return;
+  const center=carousel.scrollLeft+carousel.clientWidth/2,maxDist=Math.max(1,carousel.clientWidth*.72);
+  let nearest=slides[0],nearestDist=Infinity;
+  slides.forEach(slide=>{
+    const slideCenter=slide.offsetLeft+slide.offsetWidth/2,dist=Math.abs(slideCenter-center),ratio=Math.min(1,dist/maxDist);
+    slide.style.setProperty('--card-scale',(1-ratio*.09).toFixed(3));slide.style.setProperty('--card-y',`${(ratio*8).toFixed(1)}px`);slide.style.setProperty('--card-opacity',(1-ratio*.56).toFixed(3));
+    if(dist<nearestDist){nearestDist=dist;nearest=slide}
+  });
+  slides.forEach(slide=>slide.classList.toggle('is-active',slide===nearest));
+  if(!commit)return;
+  const key=nearest.dataset.cardKey||'',changed=input.value!==key;input.value=key;
+  const card=cardByKey(key);if(label){label.classList.toggle('has-card',!!card);label.textContent=card?.name||''}
+  if(changed)input.dispatchEvent(new Event('change',{bubbles:true}));
+  else renderTxCategories();
+}
+function bindTxCardCarousel(){
+  const carousel=document.getElementById('txCardCarousel');if(!carousel)return;
+  carousel.querySelectorAll('.tx-card-slide').forEach(slide=>{
+    slide.onclick=()=>{const target=slide.offsetLeft-(carousel.clientWidth-slide.offsetWidth)/2;carousel.scrollTo({left:target,behavior:'smooth'});clearTimeout(txCardCommitTimer);txCardCommitTimer=setTimeout(()=>updateTxCardCarouselVisual(true),220)};
+  });
+  carousel.onscroll=()=>{if(txCardScrollFrame)cancelAnimationFrame(txCardScrollFrame);txCardScrollFrame=requestAnimationFrame(()=>updateTxCardCarouselVisual(false));clearTimeout(txCardCommitTimer);txCardCommitTimer=setTimeout(()=>updateTxCardCarouselVisual(true),95)};
+}
+
+function renderTxCategories(){
+  const card=selectedTxCard(),select=document.getElementById('txCategory');if(!select)return;
+  if(!card){select.innerHTML='<option value="">請先新增信用卡目標</option>';select.disabled=true;renderTxTargetPicks();return}
+  select.disabled=false;
+  const cats=[...new Set(card.targets.filter(t=>t.targetType==='rebate').flatMap(t=>Array.isArray(t.rebateCategories)?t.rebateCategories:[]).map(x=>String(x).trim()).filter(Boolean))];
+  const options=cats.length?cats:['一般簽賬'];
+  select.innerHTML=[...options.map(cat=>`<option value="${esc(cat)}">${esc(cat)}</option>`),'<option value="__other__">其他／不屬已設定類別</option>'].join('');
+  renderTxTargetPicks();
+}
+function targetAutoMatches(t,category,date=localDateStr()){
+  if(t.targetType==='welcome'){
+    if(!t.approvalDate)return false;
+    const end=addDays(t.approvalDate,Math.max(1,Number(t.welcomeDays||1)));
+    return date>=t.approvalDate && date<=end;
+  }
+  if(t.rebateEndDate && date>t.rebateEndDate)return false;
+  const cats=Array.isArray(t.rebateCategories)?t.rebateCategories.filter(Boolean):[];
+  if(!cats.length)return category!=='__other__';
+  return category!=='__other__' && cats.includes(category);
+}
+function renderTxTargetPicks(){
+  const card=selectedTxCard(),box=document.getElementById('txTargetPicks'),summary=document.getElementById('txTargetSummary');if(!box||!summary)return;
+  if(!card){box.innerHTML='';summary.className='tx-target-summary none';summary.textContent='';return}
+  const category=document.getElementById('txCategory')?.value||'';
+  const targets=card.targets;
+  if(!targets.length){box.innerHTML='';summary.className='tx-target-summary none';summary.textContent='此信用卡暫時未有目標';return}
+  let hit=0;
+  box.innerHTML=targets.map(t=>{
+    const active=targetAutoMatches(t,category);if(active)hit++;
+    return `<div class="target-pick ${t.targetType==='welcome'?'welcome':''} ${active?'active':''}" data-target-id="${t.id}" role="button" tabindex="0" aria-pressed="${active?'true':'false'}">
+      <span class="target-dot"></span><span class="target-copy"><strong>${esc(targetShortLabel(t))}</strong><small>${esc(targetDetailLabel(t))}</small></span>
+    </div>`;
+  }).join('');
+  box.querySelectorAll('.target-pick').forEach(el=>{
+    const toggle=()=>{el.classList.toggle('active');el.setAttribute('aria-pressed',el.classList.contains('active')?'true':'false');updateTxTargetSummary()};
+    el.addEventListener('click',toggle);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
+  });
+  summary.className=`tx-target-summary ${hit?'hit':'none'}`;
+  summary.textContent=hit?`系統自動命中 ${hit} 個目標；可按下個別目標亮起／熄滅`:'系統未自動命中目標；如需要仍可手動按下亮起';
+}
+function updateTxTargetSummary(){
+  const box=document.getElementById('txTargetPicks'),summary=document.getElementById('txTargetSummary');if(!box||!summary)return;
+  const n=box.querySelectorAll('.target-pick.active').length;summary.className=`tx-target-summary ${n?'hit':'none'}`;summary.textContent=n?`今次消費會計入 ${n} 個目標`:'今次消費不會計入任何目標';
 }
 
 function render(){
-  document.getElementById('monthPicker').value=state.month;
-  renderGoals();
-  renderTransactions();
-  renderCardOptions();
+  document.getElementById('monthPicker').value=state.month;renderGoals();renderTransactions();
 }
-
-function openModal(id){
-  const el=document.getElementById(id);
-  el.classList.remove('closing');
-  el.classList.add('show');
-}
+function openModal(id){const el=document.getElementById(id);el.classList.remove('closing');el.classList.add('show')}
 function closeModal(id){
-  const el=document.getElementById(id);
-  if(!el.classList.contains('show'))return;
-
-  if(id==='settingsModal' && creatingNewTarget && editingCardId){
-    const unsavedId=editingCardId;
-    state.cards=state.cards.filter(c=>c.id!==unsavedId);
-    state.transactions=state.transactions.filter(t=>t.cardId!==unsavedId);
-    creatingNewTarget=false;
-    editingCardId=null;
-  }
-
-  el.classList.add('closing');
-  setTimeout(()=>{
-    el.classList.remove('show','closing');
-  },190);
+  const el=document.getElementById(id);if(!el.classList.contains('show'))return;
+  if(id==='settingsModal'&&creatingNewTarget&&editingTargetId){const unsaved=editingTargetId;state.cards=state.cards.filter(t=>t.id!==unsaved);creatingNewTarget=false;editingTargetId=null}
+  el.classList.add('closing');setTimeout(()=>el.classList.remove('show','closing'),190);
 }
-
-document.querySelectorAll('[data-close]').forEach(b=>{
-  b.onclick=()=>closeModal(b.dataset.close);
-});
-document.querySelectorAll('.modal').forEach(m=>{
-  m.addEventListener('click',e=>{
-    if(e.target===m) closeModal(m.id);
-  });
-});
+document.querySelectorAll('[data-close]').forEach(b=>{b.onclick=()=>closeModal(b.dataset.close)});
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id)}));
 
 document.getElementById('openAdd').onclick=()=>{
-  renderCardOptions();
-  document.getElementById('txAmount').value='';
-  renderTxCategories();
+  document.getElementById('txAmount').value='';document.getElementById('txAmount').style.width='1ch';
   openModal('addModal');
-  setTimeout(()=>document.getElementById('txAmount').focus(),100);
+  requestAnimationFrame(()=>renderCardOptions());
 };
-
+document.getElementById('amountEntry')?.addEventListener('click',()=>document.getElementById('txAmount')?.focus());
+document.getElementById('txAmount')?.addEventListener('input',e=>{
+  let v=String(e.target.value||'').replace(/[^0-9.]/g,'');const dot=v.indexOf('.');if(dot>=0)v=v.slice(0,dot+1)+v.slice(dot+1).replace(/\./g,'').slice(0,2);v=v.replace(/^0+(?=\d)/,'');e.target.value=v;e.target.style.width=`${Math.min(10,Math.max(1,v.length||1))}ch`;
+});
 document.getElementById('txCard').addEventListener('change',renderTxCategories);
-document.getElementById('txCategory').addEventListener('change',()=>syncTxQualificationDefaults(false));
-
+document.getElementById('txCategory').addEventListener('change',renderTxTargetPicks);
 document.getElementById('confirmAdd').onclick=()=>{
-  const cardId=document.getElementById('txCard').value;
-  const amount=parseFloat(document.getElementById('txAmount').value);
-  const rawCategory=document.getElementById('txCategory').value;
-  const category=rawCategory==='__other__'?'其他簽賬':rawCategory;
-  const qualifiesRebate=document.getElementById('txQualifyRebate').checked;
-  const qualifiesWelcome=document.getElementById('txQualifyWelcome').checked;
-
-  if(!(amount>0)){
-    alert('請輸入消費金額');
-    return;
-  }
-
+  const card=selectedTxCard(),amount=parseFloat(document.getElementById('txAmount').value),raw=document.getElementById('txCategory').value;
+  if(!card){alert('請先新增及選擇信用卡目標');return}
+  if(!(amount>0)){alert('請輸入消費金額');return}
+  const category=raw==='__other__'?'其他簽賬':raw;
+  const selectedIds=[...document.querySelectorAll('#txTargetPicks .target-pick.active')].map(x=>x.dataset.targetId).filter(Boolean);
+  const selectedTargets=selectedIds.map(id=>state.cards.find(t=>t.id===id)).filter(Boolean);
   const date=localDateStr();
   state.transactions.push({
-    id:uid(),
-    cardId,
-    amount,
-    category,
-    qualifiesRebate,
-    qualifiesWelcome,
-    date,
-    createdAt:Date.now()
+    id:uid(),cardKey:card.cardKey,cardName:card.name,amount,category,targetIds:selectedIds,
+    targetRefs:selectedTargets.map(t=>({id:t.id,type:t.targetType,label:targetShortLabel(t)})),date,createdAt:Date.now()
   });
-  state.month=date.slice(0,7);
-  save();
-  render();
-  closeModal('addModal');
+  state.month=date.slice(0,7);save();render();closeModal('addModal');
 };
+document.getElementById('monthPicker').onchange=e=>{state.month=e.target.value||localMonthStr();save();render()};
 
-document.getElementById('monthPicker').onchange=e=>{
-  state.month=e.target.value||localMonthStr();
-  save();
-  render();
-};
+let editingTargetId=null,creatingNewTarget=false;
+const PRESET_CATEGORIES=['一般零售','網上簽賬','手機支付','感應式支付','海外簽賬','外幣簽賬','餐飲','超市','便利店','旅遊商戶','酒店','航空公司','交通','八達通','娛樂','指定商戶'];
 
 document.getElementById('settingsBtn').onclick=()=>{
-  activeOfferTab='rebate';
-
-  const c=defaultCard();
-  c.name='';
-  c.rebateCategories=[];
-  c.hasWelcome=false;
-  c.approvalDate='';
-  c.rebateEndDate='';
-  c._temporary=true;
-
-  state.cards.push(c);
-  editingCardId=c.id;
-  creatingNewTarget=true;
-
-  renderSettings();
-  openModal('settingsModal');
+  const t=defaultTarget('rebate');t._temporary=true;state.cards.push(t);editingTargetId=t.id;creatingNewTarget=true;renderSettings();openModal('settingsModal');
 };
-
-let activeOfferTab='rebate';
-
-function setOfferTab(tab){
-  const changed=activeOfferTab!==tab;
-  activeOfferTab=tab;
-
-  if(changed && editingCardId){
-    const c=state.cards.find(x=>x.id===editingCardId);
-    if(creatingNewTarget && c && tab==='welcome'){
-      c.hasWelcome=true;
-    }
-    renderSettings();
-    return;
-  }
-
-  document.querySelectorAll('.offer-tab').forEach(btn=>{
-    btn.classList.toggle('active',btn.dataset.tab===tab);
-  });
-}
-
-let editingCardId=null;
-let creatingNewTarget=false;
-
-function cardSummary(c){
-  if(activeOfferTab==='welcome'){
-    if(!c.hasWelcome)return '未設定迎新優惠';
-    return `迎新 · 要求 ${money(c.welcomeRequirement||0)} · ${c.welcomeRewardType||'現金回贈'} ${rewardLabel(c)}`;
-  }
-  const cats=(c.rebateCategories||[]).join('、') || '未設定類別';
-  return `回贈 ${Number(c.rebateRate||0)}% · ${cats}`;
-}
-
-function openCardEditor(id){
-  editingCardId=id;
-  creatingNewTarget=false;
-  renderSettings();
-  setTimeout(()=>{
-    document.querySelector('.settings-editor')?.scrollIntoView({behavior:'smooth',block:'start'});
-  },30);
-}
-
 function renderSettings(){
-  const current=state.cards.find(c=>c.id===editingCardId);
-
-  document.getElementById('settingsCards').innerHTML=`
-    <div class="offer-tabs">
-      <button class="offer-tab ${activeOfferTab==='rebate'?'active':''}" data-tab="rebate" onclick="setOfferTab('rebate')">簽賬回贈</button>
-      <button class="offer-tab ${activeOfferTab==='welcome'?'active':''}" data-tab="welcome" onclick="setOfferTab('welcome')">迎新優惠</button>
-    </div>
-
-    ${current ? renderEditorCard(current,activeOfferTab) : ''}
-  `;
-
-  setOfferTab(activeOfferTab);
+  const current=state.cards.find(t=>t.id===editingTargetId);document.getElementById('settingsCards').innerHTML=current?renderEditorTarget(current):'';
 }
-
-function renderEditorCard(c,type){
-  if(type==='welcome'){
-    return `
-      <div class="settings-editor">
-        <div class="settings-card" data-id="${c.id}" data-type="welcome">
-          <div class="settings-title"><h4>${creatingNewTarget?'新增迎新優惠':esc(c.name)}</h4></div>
-
-          <div class="toggle-row" style="padding-top:0;margin-bottom:8px">
-            <span>啟用迎新優惠</span>
-            <label class="switch">
-              <input type="checkbox" data-k="hasWelcome" ${c.hasWelcome?'checked':''}
-                onchange="toggleWelcomePanel('${c.id}',this.checked)">
-              <i></i>
-            </label>
-          </div>
-
-          <div class="welcome-fields ${c.hasWelcome?'':'hidden'}">
-            <div class="grid2">
-              <div class="field full">
-                <label>信用卡名稱</label>
-                <input data-k="name" list="cardNameList" autocomplete="off" placeholder="輸入或選擇信用卡" value="${esc(c.name)}">
-              </div>
-              <div class="field full">
-                <label>批卡日期</label>
-                <input data-k="approvalDate" type="date" value="${c.approvalDate||''}">
-              </div>
-              <div class="field">
-                <label>簽賬期限（日）</label>
-                <input data-k="welcomeDays" type="number" min="1" value="${c.welcomeDays}">
-              </div>
-              <div class="field">
-                <label>簽賬要求</label>
-                <input data-k="welcomeRequirement" type="number" min="0" value="${c.welcomeRequirement}">
-              </div>
-              <div class="field">
-                <label>獎賞類型</label>
-                <select data-k="welcomeRewardType">
-                  <option value="現金回贈" ${c.welcomeRewardType==='現金回贈'?'selected':''}>現金回贈</option>
-                  <option value="飛行里數" ${c.welcomeRewardType==='飛行里數'?'selected':''}>飛行里數</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>獎賞額</label>
-                <input data-k="welcomeReward" type="number" min="0" value="${c.welcomeReward}">
-              </div>
-            </div>
-          </div>
-
-          <div class="save-row">
-            <button class="save" onclick="saveOfferCard('${c.id}','welcome')">儲存</button>
-            ${creatingNewTarget?'':`<button class="remove" onclick="removeCard('${c.id}')">刪除</button>`}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  return `
-    <div class="settings-editor">
-      <div class="settings-card" data-id="${c.id}" data-type="rebate">
-        <div class="settings-title"><h4>${creatingNewTarget?'新增簽賬回贈':esc(c.name)}</h4></div>
-        <div class="grid2">
-          <div class="field full">
-            <label>信用卡名稱</label>
-            <input data-k="name" list="cardNameList" autocomplete="off" placeholder="輸入或選擇信用卡" value="${esc(c.name)}">
-          </div>
-          <div class="field">
-            <label>簽賬回贈 %</label>
-            <input data-k="rebateRate" type="number" min="0" step="0.1" value="${c.rebateRate}">
-          </div>
-          <div class="field">
-            <label>簽賬下限</label>
-            <input data-k="spendRequirement" type="number" min="0" value="${c.spendRequirement}">
-          </div>
-          <div class="field">
-            <label>簽賬上限</label>
-            <input data-k="spendCap" type="number" min="0" value="${c.spendCap}">
-          </div>
-          <div class="field full">
-            <label>簽賬類別</label>
-            <div class="category-input-row">
-              <input class="category-new" list="spendCategorySuggestions" autocomplete="off" placeholder="例如：網上簽賬">
-              <button class="category-add" type="button" onclick="addCategoryTag(this)">＋</button>
-            </div>
-            <div class="category-tags">
-              ${(c.rebateCategories||[]).map(cat=>`
-                <button class="cat-chip" type="button" data-value="${esc(cat)}" onclick="this.remove()">
-                  ${esc(cat)} <span>×</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-          <div class="field full">
-            <label>優惠結束日期（可選）</label>
-            <input data-k="rebateEndDate" type="date" value="${c.rebateEndDate||''}">
-          </div>
-        </div>
-
-        <div class="save-row">
-          <button class="save" onclick="saveOfferCard('${c.id}','rebate')">儲存</button>
-          ${creatingNewTarget?'':`<button class="remove" onclick="removeCard('${c.id}')">刪除</button>`}
-        </div>
-      </div>
-    </div>
-  `;
+function cardNameChoices(){
+  const existing=getPhysicalCards().map(c=>c.name);
+  const suggestions=[...document.querySelectorAll('#cardNameSuggestions option')].map(o=>o.value).filter(Boolean);
+  return [...new Set([...existing,...suggestions])];
 }
-
-window.toggleWelcomePanel=(id,checked)=>{
-  const panel=[...document.querySelectorAll('.settings-card')]
-    .find(x=>x.dataset.id===id && x.dataset.type==='welcome');
-  if(panel){
-    panel.querySelector('.welcome-fields').classList.toggle('hidden',!checked);
-  }
-};
-
+function renderCardNamePicker(t){
+  const options=cardNameChoices().map(name=>`<button class="card-name-option" type="button" onclick="chooseCardName(this,'${encodeURIComponent(name)}')">${esc(name)}</button>`).join('');
+  return `<div class="field full card-name-picker"><label>信用卡名稱</label><div class="card-name-row">
+    <input class="card-name-input" data-k="name" autocomplete="off" placeholder="輸入信用卡名稱" value="${esc(t.name)}">
+    <button class="card-name-picker-btn" type="button" aria-label="選擇信用卡名稱" title="選擇信用卡名稱" onclick="toggleCardNameMenu(this)">⌄</button>
+  </div><div class="card-name-menu hidden">${options}</div></div>`;
+}
+function renderEditorTarget(t){
+  const selected=new Set(Array.isArray(t.rebateCategories)?t.rebateCategories:[]),custom=[...selected].filter(x=>!PRESET_CATEGORIES.includes(x));
+  return `<div class="settings-editor"><div class="settings-card" data-id="${t.id}">
+    <div class="settings-title"><h4>${creatingNewTarget?'新增目標':`修改目標 · ${esc(t.name)}`}</h4></div>
+    <div class="grid2">${renderCardNamePicker(t)}</div>
+    <div class="feature-label">目標類型</div><div class="feature-note">每次「新增目標」只建立一個目標；同一張信用卡如有多個優惠，請分開新增。</div>
+    <div class="feature-picks">
+      <button class="feature-pick ${t.targetType==='rebate'?'active':''}" type="button" onclick="setTargetType('${t.id}','rebate')"><span class="feature-icon">%</span>簽賬回贈</button>
+      <button class="feature-pick welcome ${t.targetType==='welcome'?'active':''}" type="button" onclick="setTargetType('${t.id}','welcome')"><span class="feature-icon">★</span>迎新優惠</button>
+    </div>
+    <div class="offer-config ${t.targetType==='rebate'?'':'hidden'}" data-offer="rebate"><div class="offer-config-title">簽賬回贈設定</div><div class="grid2">
+      <div class="field"><label>簽賬下限</label><input data-k="spendRequirement" type="number" min="0" value="${t.spendRequirement}"></div>
+      <div class="field"><label>簽賬上限</label><input data-k="spendCap" type="number" min="0" value="${t.spendCap}"></div>
+      <div class="field full"><label>簽賬回贈 %</label><input data-k="rebateRate" type="number" min="0" step="0.1" value="${t.rebateRate}"></div>
+      <div class="field full"><label>簽賬類別 · 點按可亮起／取消</label><div class="category-preset-tags">
+        ${PRESET_CATEGORIES.map(cat=>`<button class="cat-select ${selected.has(cat)?'active':''}" type="button" data-value="${esc(cat)}" onclick="togglePresetCategory(this)">${esc(cat)}</button>`).join('')}
+      </div><div class="custom-category-caption">自定義類別</div><div class="category-input-row"><input class="category-new" autocomplete="off" placeholder="輸入自定義類別"><button class="category-add" type="button" onclick="addCategoryTag(this)">＋</button></div>
+      <div class="custom-category-tags">${custom.map(cat=>`<button class="cat-chip" type="button" data-value="${esc(cat)}" onclick="this.remove()">${esc(cat)} <span>×</span></button>`).join('')}</div></div>
+      <div class="field full"><label>優惠結束日期（可選）</label><input data-k="rebateEndDate" type="date" value="${t.rebateEndDate||''}"></div>
+    </div></div>
+    <div class="offer-config ${t.targetType==='welcome'?'':'hidden'}" data-offer="welcome"><div class="offer-config-title">迎新優惠設定</div><div class="grid2">
+      <div class="field full"><label>批卡日期</label><input data-k="approvalDate" type="date" value="${t.approvalDate||''}"></div>
+      <div class="field"><label>簽賬期限（日）</label><input data-k="welcomeDays" type="number" min="1" value="${t.welcomeDays}"></div>
+      <div class="field"><label>簽賬要求</label><input data-k="welcomeRequirement" type="number" min="0" value="${t.welcomeRequirement}"></div>
+      <div class="field"><label>獎賞類型</label><select data-k="welcomeRewardType"><option value="現金回贈" ${t.welcomeRewardType==='現金回贈'?'selected':''}>現金回贈</option><option value="飛行里數" ${t.welcomeRewardType==='飛行里數'?'selected':''}>飛行里數</option></select></div>
+      <div class="field"><label>獎賞額</label><input data-k="welcomeReward" type="number" min="0" value="${t.welcomeReward}"></div>
+    </div></div>
+    <div class="save-row"><button class="save" onclick="saveTarget('${t.id}')">儲存</button>${creatingNewTarget?'':`<button class="remove" onclick="removeTarget('${t.id}')">刪除</button>`}</div>
+  </div></div>`;
+}
+function syncEditorDraft(id){
+  const panel=document.querySelector(`.settings-card[data-id="${id}"]`),t=state.cards.find(x=>x.id===id);if(!panel||!t)return;
+  panel.querySelectorAll('[data-k]').forEach(el=>{const k=el.dataset.k;if(el.type==='number')t[k]=Math.max(0,parseFloat(el.value)||0);else t[k]=el.value});
+  const active=[...panel.querySelectorAll('.cat-select.active')].map(x=>x.dataset.value),custom=[...panel.querySelectorAll('.custom-category-tags .cat-chip')].map(x=>x.dataset.value);t.rebateCategories=[...new Set([...active,...custom].filter(Boolean))];
+}
+window.setTargetType=(id,type)=>{syncEditorDraft(id);const t=state.cards.find(x=>x.id===id);if(!t)return;t.targetType=type==='welcome'?'welcome':'rebate';renderSettings()};
+window.toggleCardNameMenu=btn=>{const picker=btn.closest('.card-name-picker'),menu=picker?.querySelector('.card-name-menu');if(!menu)return;document.querySelectorAll('.card-name-menu').forEach(x=>{if(x!==menu)x.classList.add('hidden')});menu.classList.toggle('hidden')};
+window.chooseCardName=(btn,encoded)=>{const picker=btn.closest('.card-name-picker'),input=picker?.querySelector('.card-name-input');if(!input)return;input.value=decodeURIComponent(encoded);picker.querySelector('.card-name-menu')?.classList.add('hidden');input.focus()};
+window.togglePresetCategory=btn=>btn.classList.toggle('active');
 window.addCategoryTag=btn=>{
-  const panel=btn.closest('.settings-card');
-  const input=panel?.querySelector('.category-new');
-  const tags=panel?.querySelector('.category-tags');
-  if(!input||!tags)return;
-  const value=input.value.trim();
-  if(!value)return;
-
-  const exists=[...tags.querySelectorAll('.cat-chip')].some(x=>x.dataset.value===value);
-  if(!exists){
-    const chip=document.createElement('button');
-    chip.type='button';
-    chip.className='cat-chip';
-    chip.dataset.value=value;
-    chip.innerHTML=`${esc(value)} <span>×</span>`;
-    chip.onclick=()=>chip.remove();
-    tags.appendChild(chip);
-  }
-  input.value='';
-  input.focus();
+  const panel=btn.closest('.settings-card'),input=panel?.querySelector('.category-new');if(!input)return;const value=input.value.trim();if(!value)return;
+  const preset=[...panel.querySelectorAll('.cat-select')].find(x=>x.dataset.value===value);if(preset){preset.classList.add('active');input.value='';input.focus();return}
+  const tags=panel.querySelector('.custom-category-tags'),exists=[...tags.querySelectorAll('.cat-chip')].some(x=>x.dataset.value===value);
+  if(!exists){const chip=document.createElement('button');chip.type='button';chip.className='cat-chip';chip.dataset.value=value;chip.innerHTML=`${esc(value)} <span>×</span>`;chip.onclick=()=>chip.remove();tags.appendChild(chip)}input.value='';input.focus();
 };
-
-window.saveOfferCard=(id,type)=>{
-  const panel=[...document.querySelectorAll('.settings-card')]
-    .find(x=>x.dataset.id===id && x.dataset.type===type);
-  const c=state.cards.find(x=>x.id===id);
-  if(!panel||!c)return;
-
-  panel.querySelectorAll('[data-k]').forEach(el=>{
-    const k=el.dataset.k;
-    if(el.type==='checkbox'){
-      c[k]=el.checked;
-    }else if(el.type==='number'){
-      c[k]=Math.max(0,parseFloat(el.value)||0);
-    }else{
-      c[k]=el.value;
-    }
-  });
-
-  if(type==='rebate'){
-    c.rebateCategories=[...panel.querySelectorAll('.category-tags .cat-chip')]
-      .map(x=>x.dataset.value)
-      .filter(Boolean);
-  }
-
-  c.name=c.name.trim()||'未命名信用卡';
-  delete c._temporary;
-  save();
-  render();
-
-  if(creatingNewTarget){
-    creatingNewTarget=false;
-  }
-  editingCardId=null;
-  renderSettings();
+function resolveCardKeyForTarget(t,name){
+  const norm=normalizeCardName(name);
+  const sameName=state.cards.find(x=>!x._temporary&&x.id!==t.id&&normalizeCardName(x.name)===norm);
+  if(sameName)return sameName.cardKey;
+  const siblings=state.cards.filter(x=>!x._temporary&&x.id!==t.id&&x.cardKey===t.cardKey);
+  if(!t.cardKey)return uid();
+  if(siblings.length && siblings.some(x=>normalizeCardName(x.name)!==norm))return uid();
+  return t.cardKey;
+}
+window.saveTarget=id=>{
+  syncEditorDraft(id);const t=state.cards.find(x=>x.id===id);if(!t)return;t.name=t.name.trim();
+  if(!t.name){alert('請輸入或選擇信用卡名稱');document.querySelector('.card-name-input')?.focus();return}
+  t.cardKey=resolveCardKeyForTarget(t,t.name);delete t._temporary;save();creatingNewTarget=false;editingTargetId=null;render();renderSettings();closeModal('settingsModal');
 };
-
-window.removeCard=id=>{
-  if(state.cards.length<=1){
-    alert('至少保留一張信用卡');
-    return;
-  }
-  const c=state.cards.find(x=>x.id===id);
-  if(!confirm(`刪除「${c.name}」及其消費紀錄？`))return;
-
+window.removeTarget=id=>{
+  const t=state.cards.find(x=>x.id===id);if(!t)return;if(!confirm(`刪除「${t.name}」的這個目標？消費紀錄會保留。`))return;
   state.cards=state.cards.filter(x=>x.id!==id);
-  state.transactions=state.transactions.filter(t=>t.cardId!==id);
-  save();
-  render();
-  renderSettings();
+  state.transactions.forEach(tx=>{tx.targetIds=(tx.targetIds||[]).filter(x=>x!==id);tx.targetRefs=(tx.targetRefs||[]).filter(x=>x.id!==id)});
+  save();editingTargetId=null;creatingNewTarget=false;render();renderSettings();closeModal('settingsModal');
 };
-
-
-
-window.addEventListener('scroll',()=>{
-  document.querySelector('.top')?.classList.toggle('is-scrolled',window.scrollY>6);
-},{passive:true});
-
+document.addEventListener('click',e=>{if(!e.target.closest('.card-name-picker'))document.querySelectorAll('.card-name-menu').forEach(x=>x.classList.add('hidden'))});
+window.addEventListener('scroll',()=>document.querySelector('.top')?.classList.toggle('is-scrolled',window.scrollY>6),{passive:true});
 render();
 </script>
 <datalist id="cardNameList">
