@@ -1141,6 +1141,173 @@ button,label.switch,.offer-tab,.cat-chip,.target-pick,.tx{
 .stamp-bulk.earned{border-style:solid;border-color:#e1bd69;background:#fff5df;color:#8a6410;box-shadow:0 4px 12px rgba(177,126,23,.08)}
 .stamp-mode-note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}
 
+
+
+/* ===== v7：新增優惠首頁層次、單一捲軸、目標卡空間及階段狀態 ===== */
+html.modal-open,body.modal-open{overflow:hidden!important;overscroll-behavior:none}
+#settingsModal{overflow:hidden!important}
+.wizard-or-divider{
+  width:100%;max-width:700px;margin:17px auto;display:flex;align-items:center;gap:12px;
+  color:#a0a5ad;font-size:12px;font-weight:850;text-align:center
+}
+.wizard-or-divider::before,.wizard-or-divider::after{content:"";height:1px;flex:1;background:#e1e4e9}
+.wizard-card-step-label{width:100%;max-width:700px;margin:0 auto 9px;font-size:14px;color:#4d545e;font-weight:880}
+.wizard-existing-cards{margin-bottom:0}
+.wizard-existing-cards-title{font-size:14px;color:#4d545e;margin-bottom:10px}
+.wizard-existing-card.is-confirming{animation:answerFlash .42s ease both}
+.wizard-card-picker{margin-bottom:0}
+.wizard-name-wrap .wizard-name-input{margin-bottom:12px}
+
+/* 未達標且尚餘 0–10 日：改為較清晰的冰藍／青藍慢閃，與達標金色分開 */
+.goal.caution-tape::after{
+  background:linear-gradient(135deg,rgba(58,157,226,.25),rgba(62,199,188,.18))!important;
+  box-shadow:inset 0 0 0 1.5px rgba(43,139,205,.20)!important;
+  animation:goalUrgencyBlueFlash 3.3s ease-in-out infinite!important
+}
+@keyframes goalUrgencyBlueFlash{
+  0%,100%{opacity:.20}
+  50%{opacity:.64}
+}
+
+/* 等高後把進度／狀態自然壓到底部，中間空間可用來展示階段資訊 */
+.goal-body{height:100%;display:flex;flex-direction:column}
+.goal-lower{margin-top:auto}
+.goal-status{margin-top:7px!important;padding-top:0!important}
+.goal-stage-panel{
+  margin:2px 0 10px;padding:9px 10px;border:1px solid rgba(218,223,230,.92);border-radius:12px;
+  background:rgba(248,249,251,.84);display:grid;gap:7px
+}
+.goal-stage-current{font-size:11px;font-weight:880;color:#343a42;line-height:1.42}
+.goal-stage-current .stage-date{display:block;margin-top:2px;color:#707780;font-size:10.5px;font-weight:720}
+.goal-stage-history{display:flex;flex-wrap:wrap;gap:6px}
+.goal-stage-state{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;font-size:9.8px;font-weight:850;line-height:1.25}
+.goal-stage-state.success{color:#137a56;background:rgba(19,122,86,.08);border:1px solid rgba(19,122,86,.11)}
+.goal-stage-state.fail{color:#b84545;background:rgba(191,69,69,.075);border:1px solid rgba(191,69,69,.11)}
+.goal-stage-state.pending{color:#747b84;background:#eef0f3;border:1px solid #e1e4e8}
+
+@media(max-width:560px){
+  .wizard-or-divider{margin:14px auto}
+  .goal-stage-current{font-size:10.7px}
+}
+@media (prefers-reduced-motion:reduce){
+  .wizard-existing-card.is-confirming,.goal.caution-tape::after{animation-duration:.01ms!important}
+}
+
+
+
+/* ===== v8：額度進度改為緊湊等高，避免以最高內容卡拉高全組 ===== */
+#goals .goal{
+  height:142px;
+  min-height:142px;
+  padding:10px 14px 9px;
+  align-items:stretch;
+}
+#goals .goal-body{min-height:0;overflow:hidden}
+#goals .goal-card{margin-bottom:1px;line-height:1.2}
+#goals .goal-title{
+  margin-bottom:2px;line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#goals .goal-meta{
+  margin-bottom:5px;line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#goals .goal-lower{margin-top:auto;min-width:0}
+#goals .goal-status{
+  margin-top:4px!important;padding-top:0!important;line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* 階段資料由大盒改成一條資訊列；保留日期及上一階段結果，但不犧牲卡高 */
+#goals .goal-stage-panel{
+  min-height:29px;margin:0 0 5px;padding:4px 7px;
+  display:flex;align-items:center;gap:7px;
+  border-radius:10px;background:rgba(248,249,251,.78);
+}
+#goals .goal-stage-current{
+  min-width:0;display:flex;align-items:center;gap:5px;
+  font-size:10.5px;line-height:1.15;white-space:nowrap;
+}
+#goals .goal-stage-current .stage-date{
+  display:inline!important;margin:0!important;
+  font-size:9.5px;line-height:1.15;white-space:nowrap;
+}
+#goals .goal-stage-history{
+  margin-left:auto;display:flex;flex-wrap:nowrap;gap:4px;
+  min-width:0;overflow:hidden;
+}
+#goals .goal-stage-state{
+  flex:0 0 auto;padding:2px 5px;font-size:9px;white-space:nowrap;
+}
+
+/* 印花列縮細；多於 8 個會用「🔖 × N」摘要，避免換行撐高 */
+#goals .stamp-progress-row{gap:8px;margin-top:0;min-height:30px}
+#goals .stamp-track{min-height:30px;gap:5px;flex-wrap:nowrap;overflow:hidden}
+#goals .stamp-mark{width:28px;height:28px;border-radius:9px;font-size:15px}
+#goals .stamp-mark.milestone::before{right:-4px;top:-5px;width:13px;height:13px;font-size:7px}
+#goals .stamp-mark.milestone::after{inset:-2px;border-radius:10px}
+#goals .stamp-count-label{min-width:54px;font-size:11.5px}
+#goals .stamp-bulk{min-height:28px;padding:5px 8px;border-radius:9px;font-size:10.5px}
+
+@media(max-width:460px){
+  #goals .goal{height:146px;min-height:146px;padding:10px 12px 9px}
+  #goals .goal-stage-panel{gap:5px;padding-left:6px;padding-right:6px}
+  #goals .goal-stage-current{font-size:10px}
+  #goals .goal-stage-current .stage-date{font-size:9px}
+  #goals .goal-stage-state{font-size:8.6px;padding:2px 4px}
+}
+
+
+/* ===== v9：主頁資訊再整理 ===== */
+/* 簽賬要求改為較大、較易掃讀；最多兩行，仍維持緊湊等高 */
+#goals .goal-meta{
+  margin-bottom:6px;
+  color:#5e6670;
+  font-size:12.4px;
+  font-weight:760;
+  line-height:1.32;
+  white-space:normal;
+  overflow:hidden;
+  text-overflow:clip;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+}
+
+/* 階段卡不再在進度條前重複顯示「目前階段＋日期」；只保留過往階段結果 */
+#goals .goal-stage-history-only{
+  margin:0 0 5px;
+  display:flex;
+  flex-wrap:nowrap;
+  gap:4px;
+  min-width:0;
+  overflow:hidden;
+}
+#goals .goal-stage-history-only .goal-stage-state{
+  flex:0 0 auto;
+}
+
+/* 印花列善用卡內橫向空位：可逐個顯示時把印花放大 */
+#goals .stamp-progress-row{min-height:40px;gap:9px}
+#goals .stamp-track{min-height:40px;gap:6px}
+#goals .stamp-mark{
+  width:36px;
+  height:36px;
+  border-radius:11px;
+  font-size:21px;
+}
+#goals .stamp-mark.milestone::before{
+  right:-5px;top:-6px;width:15px;height:15px;font-size:8px;
+}
+#goals .stamp-mark.milestone::after{inset:-3px;border-radius:13px}
+#goals .stamp-count-label{font-size:12.5px;min-width:58px}
+
+@media(max-width:460px){
+  #goals .goal-meta{font-size:11.8px;line-height:1.3}
+  #goals .stamp-progress-row,#goals .stamp-track{min-height:38px}
+  #goals .stamp-mark{width:34px;height:34px;font-size:20px}
+}
+
 </style>
 </head>
 <body>
@@ -1609,9 +1776,15 @@ function rebateProgressTitle(t,rate){
   return `💳所有合資格簽賬回贈 · ${rateText}%`;
 }
 function offerMeta(t){
-  const cats=t.eligibilityMode==='categories'&&t.rebateCategories.length?t.rebateCategories.join('、'):'所有合資格簽賬';
-  const period=(t.mechanic==='milestone'&&t.targetType!=='welcome')?'按階段日期':(({monthly:'每月重置',quarterly:'每季度',campaign:'指定推廣期',yearly:'全年',approval_window:`批卡後 ${t.welcomeDays} 日`})[t.periodType]||'自訂週期');
-  return `${cats} · ${period}${t.capType!=='none'&&t.capAmount>0?` · 上限 ${money(t.capAmount)}`:''}`;
+  const catText=t.eligibilityMode==='categories'&&t.rebateCategories.length?`限${t.rebateCategories.join('、')}`:'適用於所有合資格簽賬';
+  const period=(t.mechanic==='milestone'&&t.targetType!=='welcome')?'按階段日期':(({monthly:'每月重置',quarterly:'每季度重置',campaign:'指定推廣期',yearly:'全年',approval_window:`批卡後 ${t.welcomeDays} 日`})[t.periodType]||'自訂週期');
+  const parts=[catText,period];
+  // 固定回贈目標：主頁簽賬要求同時顯示「最低累積簽賬」，避免只見到每筆最低簽賬／上限而漏掉達標門檻。
+  if(t.mechanic==='standard'&&Number(t.spendRequirement||0)>0)parts.push(`最低累積簽賬 ${money(t.spendRequirement)}`);
+  if(Number(t.minTransaction||0)>0)parts.push(`每筆最低簽賬 ${money(t.minTransaction)}`);
+  if(t.capType==='spend'&&Number(t.capAmount||0)>0)parts.push(`達標簽賬上限 ${money(t.capAmount)}`);
+  else if(t.capType==='reward'&&Number(t.capAmount||0)>0)parts.push(`回贈上限 ${money(t.capAmount)}`);
+  return parts.join(' · ');
 }
 function thresholdTierRewardLabel(tier,categories=[]){
   const mode=tier?.rewardMode||'rate';
@@ -1662,7 +1835,7 @@ function stampCountForOffer(t,bounds=offerBounds(t)){
 function getGoalRows(){
   const rows=[];
   state.cards.filter(t=>!t._temporary).forEach(t=>{
-    const b=offerBounds(t),time=offerEndStatus(t,b),spent=spendForOffer(t,b);let title='',status='',progress=0,percent='0%',completed=false,meta=offerMeta(t),stampCurrent=0,stampTarget=0,stampMilestones=[];
+    const b=offerBounds(t),time=offerEndStatus(t,b),spent=spendForOffer(t,b);let title='',status='',progress=0,percent='0%',completed=false,meta=offerMeta(t),stampCurrent=0,stampTarget=0,stampMilestones=[],stageOverview=null;
     if(t.mechanic==='tier_rate'){
       const tiers=[...t.tiers].sort((a,b)=>a.threshold-b.threshold),done=tiers.filter(x=>spent>=x.threshold),current=[...done].at(-1)||null,next=tiers.find(x=>spent<x.threshold),target=next?.threshold||tiers.at(-1)?.threshold||0;
       progress=target?pct(spent,target):(tiers.length?100:0);completed=!next&&tiers.length>0;
@@ -1676,13 +1849,31 @@ function getGoalRows(){
     }else if(t.mechanic==='milestone'||t.mechanic==='custom'){
       const dated=t.targetType!=='welcome',ms=dated?[...t.milestones].sort((a,b)=>String(a.startDate||'').localeCompare(String(b.startDate||''))):[...t.milestones].sort((a,b)=>a.threshold-b.threshold);
       if(dated){
-        const stageStats=ms.map(x=>{const stageSpent=spendForOffer(t,{start:x.startDate||'',end:x.endDate||''});return {...x,stageSpent,met:stageSpent>=Number(x.threshold||0)}}),done=stageStats.filter(x=>x.met),next=stageStats.find(x=>!x.met),allStages=stageStats.length>0&&done.length===stageStats.length;
+        const today=localDateStr();
+        const stageStats=ms.map(x=>{
+          const stageSpent=spendForOffer(t,{start:x.startDate||'',end:x.endDate||''}),met=stageSpent>=Number(x.threshold||0);
+          const expired=!!x.endDate&&today>x.endDate,future=!!x.startDate&&today<x.startDate,current=(!x.startDate||today>=x.startDate)&&(!x.endDate||today<=x.endDate);
+          return {...x,stageSpent,met,expired,future,current};
+        }),done=stageStats.filter(x=>x.met),next=stageStats.find(x=>!x.met),allStages=stageStats.length>0&&done.length===stageStats.length;
+        const activeIndex=stageStats.findIndex(x=>x.current);
+        const nextFutureIndex=stageStats.findIndex(x=>x.future&&!x.met);
+        let focusIndex=activeIndex>=0?activeIndex:(nextFutureIndex>=0?nextFutureIndex:(next?stageStats.indexOf(next):Math.max(0,stageStats.length-1)));
+        const focus=stageStats[focusIndex]||null;
         const stageStart=stageStats.map(x=>x.startDate).filter(Boolean).sort()[0]||b.start,stageEnd=stageStats.map(x=>x.endDate).filter(Boolean).sort().at(-1)||b.end,totalSpent=spendForOffer(t,{start:stageStart||'',end:stageEnd||''}),bonusNeed=Math.max(0,Number(t.milestoneBonusSpend||0)),bonusMet=!t.milestoneBonusEnabled||(allStages&&totalSpent>=bonusNeed);
         completed=allStages&&bonusMet;title=`簽賬 · 階段獎賞 ${done.length}/${stageStats.length}`;
-        if(next){progress=next.threshold?pct(next.stageSpent,next.threshold):100;const idx=stageStats.indexOf(next)+1,dateText=next.startDate&&next.endDate?`（${next.startDate} 至 ${next.endDate}）`:'';status=`階段（${idx}）${dateText} 已簽 ${money(next.stageSpent)}，尚欠 ${money(Math.max(0,next.threshold-next.stageSpent))}${Number(next.reward||0)>0?`；達標可得 ${rewardValueLabel(next.rewardType,next.reward)}`:''}`}
-        else if(t.milestoneBonusEnabled&&!bonusMet){progress=bonusNeed?pct(totalSpent,bonusNeed):100;status=`全部階段已達標；全期已簽 ${money(totalSpent)}，尚欠 ${money(Math.max(0,bonusNeed-totalSpent))} 解鎖加碼 ${rewardValueLabel(t.milestoneBonusType,t.milestoneBonus)}`}
+        if(focus&&!allStages){
+          progress=focus.threshold?pct(focus.stageSpent,focus.threshold):100;
+          const idx=focusIndex+1;
+          if(focus.future)status=`階段（${idx} / ${stageStats.length}）將於 ${focus.startDate} 開始；要求 ${money(focus.threshold)}${Number(focus.reward||0)>0?`，達標可得 ${rewardValueLabel(focus.rewardType,focus.reward)}`:''}`;
+          else if(focus.expired&&!focus.met)status=`階段（${idx} / ${stageStats.length}）已結束，未能達標；已簽 ${money(focus.stageSpent)} / ${money(focus.threshold)}`;
+          else status=`階段（${idx} / ${stageStats.length}）已簽 ${money(focus.stageSpent)}，尚欠 ${money(Math.max(0,focus.threshold-focus.stageSpent))}${Number(focus.reward||0)>0?`；達標可得 ${rewardValueLabel(focus.rewardType,focus.reward)}`:''}`;
+        }else if(t.milestoneBonusEnabled&&!bonusMet){progress=bonusNeed?pct(totalSpent,bonusNeed):100;status=`全部階段已達標；全期已簽 ${money(totalSpent)}，尚欠 ${money(Math.max(0,bonusNeed-totalSpent))} 解鎖加碼 ${rewardValueLabel(t.milestoneBonusType,t.milestoneBonus)}`}
         else{progress=100;status=`全部 ${stageStats.length} 個階段已達標${t.milestoneBonusEnabled?`，並已解鎖加碼 ${rewardValueLabel(t.milestoneBonusType,t.milestoneBonus)}`:''}`}
-        meta=`按指定日期分 ${stageStats.length} 個階段${t.milestoneBonusEnabled?` · 全部完成${bonusNeed>0?`且全期滿 ${money(bonusNeed)}`:''}再 ${rewardValueLabel(t.milestoneBonusType,t.milestoneBonus)}`:''}`;
+        if(stageStats.length){
+          const shownIndex=Math.max(0,Math.min(focusIndex,stageStats.length-1)),shown=stageStats[shownIndex];
+          stageOverview={index:shownIndex+1,total:stageStats.length,startDate:shown?.startDate||'',endDate:shown?.endDate||'',previous:stageStats.slice(0,shownIndex).map((x,i)=>({index:i+1,state:x.met?'success':(x.expired?'fail':'pending')}))};
+        }
+        meta=`${meta} · ${stageStats.length} 個階段${t.milestoneBonusEnabled?` · 全部完成${bonusNeed>0?`且全期滿 ${money(bonusNeed)}`:''}再 ${rewardValueLabel(t.milestoneBonusType,t.milestoneBonus)}`:''}`;
       }else{
         const done=ms.filter(x=>spent>=x.threshold),next=ms.find(x=>spent<x.threshold),target=next?.threshold||ms.at(-1)?.threshold||0,allStages=!next&&ms.length>0,bonusNeed=Math.max(0,Number(t.milestoneBonusSpend||0)),bonusMet=!t.milestoneBonusEnabled||(allStages&&spent>=bonusNeed);
         progress=allStages&&t.milestoneBonusEnabled&&!bonusMet?(bonusNeed?pct(spent,bonusNeed):100):(target?pct(spent,target):0);completed=allStages&&bonusMet;
@@ -1698,7 +1889,7 @@ function getGoalRows(){
       progress=threshold?pct(thisSpent,threshold):0;completed=months.length>0&&achieved===months.length;
       title=`簽賬 · 分期達標 ${achieved}/${total}`;
       status=thisSpent>=threshold?`${selected} 已達標 ${money(thisSpent)}；${months.length&&achieved===months.length&&t.completionBonus>0?'已解鎖完成獎賞 '+rewardValueLabel(t.completionBonusType,t.completionBonus):'每期獎賞 '+rewardValueLabel(t.recurringRewardType,t.recurringReward)}`:`${selected} 已簽 ${money(thisSpent)}，尚欠 ${money(Math.max(0,threshold-thisSpent))}`;
-      meta=`每期 ${money(threshold)} → ${rewardValueLabel(t.recurringRewardType,t.recurringReward)}${t.completionBonus>0?` · 全期完成再 ${rewardValueLabel(t.completionBonusType,t.completionBonus)}`:''}`;
+      meta=`${meta} · 每期 ${money(threshold)} → ${rewardValueLabel(t.recurringRewardType,t.recurringReward)}${t.completionBonus>0?` · 全期完成再 ${rewardValueLabel(t.completionBonusType,t.completionBonus)}`:''}`;
     }else if(t.mechanic==='stamp'){
       const stamps=stampCountForOffer(t,b),stampCap=Math.max(0,Number(t.stampCap||0));
       if(t.stampMode==='repeat'){
@@ -1711,13 +1902,13 @@ function getGoalRows(){
         title=`簽賬 · 印花 ${stamps} 個 · 已獎 ${earnedRewards} 次`;
         if(completed)status=`已達本期上限；共獲 ${earnedRewards} 次 ${rewardValueLabel(t.stampRepeatRewardType,t.stampRepeatReward)}`;
         else{const nextNeed=every-(stamps%every||0);status=`再 ${nextNeed} 個印花可得 ${rewardValueLabel(t.stampRepeatRewardType,t.stampRepeatReward)}${rewardLimit>0?` · 最多獎 ${rewardLimit} 次`:''}`}
-        meta=`${stampEarnDescription(t)} · 集滿 ${every} 個印花發放一次獎賞${stampCap>0?` · 印花上限 ${stampCap}`:''}${rewardLimit>0?` · 獎勵上限 ${rewardLimit} 次`:''}`;
+        meta=`${meta} · ${stampEarnDescription(t)} · 集滿 ${every} 個印花發放一次獎賞${stampCap>0?` · 印花上限 ${stampCap}`:''}${rewardLimit>0?` · 獎勵上限 ${rewardLimit} 次`:''}`;
       }else{
         const ms=[...t.stampMilestones].sort((a,b)=>a.count-b.count),done=ms.filter(x=>stamps>=x.count),next=ms.find(x=>stamps<x.count),target=next?.count||ms.at(-1)?.count||0;
         progress=target?pct(stamps,target):0;completed=!next&&ms.length>0;percent=`${stamps}/${target||stamps||0}`;stampCurrent=stamps;stampTarget=target||stamps||0;stampMilestones=ms.map(x=>x.count);
         title=`簽賬 · 印花／次數 ${stamps} 個`;
         status=next?`再 ${Math.max(0,next.count-stamps)} 個即可解鎖 ${rewardValueLabel(next.rewardType,next.reward)}`:`所有印花獎賞已解鎖`;
-        meta=`${stampEarnDescription(t)} · ${ms.length} 個獎賞階段${stampCap>0?` · 印花上限 ${stampCap}`:''}`;
+        meta=`${meta} · ${stampEarnDescription(t)} · ${ms.length} 個獎賞階段${stampCap>0?` · 印花上限 ${stampCap}`:''}`;
       }
     }else{
       const req=Number(t.spendRequirement||0),rate=Number(t.rebateRate||0);let target=req;
@@ -1728,7 +1919,7 @@ function getGoalRows(){
       status=spent<req?`已簽 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻`:`已簽 ${money(spent)}，估算回贈 ${money(capped)}`;
     }
     if(percent==='0%')percent=`${Math.round(progress)}%`;
-    rows.push({targetId:t.id,mechanic:t.mechanic,card:t.name,title:`${esc(title)} <span class="mechanic-badge">${esc(mechanicLabel(t))}</span>`,meta,days:time.days,dayClass:remainingDayClass(time,completed),goalClass:remainingGoalClass(time,completed),progress,percent,status,completed,stampCurrent,stampTarget,stampMilestones});
+    rows.push({targetId:t.id,mechanic:t.mechanic,card:t.name,title:`${esc(title)} <span class="mechanic-badge">${esc(mechanicLabel(t))}</span>`,meta,days:time.days,dayClass:remainingDayClass(time,completed),goalClass:remainingGoalClass(time,completed),progress,percent,status,completed,stampCurrent,stampTarget,stampMilestones,stageOverview});
   });
   return rows;
 }
@@ -1742,13 +1933,23 @@ const goalPalettes=[
 function goalPalette(i){return goalPalettes[i%goalPalettes.length]}
 function renderStampProgress(current,target,milestones=[]){
   const total=Math.max(1,Number(target||1)),cur=Math.max(0,Number(current||0));
-  if(total>18){
+  if(total>8){
     const earned=Math.min(cur,total);
     return `<div class="stamp-progress-row"><div class="stamp-track"><span class="stamp-bulk ${earned>0?'earned':''}">🔖 × ${earned}</span><span class="stamp-bulk">目標 🔖 × ${total}</span></div><div class="stamp-count-label">${cur}/${total} 個</div></div>`;
   }
   const milestoneSet=new Set((milestones||[]).map(Number));
   const marks=Array.from({length:total},(_,i)=>{const logical=i+1,isMilestone=milestoneSet.has(logical);return `<span class="stamp-mark ${i<cur?'earned':''} ${isMilestone?'milestone':''}" title="第 ${logical} 個印花${isMilestone?' · 獎賞節點':''}">🔖</span>`}).join('');
   return `<div class="stamp-progress-row"><div class="stamp-track">${marks}</div><div class="stamp-count-label">${cur}/${total} 個</div></div>`;
+}
+function renderStageOverview(info){
+  if(!info||!info.total)return '';
+  const previous=(info.previous||[]).map(x=>{
+    const cls=x.state==='success'?'success':x.state==='fail'?'fail':'pending';
+    const icon=x.state==='success'?'✓':x.state==='fail'?'✕':'•';
+    const label=x.state==='success'?'成功達標':x.state==='fail'?'未能達標':'待確認';
+    return `<span class="goal-stage-state ${cls}">${icon} 階段（${x.index} / ${info.total}）${label}</span>`;
+  }).join('');
+  return previous?`<div class="goal-stage-history goal-stage-history-only">${previous}</div>`:'';
 }
 function renderGoals(){
   const rows=getGoalRows();
@@ -1763,8 +1964,11 @@ function renderGoals(){
         <div class="goal-card">${esc(r.card)}</div>
         <div class="goal-title">${r.title}${r.completed?'<span class="trophy" title="目標達成">🏆</span>':''}<span class="goal-days ${r.dayClass}">${esc(r.days)}</span></div>
         <div class="goal-meta">${r.meta}</div>
-        ${r.mechanic==='stamp'?renderStampProgress(r.stampCurrent,r.stampTarget,r.stampMilestones):`<div class="goal-progress-row"><div class="progress"><div style="--target-width:${r.progress}%"></div></div><div class="goal-percent">${r.percent}</div></div>`}
-        <div class="goal-status">${r.status}</div>
+        ${r.stageOverview?renderStageOverview(r.stageOverview):''}
+        <div class="goal-lower">
+          ${r.mechanic==='stamp'?renderStampProgress(r.stampCurrent,r.stampTarget,r.stampMilestones):`<div class="goal-progress-row"><div class="progress"><div style="--target-width:${r.progress}%"></div></div><div class="goal-percent">${r.percent}</div></div>`}
+          <div class="goal-status">${r.status}</div>
+        </div>
       </div>
       <button class="goal-modify" type="button" aria-label="修改" title="修改">✎</button>
     </div>`;
@@ -1774,10 +1978,8 @@ function renderGoals(){
 }
 let goalHeightRaf=0;
 function equalizeGoalHeights(){
-  const goals=[...document.querySelectorAll('#goals .goal')];if(!goals.length)return;
-  goals.forEach(g=>g.style.height='auto');
-  const max=Math.max(...goals.map(g=>Math.ceil(g.getBoundingClientRect().height)));
-  if(max>0)goals.forEach(g=>g.style.height=`${max}px`);
+  // 額度卡採用 CSS 緊湊等高，不再以內容最高的一張把全部卡拉高。
+  document.querySelectorAll('#goals .goal').forEach(g=>g.style.removeProperty('height'));
 }
 function scheduleGoalHeightEqualize(){cancelAnimationFrame(goalHeightRaf);goalHeightRaf=requestAnimationFrame(equalizeGoalHeights)}
 function bindGoalActions(){
@@ -1960,12 +2162,16 @@ function openTransactionEditor(id=null){
     openModal('addModal');requestAnimationFrame(()=>renderCardOptions());
   }
 }
-function openModal(id){const el=document.getElementById(id);el.classList.remove('closing');el.classList.add('show')}
+function syncModalScrollLock(){
+  const locked=[...document.querySelectorAll('.modal.show')].some(m=>m.id==='settingsModal'||m.id==='addModal');
+  document.documentElement.classList.toggle('modal-open',locked);document.body.classList.toggle('modal-open',locked);
+}
+function openModal(id){const el=document.getElementById(id);el.classList.remove('closing');el.classList.add('show');syncModalScrollLock()}
 function closeModal(id){
   const el=document.getElementById(id);if(!el.classList.contains('show'))return;
   if(id==='settingsModal'&&creatingNewTarget&&editingTargetId){const unsaved=editingTargetId;state.cards=state.cards.filter(t=>t.id!==unsaved);creatingNewTarget=false;editingTargetId=null;editingBackup=null}
   else if(id==='settingsModal'&&!creatingNewTarget&&editingTargetId&&editingBackup){const idx=state.cards.findIndex(t=>t.id===editingTargetId);if(idx>=0)state.cards[idx]=normalizeTarget(editingBackup);editingTargetId=null;editingBackup=null;render()}
-  el.classList.add('closing');setTimeout(()=>{el.classList.remove('show','closing');if(id==='addModal')resetTransactionEditor()},id==='addModal'?230:190);
+  el.classList.add('closing');setTimeout(()=>{el.classList.remove('show','closing');if(id==='addModal')resetTransactionEditor();syncModalScrollLock()},id==='addModal'?230:190);
 }
 document.querySelectorAll('[data-close]').forEach(b=>{b.onclick=()=>closeModal(b.dataset.close)});
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id)}));
@@ -2210,16 +2416,19 @@ function renderWizardCardPicker(t,excludeExisting=false){
   const names=wizardCardSuggestionNames().filter(name=>!excludeExisting||!existingNames.has(normalizeCardName(name)));
   const grouped=new Map();names.forEach(name=>{const bank=cardBankGroup(name);if(!grouped.has(bank))grouped.set(bank,[]);grouped.get(bank).push(name)});
   const groups=[...grouped.entries()].map(([bank,cards])=>`<div class="wizard-card-bank-group" data-card-bank-group><div class="wizard-card-bank-title">${esc(bank)}</div>${cards.map(name=>{const key=keyByName.get(normalizeCardName(name))||'';return `<button type="button" class="wizard-card-picker-option ${key?'is-existing':''}" data-card-search="${esc((bank+' '+name).toLocaleLowerCase('zh-HK'))}" onclick="pickWizardCardSuggestion(this,'${encodeURIComponent(name).replace(/'/g,'%27')}','${encodeURIComponent(key).replace(/'/g,'%27')}')">${esc(name)}</button>`}).join('')}</div>`).join('');
-  return `<div class="wizard-card-picker"><button type="button" class="wizard-card-picker-toggle" onclick="toggleWizardCardPicker(this)"><span>${t.name?esc(t.name):'從信用卡清單選擇'}</span><span class="picker-chevron">⌄</span></button><div class="wizard-card-picker-panel hidden"><input class="wizard-card-picker-search" type="search" autocomplete="off" placeholder="搜尋銀行或信用卡" oninput="filterWizardCardPicker(this)"><div class="wizard-card-picker-options">${groups}</div><div class="wizard-card-picker-empty hidden">搵唔到；可以喺下面直接輸入新卡名。</div></div></div>`;
+  return `<div class="wizard-card-picker"><button type="button" class="wizard-card-picker-toggle" onclick="toggleWizardCardPicker(this)"><span>${t.name?esc(t.name):'選擇信用卡'}</span><span class="picker-chevron">⌄</span></button><div class="wizard-card-picker-panel hidden"><input class="wizard-card-picker-search" type="search" autocomplete="off" placeholder="搜尋銀行或信用卡" oninput="filterWizardCardPicker(this)"><div class="wizard-card-picker-options">${groups}</div><div class="wizard-card-picker-empty hidden">搵唔到；可以喺下面直接輸入新卡名。</div></div></div>`;
 }
 function renderWizardStep(t){
   if(wizardStep===1){
     const existing=getPhysicalCards();
     const existingBlock=existing.length?`<div class="wizard-existing-cards"><div class="wizard-existing-cards-title">已有回贈目標嘅信用卡</div><div class="wizard-existing-card-grid">${existing.map(c=>`<button type="button" class="wizard-existing-card ${t.cardKey===c.cardKey||normalizeCardName(t.name)===normalizeCardName(c.name)?'active':''}" onclick="chooseWizardCard(this,'${encodeURIComponent(c.cardKey)}','${encodeURIComponent(c.name)}')"><strong>${esc(c.name)}</strong><small>${c.targets.length} 個現有目標 · 直接新增優惠</small></button>`).join('')}</div></div>`:'';
-    return `<div class="wizard-question">你想為邊張信用卡新增優惠？</div><div class="wizard-help">已有目標嘅信用卡可以直接揀；亦可從下方按銀行分組嘅清單搜尋，或者直接輸入新卡名。</div>
+    return `<div class="wizard-question">你想為邊張信用卡新增優惠？</div>
       ${existingBlock}
-      <div class="wizard-other-card-label">或從清單中選擇信用卡</div>${renderWizardCardPicker(t,true)}
-      <div class="wizard-name-wrap"><input data-k="name" class="card-name-input wizard-name-input" autocomplete="off" placeholder="或者輸入新信用卡名稱" value="${esc(t.name)}"><button class="wizard-answer" type="button" onclick="useWizardCardName(this,'${t.id}')">使用呢張信用卡</button></div>`;
+      ${existing.length?'<div class="wizard-or-divider"><span>或</span></div>':''}
+      <div class="wizard-card-step-label">從清單中選擇信用卡</div>${renderWizardCardPicker(t,true)}
+      <div class="wizard-or-divider"><span>或</span></div>
+      <div class="wizard-card-step-label">自行輸入信用卡名稱</div>
+      <div class="wizard-name-wrap"><input data-k="name" class="card-name-input wizard-name-input" autocomplete="off" placeholder="輸入信用卡名稱" value="${esc(t.name)}"><button class="wizard-answer" type="button" onclick="useWizardCardName(this,'${t.id}')">使用呢張信用卡</button></div>`;
   }
   if(wizardStep===2)return `<div class="wizard-question">呢個係咩優惠？</div><div class="wizard-help">按答案後會自動進入下一題。</div><div class="wizard-options">
     ${optionButton(t.targetType==='rebate','💰','簽賬回贈','日常或推廣期簽賬取得現金、里數、積分或額外回贈',`selectTargetType(this,'${t.id}','rebate')`)}
@@ -2306,7 +2515,7 @@ window.pickWizardCardSuggestion=(btn,name,key)=>{
   t.name=decodeURIComponent(name);if(key)t.cardKey=decodeURIComponent(key);
   flashThen(btn,()=>transitionWizard(2,'forward',false));
 };
-window.chooseWizardCard=(btn,key,name)=>{const t=state.cards.find(x=>x.id===editingTargetId);if(!t)return;t.cardKey=decodeURIComponent(key);t.name=decodeURIComponent(name);transitionWizard(2,'forward',false)};
+window.chooseWizardCard=(btn,key,name)=>{const t=state.cards.find(x=>x.id===editingTargetId);if(!t)return;t.cardKey=decodeURIComponent(key);t.name=decodeURIComponent(name);flashThen(btn,()=>transitionWizard(2,'forward',false))};
 window.useWizardCardName=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.name=String(t.name||'').trim();const existing=getPhysicalCards().find(c=>normalizeCardName(c.name)===normalizeCardName(t.name));if(existing)t.cardKey=existing.cardKey;if(!validateWizardStep(t,1))return;flashThen(btn,()=>transitionWizard(2,'forward',false))};
 window.selectTargetType=(btn,id,type)=>{
   const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);
@@ -2471,7 +2680,7 @@ render();
 <option value="安信EarnMORE銀聯卡"></option>
 <option value="AEON Visa 信用卡"></option>
 <option value="AEON萬事達信用卡"></option>
-<option value="AEON 銀聯信用卡"></option>
+<option value="AEON銀聯信用卡"></option>
 <option value="AEON JCB 信用卡"></option>
 <option value="AEON CARD WAKUWAKU"></option>
 <option value="AEON Card JAL 萬事達卡"></option>
