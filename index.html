@@ -1308,8 +1308,373 @@ html.modal-open,body.modal-open{overflow:hidden!important;overscroll-behavior:no
   #goals .stamp-mark{width:34px;height:34px;font-size:20px}
 }
 
+
+/* ===== v10：主頁額度卡文字層次 ===== */
+#goals .goal{
+  height:156px;
+  min-height:156px;
+}
+#goals .goal-card{
+  /* 尚餘時間固定在第一行右上角，預留空間避免蓋住卡名 */
+  padding-right:112px;
+}
+#goals .goal-title{
+  /* 尚餘時間已移到右上角，優惠名稱可使用完整第二行寬度 */
+  padding-right:0;
+}
+#goals .goal-days{
+  position:absolute;
+  top:6px;
+  right:8px;
+  margin-left:0;
+  z-index:4;
+  font-size:12.5px;
+  font-weight:860;
+  line-height:1.1;
+  padding:4px 8px;
+  letter-spacing:-.08px;
+  white-space:nowrap;
+  box-shadow:0 2px 8px rgba(20,26,34,.045);
+}
+#goals .goal-meta{
+  display:block;
+  -webkit-line-clamp:unset;
+  overflow:visible;
+  white-space:normal;
+  margin-top:1px;
+  margin-bottom:6px;
+}
+#goals .goal-meta-line{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  line-height:1.42;
+}
+@media(max-width:460px){
+  #goals .goal{height:160px;min-height:160px}
+  #goals .goal-days{top:5px;right:7px;font-size:12px;padding:4px 7px}
+  #goals .goal-card{padding-right:106px}
+}
+
+/* ===== v11：印花優惠主頁格式 ===== */
+#goals .goal:has(.stamp-progress-row){height:184px;min-height:184px}
+#goals .goal:has(.stamp-progress-row) .goal-meta{margin-bottom:4px}
+#goals .stamp-progress-row{
+  display:block;
+  min-height:0;
+  margin-top:0;
+}
+#goals .stamp-track{
+  display:flex;
+  min-height:34px;
+  gap:5px;
+  margin-bottom:2px;
+}
+#goals .stamp-mark{
+  width:31px;
+  height:31px;
+  font-size:19px;
+}
+#goals .stamp-count-label{
+  display:block;
+  min-width:0;
+  text-align:left;
+  font-size:12.5px;
+  line-height:1.25;
+  margin-top:1px;
+}
+#goals .goal:has(.stamp-progress-row) .goal-status{margin-top:4px!important}
+@media(max-width:460px){
+  #goals .goal:has(.stamp-progress-row){height:188px;min-height:188px}
+  #goals .stamp-track{min-height:32px}
+  #goals .stamp-mark{width:30px;height:30px;font-size:18px}
+}
+
+
+
+/* ===== v12：主頁卡片等高＋金額重點＋電脈衝進度 ===== */
+/* 不再由 grid 的最高內容撐高其他 row；每張卡直接同高、緊貼排列。 */
+#goals{
+  display:block;
+}
+#goals .goal{
+  height:176px!important;
+  min-height:176px!important;
+  margin:0!important;
+}
+#goals .goal:has(.stamp-progress-row){
+  height:176px!important;
+  min-height:176px!important;
+}
+#goals .goal + .goal{margin-top:0!important}
+
+/* 狀態中的金額加粗，方便快速掃讀。 */
+#goals .goal-status b{
+  color:var(--text);
+  font-weight:900;
+}
+
+/* 進度條：保留原本漸層，再加一束電脈衝光掃過已完成部分。 */
+#goals .progress>div{
+  position:relative;
+  overflow:hidden;
+  animation:progressGrow .82s cubic-bezier(.22,.78,.24,1) both,
+            progressElectricPulse 2.4s ease-in-out 1.05s infinite;
+  animation-delay:var(--bar-delay,0ms),calc(var(--bar-delay,0ms) + 900ms);
+}
+#goals .progress>div::after{
+  content:"";
+  position:absolute;
+  top:-55%;
+  bottom:-55%;
+  left:-38%;
+  width:28%;
+  margin:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),rgba(255,255,255,.98),rgba(255,255,255,.20),transparent);
+  transform:skewX(-18deg);
+  filter:blur(.15px);
+  opacity:0;
+  animation:progressElectricSweep 2.4s cubic-bezier(.2,.72,.2,1) calc(var(--bar-delay,0ms) + 900ms) infinite;
+}
+@keyframes progressElectricSweep{
+  0%,18%{left:-38%;opacity:0}
+  28%{opacity:.92}
+  62%{opacity:.78}
+  76%,100%{left:118%;opacity:0}
+}
+@keyframes progressElectricPulse{
+  0%,100%{box-shadow:0 0 9px var(--bar-glow,rgba(89,103,255,.18))}
+  45%{box-shadow:0 0 15px var(--bar-glow,rgba(89,103,255,.30))}
+  56%{box-shadow:0 0 7px var(--bar-glow,rgba(89,103,255,.18))}
+}
+
+@media(max-width:460px){
+  #goals .goal,
+  #goals .goal:has(.stamp-progress-row){height:180px!important;min-height:180px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  #goals .progress>div,
+  #goals .progress>div::after{animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+
+
+/* ===== v13：較慢電脈衝＋主頁要求重點＋加粗進度條 ===== */
+/* 主頁要求列的金額／迎新日數由 renderGoalMeta() 包成 <b>。 */
+#goals .goal-meta-line{
+  font-weight:850;
+}
+#goals .goal-meta b{
+  color:var(--text);
+  font-weight:920;
+}
+
+/* 進度條加粗，仍保持圓角。 */
+#goals .progress{
+  height:15px;
+  border-radius:999px;
+}
+
+/*
+   電脈衝改成「慢掃一次 + 較長休息」：
+   - 一個完整循環 6.8 秒
+   - 真正掃光只集中在中段，前後大部分時間維持安靜
+*/
+#goals .progress>div{
+  animation:progressGrow .82s cubic-bezier(.22,.78,.24,1) both,
+            progressElectricPulseSlow 6.8s ease-in-out 1.4s infinite;
+  animation-delay:var(--bar-delay,0ms),calc(var(--bar-delay,0ms) + 1.2s);
+}
+#goals .progress>div::after{
+  width:24%;
+  left:-34%;
+  animation:progressElectricSweepSlow 6.8s cubic-bezier(.22,.72,.18,1) calc(var(--bar-delay,0ms) + 1.2s) infinite;
+}
+@keyframes progressElectricSweepSlow{
+  0%,18%{left:-34%;opacity:0}
+  22%{opacity:.22}
+  28%{opacity:.92}
+  48%{left:116%;opacity:.72}
+  54%,100%{left:116%;opacity:0}
+}
+@keyframes progressElectricPulseSlow{
+  0%,18%,58%,100%{box-shadow:0 0 8px var(--bar-glow,rgba(89,103,255,.16))}
+  30%{box-shadow:0 0 14px var(--bar-glow,rgba(89,103,255,.28))}
+  46%{box-shadow:0 0 10px var(--bar-glow,rgba(89,103,255,.20))}
+}
+
+@media (prefers-reduced-motion:reduce){
+  #goals .progress>div,
+  #goals .progress>div::after{animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+
+
+/* ===== v14：進行中的回贈目標＋排序工具 ===== */
+.goal-section-head{
+  gap:12px;
+}
+.goal-section-head h2{
+  flex:0 0 auto;
+  font-size:17px;
+}
+.goal-head-tools{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+  min-width:0;
+}
+.goal-sort-control{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  min-width:0;
+  height:32px;
+  padding:0 5px 0 9px;
+  border:1px solid rgba(221,224,229,.96);
+  border-radius:10px;
+  background:rgba(255,255,255,.9);
+  box-shadow:0 3px 10px rgba(20,26,34,.035);
+}
+.goal-sort-label{
+  flex:0 0 auto;
+  font-size:10px!important;
+  font-weight:800!important;
+  color:#8a9099!important;
+}
+#goalSortSelect{
+  width:auto;
+  min-width:104px;
+  height:30px;
+  border:0;
+  border-radius:8px;
+  padding:0 22px 0 2px;
+  background:transparent;
+  box-shadow:none;
+  outline:none;
+  color:#343a42;
+  font-size:10.8px;
+  font-weight:820;
+  cursor:pointer;
+}
+#goalSortSelect:focus{box-shadow:none;border:0}
+.goal-sort-dir{
+  width:32px;
+  height:32px;
+  flex:0 0 32px;
+  border:1px solid rgba(221,224,229,.96);
+  border-radius:10px;
+  background:rgba(255,255,255,.92);
+  color:#444b55;
+  font-size:16px;
+  font-weight:900;
+  line-height:1;
+  box-shadow:0 3px 10px rgba(20,26,34,.035);
+  transition:transform .14s ease,background .14s ease;
+}
+.goal-sort-dir:hover{background:#fff;transform:translateY(-1px)}
+.goal-sort-dir:active{transform:scale(.96)}
+
+/* 排序洗牌動畫：卡片依新次序滑到位置，並有輕微左右交錯感。 */
+#goals.is-shuffling{
+  overflow:visible;
+}
+#goals.is-shuffling .goal{
+  will-change:transform,opacity;
+  pointer-events:none;
+  position:relative;
+}
+
+@media(max-width:600px){
+  .goal-section-head{flex-wrap:wrap;align-items:center}
+  .goal-section-head h2{font-size:16px}
+  .goal-head-tools{width:100%;gap:6px}
+  .goal-sort-control{height:31px}
+  #goalSortSelect{min-width:99px;font-size:10.4px}
+  .goal-sort-dir{width:31px;height:31px;flex-basis:31px}
+}
+
+
+
+/* ===== 門檻／階段：新增按鈕置於表格外 + 新列向下展開動畫 ===== */
+.milestone-stage-table,.threshold-tier-table{margin-bottom:10px}
+.milestone-add-row,.threshold-add-row{
+  display:block;
+  border:1px solid rgba(100,78,220,.30);
+  background:linear-gradient(135deg,#6657d9,#846cf0);
+  color:#fff;
+  box-shadow:0 8px 20px rgba(91,73,203,.18);
+  transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;
+}
+.milestone-add-row,.threshold-add-row{margin:0 0 18px}
+.milestone-add-row:hover,.threshold-add-row:hover{transform:translateY(-1px);box-shadow:0 11px 25px rgba(91,73,203,.24);filter:brightness(1.03)}
+.milestone-add-row:active,.threshold-add-row:active{transform:scale(.99);box-shadow:0 6px 15px rgba(91,73,203,.16)}
+.wizard-row-card.row-added{
+  overflow:hidden;
+  transform-origin:top center;
+  will-change:height,opacity,transform,padding,margin;
+  animation:ruleRowExpandDown .68s cubic-bezier(.2,.82,.24,1) both;
+}
+.wizard-row-card.row-removing{
+  overflow:hidden;
+  pointer-events:none;
+  transform-origin:top center;
+  will-change:height,opacity,transform,padding,margin,border-width;
+  animation:ruleRowCollapseUp .40s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes ruleRowExpandDown{
+  0%{
+    height:0;
+    min-height:0;
+    opacity:0;
+    transform:translateY(-8px);
+    padding-top:0;
+    padding-bottom:0;
+    margin-bottom:0;
+    border-top-width:0;
+    border-bottom-width:0;
+  }
+  72%{opacity:1}
+  100%{
+    height:var(--rule-row-height,auto);
+    min-height:0;
+    opacity:1;
+    transform:translateY(0);
+    padding-top:16px;
+    padding-bottom:16px;
+    margin-bottom:10px;
+  }
+}
+@keyframes ruleRowCollapseUp{
+  0%{
+    height:var(--rule-row-height,auto);
+    min-height:0;
+    opacity:1;
+    transform:translateY(0);
+    padding-top:16px;
+    padding-bottom:16px;
+    margin-bottom:10px;
+    border-top-width:1px;
+    border-bottom-width:1px;
+  }
+  48%{opacity:.68;transform:translateY(-4px)}
+  100%{
+    height:0;
+    min-height:0;
+    opacity:0;
+    transform:translateY(-10px);
+    padding-top:0;
+    padding-bottom:0;
+    margin-bottom:0;
+    border-top-width:0;
+    border-bottom-width:0;
+  }
+}
+.wizard-option.list-create-option{grid-column:1/-1}
+.edit-shell.list-create-shell{animation:none}
 </style>
-</head>
+<script type="text/javascript" nonce="ed49d6fd724d4799beacf1fefe8" src="//injections.adguard.org?ts=1788110796703&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000007ad081fa81486c0f31edcd15%26ts%3D496698%26p%3Dfs%26cid%3D1%26sig%3D63ee7cd5f8fd0ebc6ee440b61d3b1192d9837915198cff3db75298f826d8d95a%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="ed49d6fd724d4799beacf1fefe8" src="//injections.adguard.org?ts=1788110796703&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 
 <div class="app">
@@ -1321,9 +1686,21 @@ html.modal-open,body.modal-open{overflow:hidden!important;overscroll-behavior:no
     </div>
   </div>
 
-  <div class="section-head">
-    <h2>額度進度</h2>
-    <span id="goalCount">0 個目標</span>
+  <div class="section-head goal-section-head">
+    <h2 id="goalSectionTitle">進行中的回贈目標 ( 0 個 )</h2>
+    <div class="goal-head-tools">
+      <label class="goal-sort-control" aria-label="回贈目標排序">
+        <span class="goal-sort-label">排序</span>
+        <select id="goalSortSelect">
+          <option value="card">依信用卡名稱</option>
+          <option value="type">依簽賬類型</option>
+          <option value="end">依結束時間</option>
+          <option value="added">依加入時間</option>
+          <option value="progress">依達標比例</option>
+        </select>
+      </label>
+      <button id="goalSortDir" class="goal-sort-dir" type="button" aria-label="切換排序方向" title="切換排序方向">↑</button>
+    </div>
   </div>
   <div id="goals" class="goals"></div>
 
@@ -1554,7 +1931,7 @@ function normalizeTarget(t){
   const milestones=rawMilestones.map(x=>({threshold:Math.max(0,Number(x.threshold||0)),rewardType:cleanRewardType(x.rewardType),reward:Math.max(0,Number(x.reward||0)),startDate:x.startDate||'',endDate:x.endDate||''}));
   const hasStageDates=milestones.some(x=>x.startDate||x.endDate)||t.milestoneDateMode==='dated'||incomingMechanic==='recurring';
   const migrateCumulativeMilestone=type!=='welcome'&&['milestone','custom'].includes(incomingMechanic)&&!hasStageDates;
-  let mechanic=type==='welcome'?'milestone':(incomingMechanic==='recurring'?'milestone':incomingMechanic);
+  let mechanic=type==='welcome'?'milestone':(['recurring','custom'].includes(incomingMechanic)?'milestone':incomingMechanic);
   if(migrateCumulativeMilestone)mechanic='tier_rate';
   const milestoneDateMode=type==='welcome'?'cumulative':'dated';
   const milestoneBonusEnabled=t.milestoneBonusEnabled!==undefined?!!t.milestoneBonusEnabled:(incomingMechanic==='recurring'&&Number(t.completionBonus||0)>0);
@@ -1594,7 +1971,7 @@ function normalizeTarget(t){
   };
 }
 function mechanicLabel(t){
-  return ({standard:'指定回贈',tier_rate:'門檻簽賬',milestone:'階段獎賞',recurring:'階段獎賞',stamp:'印花／次數',custom:'自訂組合'})[t.mechanic]||'優惠';
+  return ({standard:'指定回贈',tier_rate:'門檻簽賬',milestone:'階段獎賞',recurring:'階段獎賞',stamp:'印花獎賞',custom:'階段獎賞'})[t.mechanic]||'優惠';
 }
 function rewardValueLabel(type,value){
   const n=Number(value||0);if(type==='飛行里數')return `${n.toLocaleString('en-HK')} 里`;if(type==='積分')return `${n.toLocaleString('en-HK')} 分`;if(type==='禮品'||type==='自訂獎賞')return `${n||1} 份`;return money(n);
@@ -1708,6 +2085,111 @@ function load(){
 let state=load();
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 
+/* 主頁回贈目標排序：獨立儲存，避免改動優惠資料結構。 */
+const GOAL_SORT_KEY=KEY+'_goal_sort';
+const GOAL_SORT_DEFAULT_DIR={card:'asc',type:'asc',end:'asc',added:'asc',progress:'desc'};
+function loadGoalSort(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(GOAL_SORT_KEY)||'null');
+    const key=['card','type','end','added','progress'].includes(raw?.key)?raw.key:'added';
+    const dir=raw?.dir==='desc'?'desc':raw?.dir==='asc'?'asc':GOAL_SORT_DEFAULT_DIR[key];
+    return {key,dir};
+  }catch(e){return {key:'added',dir:'asc'}}
+}
+let goalSort=loadGoalSort();
+function saveGoalSort(){localStorage.setItem(GOAL_SORT_KEY,JSON.stringify(goalSort))}
+function goalSpendType(t){
+  if(t.targetType==='welcome')return '迎新簽賬';
+  if(t.eligibilityMode==='categories'&&Array.isArray(t.rebateCategories)&&t.rebateCategories.length){
+    return t.rebateCategories.map(x=>String(x||'').trim()).filter(Boolean).join('／');
+  }
+  return '所有合資格簽賬';
+}
+function sortGoalRows(rows){
+  const dir=goalSort.dir==='desc'?-1:1,key=goalSort.key;
+  const compareText=(a,b)=>String(a||'').localeCompare(String(b||''),'zh-HK',{numeric:true,sensitivity:'base'});
+  return rows.slice().sort((a,b)=>{
+    let result=0;
+    if(key==='card')result=compareText(a.sortCard,b.sortCard);
+    else if(key==='type')result=compareText(a.sortType,b.sortType);
+    else if(key==='end'){
+      const aMissing=!a.sortEnd,bMissing=!b.sortEnd;
+      if(aMissing!==bMissing)return aMissing?1:-1;
+      result=compareText(a.sortEnd,b.sortEnd);
+    }else if(key==='added')result=Number(a.sortAdded||0)-Number(b.sortAdded||0);
+    else if(key==='progress')result=Number(a.progress||0)-Number(b.progress||0);
+    if(result===0)result=Number(a.sortAdded||0)-Number(b.sortAdded||0);
+    return result*dir;
+  });
+}
+function updateGoalSortControls(){
+  const select=document.getElementById('goalSortSelect'),btn=document.getElementById('goalSortDir');
+  if(select)select.value=goalSort.key;
+  if(btn){
+    const asc=goalSort.dir==='asc';
+    btn.textContent=asc?'↑':'↓';
+    const label=select?.selectedOptions?.[0]?.textContent||'排序';
+    const direction=asc?'由小至大／由早至遲':'由大至小／由遲至早';
+    btn.title=`${label}：${direction}`;
+    btn.setAttribute('aria-label',`切換排序方向，目前${direction}`);
+  }
+}
+function captureGoalShufflePositions(){
+  const map=new Map();
+  document.querySelectorAll('#goals .goal[data-target-id]').forEach(el=>{
+    const r=el.getBoundingClientRect();
+    map.set(String(el.dataset.targetId||''),{left:r.left,top:r.top});
+  });
+  return map;
+}
+let goalShuffleTimer=0;
+function renderGoalsWithShuffle(){
+  /* 快速連續排序時，先清理上一輪收尾 timer，避免舊 timer 提早解除新一輪洗牌狀態。 */
+  clearTimeout(goalShuffleTimer);
+  document.getElementById('goals')?.classList.remove('is-shuffling');
+  const before=captureGoalShufflePositions();
+  renderGoals();
+  if(!before.size||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  requestAnimationFrame(()=>{
+    const box=document.getElementById('goals');
+    const cards=[...document.querySelectorAll('#goals .goal[data-target-id]')];
+    if(!box||!cards.length)return;
+    box.classList.add('is-shuffling');
+    let longest=0;
+    cards.forEach((el,i)=>{
+      const old=before.get(String(el.dataset.targetId||''));
+      const now=el.getBoundingClientRect();
+      const side=i%2===0?-1:1;
+      const dx=old?old.left-now.left:side*14;
+      const dy=old?old.top-now.top:0;
+      const moved=Math.abs(dx)>.5||Math.abs(dy)>.5;
+      const startX=moved?dx:side*10;
+      const startY=moved?dy:0;
+      const duration=680,delay=Math.min(i*34,190);
+      longest=Math.max(longest,duration+delay);
+      el.animate([
+        {transform:`translate(${startX}px,${startY}px) scale(.982) rotate(${side*.45}deg)`,opacity:.74,offset:0},
+        {transform:`translate(${side*9}px,${startY*.16}px) scale(.994) rotate(${-side*.22}deg)`,opacity:.94,offset:.58},
+        {transform:'translate(0,0) scale(1) rotate(0deg)',opacity:1,offset:1}
+      ],{duration,delay,easing:'cubic-bezier(.2,.78,.2,1)',fill:'both'});
+    });
+    goalShuffleTimer=window.setTimeout(()=>{
+      box.classList.remove('is-shuffling');
+      goalShuffleTimer=0;
+    },longest+60);
+  });
+}
+document.getElementById('goalSortSelect')?.addEventListener('change',e=>{
+  goalSort.key=e.target.value;
+  goalSort.dir=GOAL_SORT_DEFAULT_DIR[goalSort.key]||'asc';
+  saveGoalSort();updateGoalSortControls();renderGoalsWithShuffle();
+});
+document.getElementById('goalSortDir')?.addEventListener('click',()=>{
+  goalSort.dir=goalSort.dir==='asc'?'desc':'asc';
+  saveGoalSort();updateGoalSortControls();renderGoalsWithShuffle();
+});
+updateGoalSortControls();
+
 function getPhysicalCards(){
   const map=new Map();
   state.cards.filter(t=>!t._temporary).forEach(t=>{
@@ -1748,10 +2230,35 @@ function campaignMonths(start,end){
 }
 function rewardLabel(target){return rewardValueLabel(target.welcomeRewardType,target.welcomeReward)}
 function offerEndStatus(t,bounds){
-  const today=localDateStr(),end=bounds.end;if(!end)return {days:'進行中',daysLeft:null,dayClass:'',ended:false};
-  if(today>end)return {days:'已完結',daysLeft:0,dayClass:'bad',ended:true};
-  const left=daysLeft(end);
-  return {days:`尚餘${left}日`,daysLeft:left,dayClass:'',ended:false};
+  const endRaw=String(bounds.end||'').trim();
+  if(!endRaw)return {days:'進行中',daysLeft:null,dayClass:'',ended:false};
+
+  /* 日期型優惠視為有效至該日 23:59:59；最後一日改用小時／分鐘倒數。 */
+  const endDate=endRaw.slice(0,10),today=localDateStr();
+  if(today>endDate)return {days:'已完結',daysLeft:0,dayClass:'bad',ended:true};
+  if(today<endDate){
+    const left=Math.max(1,daysLeft(endDate));
+    return {days:`尚餘${left}日`,daysLeft:left,dayClass:'',ended:false};
+  }
+
+  let endAt;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(endRaw)){
+    const [y,m,d]=endRaw.split('-').map(Number);
+    endAt=new Date(y,m-1,d,23,59,59,999);
+  }else{
+    endAt=new Date(endRaw);
+  }
+  if(Number.isNaN(endAt.getTime()))return {days:'進行中',daysLeft:null,dayClass:'',ended:false};
+
+  const remaining=endAt.getTime()-Date.now();
+  if(remaining<=0)return {days:'已完結',daysLeft:0,dayClass:'bad',ended:true};
+  const MINUTE=60*1000,HOUR=60*MINUTE;
+  if(remaining<HOUR){
+    const minutes=Math.max(1,Math.floor(remaining/MINUTE));
+    return {days:`尚餘${minutes}分鐘`,daysLeft:0,dayClass:'',ended:false};
+  }
+  const hours=Math.max(1,Math.floor(remaining/HOUR));
+  return {days:`尚餘${hours}小時`,daysLeft:0,dayClass:'',ended:false};
 }
 function remainingDayClass(time,completed){
   if(completed)return 'good';
@@ -1768,23 +2275,71 @@ function rebateProgressTitle(t,rate){
   const rateText=Number(rate||0).toFixed(Number.isInteger(Number(rate||0))?0:1);
   if(t.eligibilityMode==='categories'&&t.rebateCategories.length){
     const names=t.rebateCategories.map(cat=>{
-      const label=String(cat||'');
-      return `${CATEGORY_EMOJI[label]||'🏷️'}${label}${label.endsWith('簽賬')?'回贈':'簽賬回贈'}`;
+      const label=String(cat||'').trim();
+      return `${CATEGORY_EMOJI[label]||'🏷️'}${label}${label.endsWith('簽賬')?'':'簽賬'}`;
     }).join('／');
-    return `${names} · ${rateText}%`;
+    return `${names} · 額外 ${rateText}%`;
   }
-  return `💳所有合資格簽賬回贈 · ${rateText}%`;
+  return `💳所有合資格簽賬 · 額外 ${rateText}%`;
 }
 function offerMeta(t){
   const catText=t.eligibilityMode==='categories'&&t.rebateCategories.length?`限${t.rebateCategories.join('、')}`:'適用於所有合資格簽賬';
   const period=(t.mechanic==='milestone'&&t.targetType!=='welcome')?'按階段日期':(({monthly:'每月重置',quarterly:'每季度重置',campaign:'指定推廣期',yearly:'全年',approval_window:`批卡後 ${t.welcomeDays} 日`})[t.periodType]||'自訂週期');
   const parts=[catText,period];
-  // 固定回贈目標：主頁簽賬要求同時顯示「最低累積簽賬」，避免只見到每筆最低簽賬／上限而漏掉達標門檻。
   if(t.mechanic==='standard'&&Number(t.spendRequirement||0)>0)parts.push(`最低累積簽賬 ${money(t.spendRequirement)}`);
   if(Number(t.minTransaction||0)>0)parts.push(`每筆最低簽賬 ${money(t.minTransaction)}`);
   if(t.capType==='spend'&&Number(t.capAmount||0)>0)parts.push(`達標簽賬上限 ${money(t.capAmount)}`);
   else if(t.capType==='reward'&&Number(t.capAmount||0)>0)parts.push(`回贈上限 ${money(t.capAmount)}`);
   return parts.join(' · ');
+}
+function homepageCampaignLine(t){
+  if(t.targetType==='welcome'||t.periodType!=='campaign')return '';
+  const end=String(t.endDate||t.rebateEndDate||'').trim();
+  return end?`推廣期至 ${end}`:'';
+}
+function homepageRequirementLines(t){
+  // 主頁只保留真正需要掃讀的簽賬要求；合資格類別已在標題顯示，不再重複「適用於／限…」。
+  if(t.targetType==='welcome'){
+    const first=[...(t.milestones||[])].sort((a,b)=>Number(a.threshold||0)-Number(b.threshold||0))[0];
+    const threshold=Math.max(0,Number(first?.threshold ?? t.welcomeRequirement ?? 0));
+    return threshold>0?[`批卡後 ${Math.max(1,Number(t.welcomeDays||1))} 日累積簽賬 ${money(threshold)}`]:[`批卡後 ${Math.max(1,Number(t.welcomeDays||1))} 日`];
+  }
+  if(t.mechanic==='standard'){
+    const lines=[];
+    const campaignLine=homepageCampaignLine(t);
+    const req=Math.max(0,Number(t.spendRequirement||0));
+    const periodPrefix=({monthly:'每月',quarterly:'每季度',yearly:'全年'})[t.periodType]||(t.periodType==='campaign'?'':'每期');
+    if(campaignLine)lines.push(campaignLine);
+    if(req>0)lines.push(`${periodPrefix}最低累積簽賬 ${money(req)}`);
+    if(Number(t.minTransaction||0)>0)lines.push(`每筆最低簽賬 ${money(t.minTransaction)}`);
+    if(t.capType==='spend'&&Number(t.capAmount||0)>0)lines.push(`達標簽賬上限 ${money(t.capAmount)}`);
+    else if(t.capType==='reward'&&Number(t.capAmount||0)>0){
+      const rate=Math.max(0,Number(t.rebateRate||0));
+      const spendCap=rate>0?Number(t.capAmount)/(rate/100):0;
+      lines.push(spendCap>0?`達標簽賬上限 ${money(spendCap)} (回贈上限 ${money(t.capAmount)})`:`回贈上限 ${money(t.capAmount)}`);
+    }
+    return lines.length?lines:[periodPrefix||'指定推廣期'];
+  }
+  return [offerMeta(t)];
+}
+function renderGoalMeta(lines){
+  return (Array.isArray(lines)?lines:[lines]).filter(Boolean).map(x=>{
+    const raw=String(x||'');
+    let text=esc(raw);
+    // 主頁要求列：金額一律加粗；迎新「批卡後 X 日」的日數亦加粗。
+    text=text.replace(/(\$[0-9][0-9,]*(?:\.[0-9]+)?)/g,'<b>$1</b>');
+    text=text.replace(/(批卡後\s+)([0-9]+)(\s+日)/g,'$1<b>$2</b>$3');
+    // 印花條件的「每次獲得印花數量」同樣屬關鍵數值，與金額一樣加重顯示。
+    text=text.replace(/(\s=\s)([0-9]+)(\s+個印花)/g,'$1<b>$2</b>$3');
+    // 指定推廣期在主頁獨立顯示；「推廣期至」保持一般字重，只把日期加粗。
+    const campaignMatch=raw.match(/^推廣期至\s+(\d{4}-\d{2}-\d{2})$/);
+    if(campaignMatch)return `<span class="goal-meta-line">· 推廣期至 <b>${esc(campaignMatch[1])}</b></span>`;
+    return `<span class="goal-meta-line">· ${text}</span>`;
+  }).join('');
+}
+function renderGoalStatus(status){
+  /* 先 escape，再只為 $ 金額加入 <b>，避免把狀態文字當 HTML 注入。 */
+  return esc(status).replace(/(\$[0-9][0-9,]*(?:\.[0-9]+)?)/g,'<b>$1</b>');
 }
 function thresholdTierRewardLabel(tier,categories=[]){
   const mode=tier?.rewardMode||'rate';
@@ -1797,8 +2352,20 @@ function thresholdTierRewardLabel(tier,categories=[]){
 }
 function stampEarnDescription(t){
   const amount=money(t.stampTransactionMin),qty=Math.max(1,Number(t.stampsPerTxn||1));
-  const base=t.stampEarnMode==='cumulative'?`累積每滿 ${amount} = ${qty} 個印花`:`每筆滿 ${amount} = ${qty} 個印花`;
+  const base=t.stampEarnMode==='cumulative'?`每累積簽賬 ${amount} = ${qty} 個印花`:`單筆簽賬達 ${amount} = ${qty} 個印花`;
   return `${base}${t.stampDailyCapEnabled?` · 每日最多 ${Math.max(1,Number(t.stampDailyCap||1))} 個`:''}`;
+}
+function stampGoalTitle(t){
+  if(t.eligibilityMode==='categories'&&t.rebateCategories.length){
+    const catsRaw=t.rebateCategories.map(cat=>String(cat||'').trim()).filter(Boolean);
+    const labels=catsRaw.map(label=>label.endsWith('簽賬')?label:`${label}簽賬`);
+    const cats=labels.join('／'),full=`${cats||'指定簽賬'} · 印花獎賞`;
+    /* 多類別或標題過長時縮短；圖案仍保留，避免只剩純文字。 */
+    if(labels.length>=3||Array.from(full).length>20)return `💳多類別簽賬 · 印花獎賞`;
+    const icon=CATEGORY_EMOJI[catsRaw[0]]||'🔖';
+    return `${icon}${full}`;
+  }
+  return `💳所有合資格簽賬 · 印花獎賞`;
 }
 function stampCountForOffer(t,bounds=offerBounds(t)){
   const txs=txForOffer(t,bounds).slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
@@ -1835,7 +2402,7 @@ function stampCountForOffer(t,bounds=offerBounds(t)){
 function getGoalRows(){
   const rows=[];
   state.cards.filter(t=>!t._temporary).forEach(t=>{
-    const b=offerBounds(t),time=offerEndStatus(t,b),spent=spendForOffer(t,b);let title='',status='',progress=0,percent='0%',completed=false,meta=offerMeta(t),stampCurrent=0,stampTarget=0,stampMilestones=[],stageOverview=null;
+    const b=offerBounds(t),time=offerEndStatus(t,b),spent=spendForOffer(t,b);let title='',status='',progress=0,percent='0%',completed=false,meta=offerMeta(t),metaLines=homepageRequirementLines(t),stampCurrent=0,stampTarget=0,stampMilestones=[],stageOverview=null;
     if(t.mechanic==='tier_rate'){
       const tiers=[...t.tiers].sort((a,b)=>a.threshold-b.threshold),done=tiers.filter(x=>spent>=x.threshold),current=[...done].at(-1)||null,next=tiers.find(x=>spent<x.threshold),target=next?.threshold||tiers.at(-1)?.threshold||0;
       progress=target?pct(spent,target):(tiers.length?100:0);completed=!next&&tiers.length>0;
@@ -1877,11 +2444,19 @@ function getGoalRows(){
       }else{
         const done=ms.filter(x=>spent>=x.threshold),next=ms.find(x=>spent<x.threshold),target=next?.threshold||ms.at(-1)?.threshold||0,allStages=!next&&ms.length>0,bonusNeed=Math.max(0,Number(t.milestoneBonusSpend||0)),bonusMet=!t.milestoneBonusEnabled||(allStages&&spent>=bonusNeed);
         progress=allStages&&t.milestoneBonusEnabled&&!bonusMet?(bonusNeed?pct(spent,bonusNeed):100):(target?pct(spent,target):0);completed=allStages&&bonusMet;
-        title=`${t.targetType==='welcome'?'迎新':'簽賬'} · 階段獎賞 ${done.length}/${ms.length}`;
-        if(t.targetType==='welcome')meta=`累積簽賬 · ${meta}`;
-        const nextReward=next&&Number(next.reward||0)>0?`，完成後可得 ${rewardValueLabel(next.rewardType,next.reward)}`:'';
-        status=next?`已簽 ${money(spent)}，尚欠 ${money(next.threshold-spent)}${nextReward}`:(!bonusMet?`全部階段已達標；尚欠 ${money(Math.max(0,bonusNeed-spent))} 解鎖加碼 ${rewardValueLabel(t.milestoneBonusType,t.milestoneBonus)}`:(t.targetType==='welcome'?`已簽 ${money(spent)}，迎新簽賬要求已達標`:`已簽 ${money(spent)}，全部 ${ms.length} 個階段已解鎖${t.milestoneBonusEnabled?`，連同加碼獎賞`:''}`));
-        meta=`${meta}${ms.length?` · ${ms.length} 個階段`:''}${t.milestoneBonusEnabled?` · 加碼門檻 ${money(bonusNeed)}`:''}`;
+        if(t.targetType==='welcome'){
+          const first=ms[0]||null;
+          const reward=first&&Number(first.reward||0)>0?rewardValueLabel(first.rewardType,first.reward):rewardLabel(t);
+          title=`🎁迎新獎賞 ${reward}`;
+          status=next?`已簽賬 ${money(spent)}，尚欠 ${money(Math.max(0,next.threshold-spent))}`:`已簽賬 ${money(spent)}，迎新簽賬要求已達標`;
+          metaLines=homepageRequirementLines(t);
+        }else{
+          title=`簽賬 · 階段獎賞 ${done.length}/${ms.length}`;
+          const nextReward=next&&Number(next.reward||0)>0?`，完成後可得 ${rewardValueLabel(next.rewardType,next.reward)}`:'';
+          status=next?`已簽 ${money(spent)}，尚欠 ${money(next.threshold-spent)}${nextReward}`:(!bonusMet?`全部階段已達標；尚欠 ${money(Math.max(0,bonusNeed-spent))} 解鎖加碼 ${rewardValueLabel(t.milestoneBonusType,t.milestoneBonus)}`:`已簽 ${money(spent)}，全部 ${ms.length} 個階段已解鎖${t.milestoneBonusEnabled?`，連同加碼獎賞`:''}`);
+          meta=`${meta}${ms.length?` · ${ms.length} 個階段`:''}${t.milestoneBonusEnabled?` · 加碼門檻 ${money(bonusNeed)}`:''}`;
+          metaLines=[meta];
+        }
       }
     }else if(t.mechanic==='recurring'){
       const months=campaignMonths(t.startDate,t.endDate),selected=state.month,monthStart=selected+'-01',monthEndStr=monthEnd(selected),thisSpent=spendForOffer(t,{start:monthStart,end:monthEndStr}),threshold=Number(t.recurringThreshold||0);
@@ -1899,29 +2474,36 @@ function getGoalRows(){
         completed=rewardLimit>0?earnedRewards>=rewardLimit:(stampCap>0&&stamps>=stampCap);
         progress=pct(stamps,target);percent=`${stamps}/${target}`;stampCurrent=stamps;stampTarget=target;
         const markLimit=Math.min(60,target),repeatMarks=[];for(let x=every;x<=markLimit;x+=every)repeatMarks.push(x);stampMilestones=repeatMarks;
-        title=`簽賬 · 印花 ${stamps} 個 · 已獎 ${earnedRewards} 次`;
+        title=stampGoalTitle(t);
         if(completed)status=`已達本期上限；共獲 ${earnedRewards} 次 ${rewardValueLabel(t.stampRepeatRewardType,t.stampRepeatReward)}`;
-        else{const nextNeed=every-(stamps%every||0);status=`再 ${nextNeed} 個印花可得 ${rewardValueLabel(t.stampRepeatRewardType,t.stampRepeatReward)}${rewardLimit>0?` · 最多獎 ${rewardLimit} 次`:''}`}
+        else{const nextNeed=every-(stamps%every||0);status=`再 ${nextNeed} 個即可解鎖 ${rewardValueLabel(t.stampRepeatRewardType,t.stampRepeatReward)}${rewardLimit>0?` · 最多獎 ${rewardLimit} 次`:''}`}
         meta=`${meta} · ${stampEarnDescription(t)} · 集滿 ${every} 個印花發放一次獎賞${stampCap>0?` · 印花上限 ${stampCap}`:''}${rewardLimit>0?` · 獎勵上限 ${rewardLimit} 次`:''}`;
+        metaLines=[stampEarnDescription(t)];
       }else{
         const ms=[...t.stampMilestones].sort((a,b)=>a.count-b.count),done=ms.filter(x=>stamps>=x.count),next=ms.find(x=>stamps<x.count),target=next?.count||ms.at(-1)?.count||0;
         progress=target?pct(stamps,target):0;completed=!next&&ms.length>0;percent=`${stamps}/${target||stamps||0}`;stampCurrent=stamps;stampTarget=target||stamps||0;stampMilestones=ms.map(x=>x.count);
-        title=`簽賬 · 印花／次數 ${stamps} 個`;
+        title=stampGoalTitle(t);
         status=next?`再 ${Math.max(0,next.count-stamps)} 個即可解鎖 ${rewardValueLabel(next.rewardType,next.reward)}`:`所有印花獎賞已解鎖`;
         meta=`${meta} · ${stampEarnDescription(t)} · ${ms.length} 個獎賞階段${stampCap>0?` · 印花上限 ${stampCap}`:''}`;
+        metaLines=[stampEarnDescription(t)];
       }
     }else{
       const req=Number(t.spendRequirement||0),rate=Number(t.rebateRate||0);let target=req;
       if(t.capType==='spend'&&t.capAmount>0)target=t.capAmount;else if(t.capType==='reward'&&t.capAmount>0&&rate>0)target=t.capAmount/(rate/100);
       progress=target?pct(spent,target):(spent>0?100:0);completed=target>0&&spent>=target;
       title=rebateProgressTitle(t,rate);
+      metaLines=homepageRequirementLines(t);
       const est=spent>=req?spent*rate/100:0,capped=t.capType==='reward'&&t.capAmount>0?Math.min(est,t.capAmount):est;
-      status=spent<req?`已簽 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻`:`已簽 ${money(spent)}，估算回贈 ${money(capped)}`;
+      status=spent<req?`已簽賬 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻`:`已簽賬 ${money(spent)}，估算回贈 ${money(capped)}`;
     }
     if(percent==='0%')percent=`${Math.round(progress)}%`;
-    rows.push({targetId:t.id,mechanic:t.mechanic,card:t.name,title:`${esc(title)} <span class="mechanic-badge">${esc(mechanicLabel(t))}</span>`,meta,days:time.days,dayClass:remainingDayClass(time,completed),goalClass:remainingGoalClass(time,completed),progress,percent,status,completed,stampCurrent,stampTarget,stampMilestones,stageOverview});
+    if(t.mechanic!=='standard'&&t.targetType!=='welcome'&&t.mechanic!=='stamp')metaLines=[meta];
+    const campaignLine=homepageCampaignLine(t);
+    if(campaignLine&&!metaLines.includes(campaignLine))metaLines=[campaignLine,...metaLines];
+    const titleHtml=(t.mechanic==='standard'||t.targetType==='welcome'||t.mechanic==='stamp')?esc(title):`${esc(title)} <span class="mechanic-badge">${esc(mechanicLabel(t))}</span>`;
+    rows.push({targetId:t.id,mechanic:t.mechanic,card:t.name,title:titleHtml,meta,metaLines,days:time.days,dayClass:remainingDayClass(time,completed),goalClass:remainingGoalClass(time,completed),progress,percent,status,completed,stampCurrent,stampTarget,stampMilestones,stageOverview,sortCard:t.name,sortType:goalSpendType(t),sortEnd:b.end||'',sortAdded:Number(t.createdAt||0)});
   });
-  return rows;
+  return sortGoalRows(rows);
 }
 
 const goalPalettes=[
@@ -1952,9 +2534,10 @@ function renderStageOverview(info){
   return previous?`<div class="goal-stage-history goal-stage-history-only">${previous}</div>`:'';
 }
 function renderGoals(){
+  updateGoalSortControls();
   const rows=getGoalRows();
-  const doneCount=rows.filter(r=>r.completed).length;
-  document.getElementById('goalCount').textContent=!rows.length?'準備開第一個目標 ✨':doneCount===rows.length?`${rows.length} 個目標 · 全部賺到手 🏆`:doneCount>0?`${rows.length} 個目標 · 已賺到 ${doneCount} 個 ✨`:`${rows.length} 個回贈目標 · 逐個賺到盡 ✨`;
+  const goalSectionTitle=document.getElementById('goalSectionTitle');
+  if(goalSectionTitle)goalSectionTitle.textContent=`進行中的回贈目標 ( ${rows.length} 個 )`;
   const box=document.getElementById('goals');
   if(!rows.length){box.innerHTML='<div class="empty">未設定任何目標</div>';return}
   box.innerHTML=rows.map((r,i)=>{
@@ -1963,11 +2546,11 @@ function renderGoals(){
       <div class="goal-body">
         <div class="goal-card">${esc(r.card)}</div>
         <div class="goal-title">${r.title}${r.completed?'<span class="trophy" title="目標達成">🏆</span>':''}<span class="goal-days ${r.dayClass}">${esc(r.days)}</span></div>
-        <div class="goal-meta">${r.meta}</div>
+        <div class="goal-meta">${renderGoalMeta(r.metaLines||[r.meta])}</div>
         ${r.stageOverview?renderStageOverview(r.stageOverview):''}
         <div class="goal-lower">
           ${r.mechanic==='stamp'?renderStampProgress(r.stampCurrent,r.stampTarget,r.stampMilestones):`<div class="goal-progress-row"><div class="progress"><div style="--target-width:${r.progress}%"></div></div><div class="goal-percent">${r.percent}</div></div>`}
-          <div class="goal-status">${r.status}</div>
+          <div class="goal-status">${renderGoalStatus(r.status)}</div>
         </div>
       </div>
       <button class="goal-modify" type="button" aria-label="修改" title="修改">✎</button>
@@ -1994,10 +2577,27 @@ function bindGoalActions(){
     modify?.addEventListener('click',e=>{
       e.stopPropagation();
       const id=row.dataset.targetId;if(!id)return;
-      editingTargetId=id;creatingNewTarget=false;editingBackup=JSON.parse(JSON.stringify(state.cards.find(x=>x.id===id)));wizardStep=1;wizardEntering='';renderSettings();openModal('settingsModal');
+      editingTargetId=id;creatingNewTarget=false;listCreateMode=false;editingBackup=JSON.parse(JSON.stringify(state.cards.find(x=>x.id===id)));wizardStep=1;wizardEntering='';renderSettings();openModal('settingsModal');
     });
   });
 }
+
+let goalCountdownTimer=0;
+function refreshGoalCountdowns(){
+  const rows=getGoalRows(),byId=new Map(rows.map(r=>[String(r.targetId),r]));
+  document.querySelectorAll('#goals .goal[data-target-id]').forEach(goal=>{
+    const r=byId.get(String(goal.dataset.targetId||'')),badge=goal.querySelector('.goal-days');
+    if(!r||!badge)return;
+    badge.textContent=r.days;
+    badge.className=`goal-days ${r.dayClass||''}`.trim();
+    goal.classList.toggle('caution-tape',r.goalClass==='caution-tape');
+  });
+}
+function startGoalCountdownClock(){
+  clearInterval(goalCountdownTimer);
+  goalCountdownTimer=setInterval(()=>{if(document.visibilityState==='visible')refreshGoalCountdowns()},30000);
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshGoalCountdowns()});
 
 function renderTransactions(){
   const tx=state.transactions.filter(t=>String(t.date).slice(0,7)===state.month).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
@@ -2169,7 +2769,7 @@ function syncModalScrollLock(){
 function openModal(id){const el=document.getElementById(id);el.classList.remove('closing');el.classList.add('show');syncModalScrollLock()}
 function closeModal(id){
   const el=document.getElementById(id);if(!el.classList.contains('show'))return;
-  if(id==='settingsModal'&&creatingNewTarget&&editingTargetId){const unsaved=editingTargetId;state.cards=state.cards.filter(t=>t.id!==unsaved);creatingNewTarget=false;editingTargetId=null;editingBackup=null}
+  if(id==='settingsModal'&&creatingNewTarget&&editingTargetId){const unsaved=editingTargetId;state.cards=state.cards.filter(t=>t.id!==unsaved);creatingNewTarget=false;listCreateMode=false;editingTargetId=null;editingBackup=null}
   else if(id==='settingsModal'&&!creatingNewTarget&&editingTargetId&&editingBackup){const idx=state.cards.findIndex(t=>t.id===editingTargetId);if(idx>=0)state.cards[idx]=normalizeTarget(editingBackup);editingTargetId=null;editingBackup=null;render()}
   el.classList.add('closing');setTimeout(()=>{el.classList.remove('show','closing');if(id==='addModal')resetTransactionEditor();syncModalScrollLock()},id==='addModal'?230:190);
 }
@@ -2207,7 +2807,7 @@ document.getElementById('deleteTx')?.addEventListener('click',()=>{
 });
 document.getElementById('monthPicker').onchange=e=>{state.month=e.target.value||localMonthStr();save();render()};
 
-let editingTargetId=null,creatingNewTarget=false,wizardStep=1,wizardEntering='',editingBackup=null;
+let editingTargetId=null,creatingNewTarget=false,listCreateMode=false,wizardStep=1,wizardEntering='',editingBackup=null;
 const WIZARD_TOTAL=9;
 const PRESET_CATEGORIES=['一般零售','網上簽賬','手機支付','感應式支付','海外簽賬','外幣簽賬','餐飲','超市','便利店','旅遊商戶','酒店','航空公司','交通','八達通','娛樂','指定商戶'];
 const CATEGORY_EMOJI={
@@ -2219,18 +2819,17 @@ const MECHANICS=[
   ['standard','💳','指定簽賬回贈','固定回贈率，可配最低簽賬、指定類別、每期或全年上限'],
   ['tier_rate','🎯','門檻簽賬','累積滿指定金額後，可提升回贈率、直接取得現金／里數等獎賞，或解鎖指定類別回贈'],
   ['milestone','🗓️','階段獎賞','按不同日期／階段分開達標；每階段可有獨立簽賬要求及獎賞，並可設全期加碼'],
-  ['stamp','🔖','印花／次數','每次符合單筆條件取得印花／次數，再按數量解鎖獎賞'],
-  ['custom','🧩','自訂組合','以階段規則建立較特殊的銀行推廣玩法']
+  ['stamp','🔖','印花獎賞','每次符合條件取得印花，再按數量解鎖獎賞']
 ];
 
 document.getElementById('settingsBtn').onclick=()=>{
-  const t=defaultTarget('rebate');t._temporary=true;state.cards.push(t);editingTargetId=t.id;creatingNewTarget=true;editingBackup=null;wizardStep=1;wizardEntering='';renderSettings();openModal('settingsModal');
+  const t=defaultTarget('rebate');t._temporary=true;state.cards.push(t);editingTargetId=t.id;creatingNewTarget=true;listCreateMode=false;editingBackup=null;wizardStep=1;wizardEntering='';renderSettings();openModal('settingsModal');
 };
 function renderSettings(){
   const current=state.cards.find(t=>t.id===editingTargetId),title=document.getElementById('settingsTitle'),back=document.getElementById('wizardHeaderBack');
   if(title)title.textContent=creatingNewTarget?'新增優惠':'修改優惠';
-  if(back)back.classList.toggle('is-hidden',!creatingNewTarget||wizardStep<=1);
-  document.getElementById('settingsCards').innerHTML=current?(creatingNewTarget?renderWizard(current,wizardEntering):renderEditList(current)):'';
+  if(back)back.classList.toggle('is-hidden',!creatingNewTarget||(!listCreateMode&&wizardStep<=1));
+  document.getElementById('settingsCards').innerHTML=current?(creatingNewTarget&&!listCreateMode?renderWizard(current,wizardEntering):renderEditList(current)):'';
   wizardEntering='';
 }
 function wizardProgress(){const pctv=Math.round(wizardStep/WIZARD_TOTAL*100);return `<div class="wizard-progress"><div class="wizard-progress-track"><div class="wizard-progress-fill" style="width:${pctv}%"></div></div><div class="wizard-progress-text">${wizardStep} / ${WIZARD_TOTAL}</div></div>`}
@@ -2243,9 +2842,9 @@ function renderMilestoneRuleFields(t,showModeQuestion=true){
   const modeBlock=!showModeQuestion?'':t.targetType==='welcome'
     ? `<div class="wizard-section"><div class="wizard-section-title">階段計算方式</div><div class="edit-pill welcome">累積簽賬 · 迎新期限內達標</div><div class="wizard-mini-note">迎新優惠以批卡後指定日數內的累積簽賬計算。</div></div>`
     : `<div class="wizard-section"><div class="wizard-section-title">階段計算方式</div><div class="edit-pill">按日期／階段分開計算</div><div class="wizard-mini-note">「階段獎賞」只處理不同時間或階段各自達標；如果只是同一計算期內累積到不同金額，請使用「門檻簽賬」。</div></div>`;
-  const rows=t.milestones.map((x,i)=>`<div class="wizard-row-card" data-milestone-row><div class="wizard-row-head"><span>階段（${i+1}）</span>${t.milestones.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('milestone',${i})">刪除</button>`:''}</div>${dated?`<div class="wizard-input-grid"><div class="wizard-big-field"><label>階段開始日期</label>${milestoneDatePartsInput(i,'start',x.startDate||'')}</div><div class="wizard-big-field"><label>階段結束日期</label>${milestoneDatePartsInput(i,'end',x.endDate||'')}</div></div>`:''}<div class="wizard-big-field" style="margin-top:${dated?'12':'0'}px"><label>最低累積簽賬 HK$</label><input data-ms-threshold type="text" inputmode="numeric" pattern="[0-9]*" value="${Math.max(0,Number(x.threshold||0))}" oninput="sanitizeNonNegativeInteger(this)"></div><div class="wizard-input-grid" style="margin-top:12px"><div class="wizard-big-field"><label>獎賞類型</label><select data-ms-type>${rewardTypeOptions(x.rewardType)}</select></div><div class="wizard-big-field"><label>今階段獎賞額／數量</label><input data-ms-reward type="number" min="0" value="${x.reward}"></div></div></div>`).join('');
+  const rows=t.milestones.map((x,i)=>`<div class="wizard-row-card" data-milestone-row><div class="wizard-row-head"><span>階段（${i+1}）</span>${t.milestones.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('milestone',${i},this)">刪除</button>`:''}</div>${dated?`<div class="wizard-input-grid"><div class="wizard-big-field"><label>階段開始日期</label>${milestoneDatePartsInput(i,'start',x.startDate||'')}</div><div class="wizard-big-field"><label>階段結束日期</label>${milestoneDatePartsInput(i,'end',x.endDate||'')}</div></div>`:''}<div class="wizard-big-field" style="margin-top:${dated?'12':'0'}px"><label>最低累積簽賬 HK$</label><input data-ms-threshold type="text" inputmode="numeric" pattern="[0-9]*" value="${Math.max(0,Number(x.threshold||0))}" oninput="sanitizeNonNegativeInteger(this)"></div><div class="wizard-input-grid" style="margin-top:12px"><div class="wizard-big-field"><label>獎賞類型</label><select data-ms-type>${rewardTypeOptions(x.rewardType)}</select></div><div class="wizard-big-field"><label>今階段獎賞額／數量</label><input data-ms-reward type="number" min="0" value="${x.reward}"></div></div></div>`).join('');
   const bonusBlock=`<div class="wizard-section"><div class="wizard-big-field"><label class="limit-question-label">全部階段完成後有加碼獎賞嗎？</label><div class="cap-enabled-grid"><button type="button" class="cap-enabled-choice ${bonus?'active':''}" onclick="setMilestoneBonusEnabled(this,'${t.id}',true)">有</button><button type="button" class="cap-enabled-choice ${!bonus?'active':''}" onclick="setMilestoneBonusEnabled(this,'${t.id}',false)">沒有</button></div>${bonus?`<div class="limit-reveal"><div class="wizard-input-grid"><div class="wizard-big-field full"><label>全期最低累積簽賬 HK$</label><input data-k="milestoneBonusSpend" data-numeric="nonnegative" type="text" inputmode="numeric" pattern="[0-9]*" value="${Math.max(0,Number(t.milestoneBonusSpend||0))}" oninput="sanitizeNonNegativeInteger(this)"><div class="wizard-mini-note">填 0 代表只需完成所有階段。</div></div><div class="wizard-big-field"><label>加碼獎賞類型</label><select data-k="milestoneBonusType">${rewardTypeOptions(t.milestoneBonusType)}</select></div><div class="wizard-big-field"><label>加碼獎賞額／數量</label><input data-k="milestoneBonus" type="number" min="0" value="${Math.max(0,Number(t.milestoneBonus||0))}"></div></div></div>`:''}</div></div>`;
-  return `${modeBlock}<div class="wizard-section"><div class="wizard-section-title">階段要求及獎賞</div>${rows}<button class="wizard-add-row" type="button" onclick="addRuleRow('milestone')">＋ 加一個階段</button></div>${bonusBlock}`;
+  return `${modeBlock}<div class="wizard-section milestone-stage-table"><div class="wizard-section-title">階段要求及獎賞</div>${rows}</div><button class="wizard-add-row milestone-add-row" type="button" onclick="addRuleRow('milestone',this)">＋ 加入另一個階段</button>${bonusBlock}`;
 }
 function thresholdCategoryButton(cat,selected){
   const em=CATEGORY_EMOJI[cat]||'🏷️';
@@ -2257,14 +2856,14 @@ function renderThresholdRuleFields(t){
   const hasCategoryRate=tiers.some(x=>(x.rewardMode||'rate')==='category_rate');
   const rows=tiers.map((x,i)=>{
     const mode=['rate','reward','category_rate'].includes(x.rewardMode)?x.rewardMode:'rate';
-    const remove=tiers.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('tier',${i})">刪除</button>`:'';
+    const remove=tiers.length>1?`<button class="wizard-row-remove" type="button" onclick="removeRuleRow('tier',${i},this)">刪除</button>`:'';
     const rewardFields=mode==='reward'
       ? `<div class="wizard-input-grid" style="margin-top:12px"><div class="wizard-big-field"><label>達標獎賞類型</label><select data-tier-reward-type>${rewardTypeOptions(x.rewardType)}</select></div><div class="wizard-big-field"><label>獎賞額／數量</label><input data-tier-reward type="number" min="0" value="${Math.max(0,Number(x.reward||0))}"></div></div>`
       : `<div class="wizard-big-field" style="margin-top:12px"><label>${mode==='category_rate'?'指定類別回贈率 %':'回贈率 %'}</label><input data-tier-rate type="number" min="0" step="0.01" value="${Math.max(0,Number(x.rate||0))}"></div>`;
     return `<div class="wizard-row-card" data-tier-row data-tier-mode="${mode}"><div class="wizard-row-head"><span>門檻 ${i+1}</span>${remove}</div><div class="wizard-big-field"><label class="limit-question-label">門檻 ${i+1} 達標後會得到什麼？</label><div class="threshold-mode-grid"><button type="button" class="threshold-mode-choice ${mode==='rate'?'active':''}" onclick="setTierRewardMode(this,'${t.id}',${i},'rate')"><strong>📈 回贈率</strong><small>達到呢個門檻後套用指定回贈率。</small></button><button type="button" class="threshold-mode-choice ${mode==='reward'?'active':''}" onclick="setTierRewardMode(this,'${t.id}',${i},'reward')"><strong>🎁 直接獎賞</strong><small>現金、里數、積分或其他指定獎賞。</small></button><button type="button" class="threshold-mode-choice ${mode==='category_rate'?'active':''}" onclick="setTierRewardMode(this,'${t.id}',${i},'category_rate')"><strong>🏷️ 指定類別回贈</strong><small>達標後解鎖指定類別回贈率。</small></button></div></div><div class="wizard-big-field" style="margin-top:14px"><label>累積簽滿 HK$</label><input data-tier-threshold type="text" inputmode="numeric" pattern="[0-9]*" value="${Math.max(0,Number(x.threshold||0))}" oninput="sanitizeNonNegativeInteger(this)"></div>${rewardFields}</div>`;
   }).join('');
   const categoryBlock=hasCategoryRate?`<div class="wizard-section"><div class="wizard-section-title">指定類別回贈適用類別</div><div class="wizard-chip-row">${PRESET_CATEGORIES.map(cat=>thresholdCategoryButton(cat,selected.has(cat))).join('')}</div><div class="custom-category-caption">其他自定義類別</div><div class="category-input-row"><input class="threshold-category-new" autocomplete="off" placeholder="輸入自定義類別"><button class="category-add" type="button" onclick="addThresholdCategoryTag(this)">＋</button></div><div class="threshold-custom-category-tags custom-category-tags">${custom.map(cat=>`<button class="cat-chip" type="button" data-threshold-category="${esc(cat)}" onclick="this.remove()">${esc(cat)} <span>×</span></button>`).join('')}</div><div class="threshold-category-note">只有揀了「指定類別回贈」的門檻會使用這組類別；其他門檻仍可各自設定回贈率或直接獎賞。</div></div>`:'';
-  return `<div class="wizard-section"><div class="wizard-section-title">門檻要求及獎賞</div><div class="wizard-mini-note" style="margin-bottom:14px">每個門檻都可以用唔同獎賞方式，例如門檻 1 升回贈率、門檻 2 直接送里數。</div>${rows}<button class="wizard-add-row" type="button" onclick="addRuleRow('tier')">＋ 加一個門檻</button></div>${categoryBlock}`;
+  return `<div class="wizard-section threshold-tier-table"><div class="wizard-section-title">門檻要求及獎賞</div><div class="wizard-mini-note" style="margin-bottom:14px">每個門檻都可以用唔同獎賞方式，例如門檻 1 升回贈率、門檻 2 直接送里數。</div>${rows}</div><button class="wizard-add-row threshold-add-row" type="button" onclick="addRuleRow('tier',this)">＋ 加入另一個門檻</button>${categoryBlock}`;
 }
 function renderStampRuleFields(t){
   const repeat=t.stampMode==='repeat',cumulative=t.stampEarnMode==='cumulative',daily=!!t.stampDailyCapEnabled;
@@ -2290,8 +2889,8 @@ function renderEditList(t){
   const periodOptions=t.targetType==='welcome'?[['approval_window','批卡後指定日數']]:[['monthly','每月'],['yearly','全年'],['campaign','指定推廣期']];
   const mechanicOptions=MECHANICS.map(([k,,n])=>[k,n]);
   const capOptions=[['none','不設上限'],['reward','回贈／獎賞金額上限'],['spend','合資格簽賬金額上限']];
-  return `<div class="edit-shell"><div class="settings-card" data-id="${t.id}">
-    <div class="edit-hero"><div class="edit-eyebrow">✎ 清單式修改 · ${esc(typeLabel)}</div><h2 class="edit-title">${esc(t.name||'未命名信用卡')}</h2><p class="edit-subtitle">一次過查看及修改呢個優惠所有設定；只會顯示目前玩法需要嘅欄位，唔需要重新行問卷。</p></div>
+  return `<div class="edit-shell${creatingNewTarget?' list-create-shell':''}"><div class="settings-card" data-id="${t.id}">
+    <div class="edit-hero"><div class="edit-eyebrow">${creatingNewTarget?'＋ 清單式新增':'✎ 清單式修改'} · ${esc(typeLabel)}</div><h2 class="edit-title">${esc(t.name||'未命名信用卡')}</h2><p class="edit-subtitle">${creatingNewTarget?'一次過以清單形式填寫優惠目標所有設定；適合想直接查看全部欄位再逐項設定。':'一次過查看及修改呢個優惠所有設定；只會顯示目前玩法需要嘅欄位，唔需要重新行問卷。'}</p></div>
 
     <section class="edit-section"><div class="edit-section-head"><strong>基本資料</strong><small>信用卡、優惠大類同計算玩法。</small></div>
       <div class="edit-row"><div class="edit-copy"><div class="edit-label">信用卡</div><div class="edit-desc">輸入現有卡名可以移去同一張實體信用卡。</div></div><div class="edit-control"><input data-k="name" class="card-name-input wizard-name-input" autocomplete="off" value="${esc(t.name)}"></div></div>
@@ -2311,7 +2910,7 @@ function renderEditList(t){
 
     <section class="edit-section"><div class="edit-section-head"><strong>達標規則</strong><small>${esc(mechanicLabel(t))} 專用設定。</small></div><div class="edit-rule-block">${renderEditRuleFields(t)}</div></section>
 
-    <div class="edit-actions"><button class="edit-save" type="button" onclick="saveTarget('${t.id}')">儲存修改</button><button class="edit-danger" type="button" onclick="removeTarget('${t.id}')">刪除呢個優惠</button></div>
+    <div class="edit-actions"><button class="edit-save" type="button" onclick="saveTarget('${t.id}')">${creatingNewTarget?'新增優惠目標':'儲存修改'}</button>${creatingNewTarget?`<button class="edit-danger" type="button" onclick="closeModal('settingsModal')">取消新增</button>`:`<button class="edit-danger" type="button" onclick="removeTarget('${t.id}')">刪除呢個優惠</button>`}</div>
   </div></div>`;
 }
 function rerenderEditPreserveScroll(){
@@ -2434,7 +3033,7 @@ function renderWizardStep(t){
     ${optionButton(t.targetType==='rebate','💰','簽賬回贈','日常或推廣期簽賬取得現金、里數、積分或額外回贈',`selectTargetType(this,'${t.id}','rebate')`)}
     ${optionButton(t.targetType==='welcome','🎁','迎新優惠','新卡批核後指定期限內完成一個或多個簽賬階段',`selectTargetType(this,'${t.id}','welcome')`,'welcome')}
     </div>`;
-  if(wizardStep===3)return `<div class="wizard-question">呢個優惠點樣達標？</div><div class="wizard-help">按實際計算方式揀，唔需要理會銀行用咩 marketing 名稱。</div><div class="wizard-options">${MECHANICS.map(([k,i,n,d])=>optionButton(t.mechanic===k,i,n,d,`selectMechanic(this,'${t.id}','${k}')`,t.targetType==='welcome'?'welcome':'')).join('')}</div>`;
+  if(wizardStep===3)return `<div class="wizard-question">呢個優惠點樣達標？</div><div class="wizard-help">按實際計算方式揀，唔需要理會銀行用咩 marketing 名稱。</div><div class="wizard-options">${MECHANICS.map(([k,i,n,d])=>optionButton(t.mechanic===k,i,n,d,`selectMechanic(this,'${t.id}','${k}')`,t.targetType==='welcome'?'welcome':'')).join('')}${optionButton(false,'☷','以清單形式新增優惠目標','一次過查看全部設定，以清單形式直接新增優惠目標。',`startListCreate(this,'${t.id}')`,'list-create-option')}</div>`;
   if(wizardStep===4){
     const selected=new Set(t.rebateCategories||[]),custom=[...selected].filter(x=>!PRESET_CATEGORIES.includes(x));
     return `<div class="wizard-question">邊啲簽賬先計入？</div><div class="wizard-help">無論揀「所有合資格簽賬」或「指定類別」，下方都會再問有冇每筆最低簽賬，以及有冇簽賬／回贈上限。</div><div class="wizard-options">
@@ -2498,7 +3097,7 @@ function validateWizardStep(t,step=wizardStep){
   if(step===8&&t.mechanic==='recurring'&&(!t.startDate||!t.endDate)){showNotice('分期／連續達標需要設定推廣開始及結束日期');return false}
   return true;
 }
-window.wizardBack=()=>{if(!creatingNewTarget||wizardStep<=1)return;const t=state.cards.find(x=>x.id===editingTargetId);if(t?.targetType==='welcome'&&wizardStep===7){transitionWizard(2,'back',true);return}if(t?.targetType==='welcome'&&wizardStep===9){transitionWizard(7,'back',true);return}if(t?.targetType==='rebate'&&wizardStep===6){transitionWizard(4,'back',true);return}if((t?.mechanic==='milestone'||t?.mechanic==='custom')&&t?.milestoneDateMode==='dated'&&wizardStep===8){transitionWizard(6,'back',true);return}transitionWizard(wizardStep-1,'back',true)};
+window.wizardBack=()=>{if(!creatingNewTarget)return;if(listCreateMode){syncEditorDraft(editingTargetId);listCreateMode=false;wizardStep=3;wizardEntering='back';renderSettings();return}if(wizardStep<=1)return;const t=state.cards.find(x=>x.id===editingTargetId);if(t?.targetType==='welcome'&&wizardStep===7){transitionWizard(2,'back',true);return}if(t?.targetType==='welcome'&&wizardStep===9){transitionWizard(7,'back',true);return}if(t?.targetType==='rebate'&&wizardStep===6){transitionWizard(4,'back',true);return}if((t?.mechanic==='milestone'||t?.mechanic==='custom')&&t?.milestoneDateMode==='dated'&&wizardStep===8){transitionWizard(4,'back',true);return}transitionWizard(wizardStep-1,'back',true)};
 window.toggleWizardCardPicker=btn=>{
   const root=btn.closest('.wizard-card-picker'),panel=root?.querySelector('.wizard-card-picker-panel');if(!root||!panel)return;
   const opening=panel.classList.contains('hidden');panel.classList.toggle('hidden',!opening);root.classList.toggle('open',opening);
@@ -2529,6 +3128,7 @@ window.selectTargetType=(btn,id,type)=>{
   }
   t.targetType='rebate';flashThen(btn,()=>transitionWizard(3,'forward',false));
 };
+window.startListCreate=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);listCreateMode=true;wizardEntering='';renderSettings()};
 window.selectMechanic=(btn,id,k)=>answerAdvance(btn,t=>{t.mechanic=MECHANICS.some(x=>x[0]===k)?k:'standard';if(t.mechanic==='tier_rate'){t.thresholdRewardMode=t.thresholdRewardMode||'rate';t.thresholdRewardCategories=t.thresholdRewardCategories||[];if(!t.tiers.length)t.tiers=[{threshold:0,rate:0,rewardType:'現金回贈',reward:0,rewardMode:'rate'}]}if((t.mechanic==='custom'||t.mechanic==='milestone')&&!t.milestones.length)t.milestones=[{threshold:0,rewardType:'現金回贈',reward:0,startDate:'',endDate:''}]},4);
 window.selectEligibility=(btn,id,m)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.eligibilityMode=m==='categories'?'categories':'all';flashThen(btn,()=>renderSettings())};
 window.openCategoryPicker=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.eligibilityMode='categories';flashThen(btn,()=>renderSettings())};
@@ -2584,19 +3184,19 @@ function validateMilestoneRules(t){
   if(t.milestoneBonusEnabled&&Number(t.milestoneBonus||0)<=0){showNotice('請輸入加碼獎賞額／數量');return false}
   return true;
 }
-window.finishEligibilityLimits=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);if(!validateWizardStep(t,4))return;if(!validateLimitSettings(t))return;flashThen(btn,()=>transitionWizard(6,'forward',false))};
-window.setMinTransactionEnabled=(btn,id,enabled)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.minTransactionEnabled=!!enabled;if(!t.minTransactionEnabled)t.minTransaction=0;creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
-window.setCapEnabled=(btn,id,enabled)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.capEnabled=!!enabled;if(!t.capEnabled){t.capType='none';t.capAmount=0}creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
-window.setCapType=(btn,id,type)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.capEnabled=true;t.capType=['reward','spend'].includes(type)?type:'none';creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
-window.setThresholdRewardMode=(btn,id,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);const m=['rate','reward','category_rate'].includes(mode)?mode:'rate';t.tiers=(t.tiers||[]).map(x=>({...x,rewardMode:m}));t.thresholdRewardMode=m;creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
-window.setTierRewardMode=(btn,id,index,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);const m=['rate','reward','category_rate'].includes(mode)?mode:'rate';if(!t.tiers[index])return;t.tiers[index].rewardMode=m;const modes=new Set(t.tiers.map(x=>x.rewardMode||'rate'));t.thresholdRewardMode=modes.size===1?[...modes][0]:'mixed';creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
-window.setStampEarnMode=(btn,id,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.stampEarnMode=mode==='cumulative'?'cumulative':'per_txn';creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
-window.setStampDailyCapEnabled=(btn,id,enabled)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.stampDailyCapEnabled=!!enabled;if(t.stampDailyCapEnabled&&Number(t.stampDailyCap||0)<1)t.stampDailyCap=1;creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
-window.setStampMode=(btn,id,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.stampMode=mode==='repeat'?'repeat':'stages';creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.finishEligibilityLimits=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);if(!validateWizardStep(t,4))return;if(!validateLimitSettings(t))return;const datedMilestone=(t.mechanic==='milestone'||t.mechanic==='custom')&&t.targetType!=='welcome';if(datedMilestone){t.milestoneDateMode='dated';t.periodType='campaign';flashThen(btn,()=>transitionWizard(8,'forward',false));return}flashThen(btn,()=>transitionWizard(6,'forward',false))};
+window.setMinTransactionEnabled=(btn,id,enabled)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.minTransactionEnabled=!!enabled;if(!t.minTransactionEnabled)t.minTransaction=0;creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.setCapEnabled=(btn,id,enabled)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.capEnabled=!!enabled;if(!t.capEnabled){t.capType='none';t.capAmount=0}creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.setCapType=(btn,id,type)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.capEnabled=true;t.capType=['reward','spend'].includes(type)?type:'none';creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.setThresholdRewardMode=(btn,id,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);const m=['rate','reward','category_rate'].includes(mode)?mode:'rate';t.tiers=(t.tiers||[]).map(x=>({...x,rewardMode:m}));t.thresholdRewardMode=m;creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.setTierRewardMode=(btn,id,index,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);const m=['rate','reward','category_rate'].includes(mode)?mode:'rate';if(!t.tiers[index])return;t.tiers[index].rewardMode=m;const modes=new Set(t.tiers.map(x=>x.rewardMode||'rate'));t.thresholdRewardMode=modes.size===1?[...modes][0]:'mixed';creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.setStampEarnMode=(btn,id,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.stampEarnMode=mode==='cumulative'?'cumulative':'per_txn';creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.setStampDailyCapEnabled=(btn,id,enabled)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.stampDailyCapEnabled=!!enabled;if(t.stampDailyCapEnabled&&Number(t.stampDailyCap||0)<1)t.stampDailyCap=1;creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.setStampMode=(btn,id,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.stampMode=mode==='repeat'?'repeat':'stages';creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
 window.toggleThresholdCategory=btn=>btn.classList.toggle('active');
 window.addThresholdCategoryTag=btn=>{const panel=btn.closest('.settings-card'),input=panel?.querySelector('.threshold-category-new');if(!input)return;const value=input.value.trim();if(!value)return;const preset=[...panel.querySelectorAll('.threshold-category-btn')].find(x=>x.dataset.thresholdValue===value);if(preset){preset.classList.add('active');input.value='';return}const tags=panel.querySelector('.threshold-custom-category-tags'),exists=[...tags.querySelectorAll('.cat-chip')].some(x=>x.dataset.thresholdCategory===value);if(!exists){const chip=document.createElement('button');chip.type='button';chip.className='cat-chip';chip.dataset.thresholdCategory=value;chip.innerHTML=`${esc(value)} <span>×</span>`;chip.onclick=()=>chip.remove();tags.appendChild(chip)}input.value=''};
-window.setMilestoneDateMode=(btn,id,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.milestoneDateMode=t.targetType==='welcome'?'cumulative':'dated';creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
-window.setMilestoneBonusEnabled=(btn,id,enabled)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.milestoneBonusEnabled=!!enabled;if(!t.milestoneBonusEnabled){t.milestoneBonusSpend=0;t.milestoneBonus=0}creatingNewTarget?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.setMilestoneDateMode=(btn,id,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.milestoneDateMode=t.targetType==='welcome'?'cumulative':'dated';creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
+window.setMilestoneBonusEnabled=(btn,id,enabled)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.milestoneBonusEnabled=!!enabled;if(!t.milestoneBonusEnabled){t.milestoneBonusSpend=0;t.milestoneBonus=0}creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll()};
 window.clearLimitsAndAdvance=(btn,id)=>answerAdvance(btn,t=>{t.minTransaction=0;t.minTransactionEnabled=false;t.capEnabled=false;t.capType='none';t.capAmount=0},6);
 window.finishLimits=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);if(!validateLimitSettings(t))return;flashThen(btn,()=>transitionWizard(6,'forward',false))};
 window.selectMilestoneModeAndAdvance=(btn,id,mode)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;syncEditorDraft(id);t.milestoneDateMode='dated';t.periodType='campaign';flashThen(btn,()=>transitionWizard(8,'forward',false))};
@@ -2607,8 +3207,55 @@ window.finishDates=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)retur
 window.finishRules=(btn,id)=>{const t=state.cards.find(x=>x.id===id);if(!t)return;const panel=document.querySelector(`.settings-card[data-id="${id}"]`);if(panel&&!validateVisibleDateInputs(panel)){showNotice('請檢查日期是否正確');return}syncEditorDraft(id);if(!validateWizardStep(t,8)||!validateThresholdRules(t)||!validateMilestoneRules(t)||!validateStampRules(t))return;flashThen(btn,()=>transitionWizard(9,'forward',false))};
 window.togglePresetCategory=btn=>btn.classList.toggle('active');
 window.addCategoryTag=btn=>{const panel=btn.closest('.settings-card'),input=panel?.querySelector('.category-new');if(!input)return;const value=input.value.trim();if(!value)return;const preset=[...panel.querySelectorAll('.wizard-category-btn')].find(x=>x.dataset.value===value);if(preset){preset.classList.add('active');input.value='';return}const tags=panel.querySelector('.custom-category-tags'),exists=[...tags.querySelectorAll('.cat-chip')].some(x=>x.dataset.value===value);if(!exists){const chip=document.createElement('button');chip.type='button';chip.className='cat-chip';chip.dataset.value=value;chip.innerHTML=`${esc(value)} <span>×</span>`;chip.onclick=()=>chip.remove();tags.appendChild(chip)}input.value=''};
-window.addRuleRow=kind=>{const t=state.cards.find(x=>x.id===editingTargetId);if(!t)return;syncEditorDraft(t.id);if(kind==='tier')t.tiers.push({threshold:0,rate:0,rewardType:'現金回贈',reward:0,rewardMode:'rate'});if(kind==='milestone')t.milestones.push({threshold:0,rewardType:'現金回贈',reward:0,startDate:'',endDate:''});if(kind==='stamp')t.stampMilestones.push({count:1,rewardType:'現金回贈',reward:0});creatingNewTarget?renderSettings():rerenderEditPreserveScroll()};
-window.removeRuleRow=(kind,i)=>{const t=state.cards.find(x=>x.id===editingTargetId);if(!t)return;syncEditorDraft(t.id);const arr=kind==='tier'?t.tiers:kind==='stamp'?t.stampMilestones:t.milestones;if(arr.length>1)arr.splice(i,1);creatingNewTarget?renderSettings():rerenderEditPreserveScroll()};
+function animateAddedRuleRow(kind){
+  const selector=kind==='tier'?'[data-tier-row]':kind==='milestone'?'[data-milestone-row]':'';
+  if(!selector)return;
+  const rows=[...document.querySelectorAll(`#settingsCards ${selector}`)],row=rows.at(-1);
+  if(!row)return;
+  row.classList.remove('row-added');
+  row.style.setProperty('--rule-row-height',`${row.offsetHeight}px`);
+  void row.offsetWidth;
+  row.classList.add('row-added');
+  let done=false;
+  const clear=()=>{
+    if(done)return;done=true;
+    row.classList.remove('row-added');
+    row.style.removeProperty('--rule-row-height');
+    row.removeEventListener('animationend',onEnd);
+  };
+  const onEnd=e=>{if(e.target===row)clear()};
+  row.addEventListener('animationend',onEnd);
+  setTimeout(clear,820);
+}
+window.addRuleRow=(kind,btn)=>{const t=state.cards.find(x=>x.id===editingTargetId);if(!t)return;syncEditorDraft(t.id);if(kind==='tier')t.tiers.push({threshold:0,rate:0,rewardType:'現金回贈',reward:0,rewardMode:'rate'});if(kind==='milestone')t.milestones.push({threshold:0,rewardType:'現金回贈',reward:0,startDate:'',endDate:''});if(kind==='stamp')t.stampMilestones.push({count:1,rewardType:'現金回贈',reward:0});creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll();animateAddedRuleRow(kind)};
+window.removeRuleRow=(kind,i,btn)=>{
+  const t=state.cards.find(x=>x.id===editingTargetId);if(!t)return;
+  syncEditorDraft(t.id);
+  const arr=kind==='tier'?t.tiers:kind==='stamp'?t.stampMilestones:t.milestones;
+  if(arr.length<=1)return;
+  const commit=()=>{
+    arr.splice(i,1);
+    creatingNewTarget&&!listCreateMode?rerenderWizardPreserveScroll():rerenderEditPreserveScroll();
+  };
+  if((kind==='milestone'||kind==='tier')&&btn){
+    const row=btn.closest('.wizard-row-card');
+    if(row&&!row.classList.contains('row-removing')){
+      row.style.setProperty('--rule-row-height',`${row.offsetHeight}px`);
+      void row.offsetHeight;
+      row.classList.add('row-removing');btn.disabled=true;
+      let done=false;
+      const finish=e=>{
+        if(e&&e.target!==row)return;
+        if(done)return;done=true;
+        row.removeEventListener('animationend',finish);commit();
+      };
+      row.addEventListener('animationend',finish);
+      setTimeout(()=>{if(document.body.contains(row))finish()},470);
+      return;
+    }
+  }
+  commit();
+};
 function resolveCardKeyForTarget(t,name){const norm=normalizeCardName(name),sameName=state.cards.find(x=>!x._temporary&&x.id!==t.id&&normalizeCardName(x.name)===norm);if(sameName)return sameName.cardKey;const siblings=state.cards.filter(x=>!x._temporary&&x.id!==t.id&&x.cardKey===t.cardKey);if(!t.cardKey)return uid();if(siblings.length&&siblings.some(x=>normalizeCardName(x.name)!==norm))return uid();return t.cardKey}
 window.saveTarget=id=>{
   const panel=document.querySelector(`.settings-card[data-id="${id}"]`);if(panel&&!validateVisibleDateInputs(panel)){showNotice('請檢查日期是否正確');return}
@@ -2617,14 +3264,15 @@ window.saveTarget=id=>{
   if(t.mechanic==='recurring'&&(!t.startDate||!t.endDate)){wizardStep=7;renderSettings();showNotice('請設定分期優惠開始及結束日期');return}
   if(!validateLimitSettings(t)||!validateThresholdRules(t)||!validateMilestoneRules(t)||!validateStampRules(t))return;
   if(t.targetType==='welcome')t.mechanic='milestone';if(!t.capEnabled||t.capType==='none'){t.capEnabled=false;t.capType='none';t.capAmount=0}else t.capEnabled=true;t.rebateEndDate=t.endDate||'';if(t.milestones.length){const first=[...t.milestones].sort((a,b)=>a.threshold-b.threshold)[0];t.welcomeRequirement=first.threshold;t.welcomeRewardType=first.rewardType;t.welcomeReward=first.reward}
-  t.cardKey=resolveCardKeyForTarget(t,t.name);delete t._temporary;save();creatingNewTarget=false;editingTargetId=null;editingBackup=null;wizardStep=1;render();renderSettings();closeModal('settingsModal');
+  t.cardKey=resolveCardKeyForTarget(t,t.name);delete t._temporary;save();creatingNewTarget=false;listCreateMode=false;editingTargetId=null;editingBackup=null;wizardStep=1;render();renderSettings();closeModal('settingsModal');
 };
-window.removeTarget=id=>{const t=state.cards.find(x=>x.id===id);if(!t)return;askConfirm(`刪除「${t.name}」呢個優惠？\n消費紀錄會保留。`,()=>{state.cards=state.cards.filter(x=>x.id!==id);state.transactions.forEach(tx=>{tx.targetIds=(tx.targetIds||[]).filter(x=>x!==id);tx.targetRefs=(tx.targetRefs||[]).filter(x=>x.id!==id)});save();editingTargetId=null;creatingNewTarget=false;editingBackup=null;wizardStep=1;render();renderSettings();closeModal('settingsModal');showNotice('優惠已刪除','success')},'刪除優惠');};
+window.removeTarget=id=>{const t=state.cards.find(x=>x.id===id);if(!t)return;askConfirm(`刪除「${t.name}」呢個優惠？\n消費紀錄會保留。`,()=>{state.cards=state.cards.filter(x=>x.id!==id);state.transactions.forEach(tx=>{tx.targetIds=(tx.targetIds||[]).filter(x=>x!==id);tx.targetRefs=(tx.targetRefs||[]).filter(x=>x.id!==id)});save();editingTargetId=null;creatingNewTarget=false;listCreateMode=false;editingBackup=null;wizardStep=1;render();renderSettings();closeModal('settingsModal');showNotice('優惠已刪除','success')},'刪除優惠');};
 
 document.addEventListener('click',e=>{if(!e.target.closest('.card-name-picker'))document.querySelectorAll('.card-name-menu').forEach(x=>x.classList.add('hidden'))});
 window.addEventListener('scroll',()=>document.querySelector('.top')?.classList.toggle('is-scrolled',window.scrollY>6),{passive:true});
 window.addEventListener('resize',scheduleGoalHeightEqualize,{passive:true});
 render();
+startGoalCountdownClock();
 </script>
 <datalist id="cardNameList">
 <option value="滙豐Red信用卡"></option>
