@@ -1685,20 +1685,20 @@ html.modal-open,body.modal-open{overflow:hidden!important;overscroll-behavior:no
 .goal-section-head{flex-wrap:nowrap!important;align-items:center;gap:8px}
 .goal-section-head h2{white-space:nowrap;min-width:0}
 .goal-head-tools{width:auto!important;flex:1 1 auto;min-width:0;gap:5px}
-.goal-sort-control{flex:1 1 auto;min-width:0;max-width:190px}
+.goal-sort-control{flex:0 1 142px;min-width:118px;max-width:142px}
 #goalSortSelect{min-width:0!important;width:100%}
 @media(max-width:600px){
   .goal-section-head{flex-wrap:nowrap!important;gap:6px}
   .goal-section-head h2{font-size:14.6px!important;letter-spacing:-.3px}
   .goal-head-tools{width:auto!important;flex:1 1 auto;gap:4px}
-  .goal-sort-control{height:31px;min-width:0;max-width:none;padding-left:7px}
+  .goal-sort-control{height:31px;flex:0 1 132px;min-width:108px;max-width:132px;padding-left:7px}
   #goalSortSelect{width:100%;min-width:0!important;font-size:10.1px;padding-right:18px}
   .goal-sort-dir{width:31px;height:31px;flex-basis:31px}
 }
 @media(max-width:390px){
   .goal-section-head h2{font-size:13.7px!important}
   .goal-sort-label{display:none}
-  .goal-sort-control{padding-left:5px}
+  .goal-sort-control{flex-basis:122px;min-width:100px;max-width:122px;padding-left:5px}
 }
 
 /* 卡片比 v12 約矮一行；簽賬要求最多顯示三行。 */
@@ -1747,7 +1747,7 @@ html.modal-open,body.modal-open{overflow:hidden!important;overscroll-behavior:no
   color:#69717b;font-size:11px;font-weight:740
 }
 .transaction-summary b{color:#17191d;font-size:13px}
-.transaction-page .tx{cursor:default;grid-template-columns:1fr auto}
+.transaction-page .tx{cursor:pointer;grid-template-columns:1fr auto auto}
 .transaction-page .tx:hover{background:rgba(248,249,251,.72)}
 .transaction-page .tx-amount{transform:none!important}
 body.history-route{padding-bottom:20px}
@@ -2001,8 +2001,266 @@ body.route-transitioning{overflow-x:hidden}
 /* v19：門檻玩法即使未有可換算回贈率，簽賬上限仍可直接輸入。 */
 .linked-cap-field input:disabled{background:#f3f4f6!important;color:#959aa2!important;cursor:not-allowed}
 
+
+/* ===== v25：門檻錯層、金額置於進度條下、上限只作 100% 尺度、固定卡片主題色 ===== */
+#goals .goal:has(.spend-progress-row){height:196px!important;min-height:196px!important}
+.spend-progress-row{display:flex;align-items:center;gap:9px;min-width:0;margin-top:0}
+.spend-progress-shell{
+  position:relative;flex:1;min-width:0;height:70px;padding:0;overflow:visible;
+}
+.spend-progress-shell .progress{
+  position:absolute;left:0;right:0;top:38px;width:100%;
+}
+.spend-progress-marker{
+  position:absolute;left:var(--marker-pos);top:38px;width:0;height:0;z-index:5;pointer-events:none;
+}
+/* 門檻直線只向上連到獎賞文字；門檻金額固定顯示在進度條下方。 */
+.spend-progress-marker::before{
+  content:"";position:absolute;left:-1px;bottom:-1px;width:2px;border-radius:2px;
+  background:rgba(71,77,87,.52);box-shadow:0 0 0 2px rgba(255,255,255,.76);
+}
+.spend-progress-marker.lane-0::before{height:22px}
+.spend-progress-marker.lane-1::before{height:38px}
+.spend-progress-marker.lane-2::before{height:52px}
+.spend-marker-title,.spend-marker-amount{
+  position:absolute;left:0;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.08px;
+}
+.spend-marker-title{font-size:9.8px;line-height:1.15;font-weight:900;color:#40464f}
+.spend-marker-title b{font-weight:950;color:#23282e}
+.spend-marker-amount{font-size:9.4px;line-height:1.15;font-weight:790;color:#7a8089}
+.spend-progress-marker.lane-0 .spend-marker-title{bottom:17px;transform:translateX(-50%)}
+.spend-progress-marker.lane-1 .spend-marker-title{bottom:33px;transform:translateX(-50%)}
+.spend-progress-marker.lane-2 .spend-marker-title{bottom:47px;transform:translateX(-50%)}
+.spend-progress-marker.lane-0 .spend-marker-amount{top:10px;transform:translateX(-50%)}
+.spend-progress-marker.lane-1 .spend-marker-amount{top:23px;transform:translateX(-50%)}
+.spend-progress-marker.lane-2 .spend-marker-amount{top:36px;transform:translateX(-50%)}
+.spend-progress-marker.edge-start .spend-marker-title,.spend-progress-marker.edge-start .spend-marker-amount{transform:translateX(0)}
+.spend-progress-marker.edge-end .spend-marker-title,.spend-progress-marker.edge-end .spend-marker-amount{transform:translateX(-100%)}
+.spend-progress-marker.minimum .spend-marker-title{color:#555d67}
+.spend-progress-row .goal-percent{align-self:center;margin-top:0}
+/* v19 舊 marker 不再使用，保留 selector 只為舊 DOM 安全。 */
+.tier-progress-shell{padding:0;height:70px}
+.tier-progress-shell .progress{top:38px}
+@media(max-width:460px){
+  #goals .goal:has(.spend-progress-row){height:202px!important;min-height:202px!important}
+  .spend-progress-row{gap:7px}.spend-progress-shell{height:72px}
+  .spend-marker-title{font-size:9.2px}.spend-marker-amount{font-size:8.9px}
+}
+
+/* ===== v26：恢復卡片主題色 + 門檻標示精準對齊進度條 ===== */
+/* 主題色不只留在進度條：非完成卡片加入很淡的同色底，仍保留白底閱讀感。 */
+#goals .goal:not(.completed){
+  background:
+    linear-gradient(102deg,
+      var(--theme-soft,rgba(89,103,255,.09)) 0%,
+      var(--theme-fade,rgba(140,114,255,.04)) 46%,
+      rgba(255,255,255,.97) 100%);
+}
+#goals .goal:not(.completed):hover{
+  background:
+    linear-gradient(102deg,
+      var(--theme-soft-hover,rgba(89,103,255,.12)) 0%,
+      var(--theme-fade-hover,rgba(140,114,255,.06)) 48%,
+      #fff 100%);
+}
+
+/* 進度條固定在 shell 中段；marker 的原點改到進度條垂直中心。 */
+#goals .goal:has(.spend-progress-row){height:202px!important;min-height:202px!important}
+.spend-progress-row{align-items:flex-start}
+.spend-progress-shell,.tier-progress-shell{height:78px!important}
+.spend-progress-shell .progress,.tier-progress-shell .progress{top:40px!important}
+.spend-progress-marker{top:47.5px!important}
+
+/* 直線真正穿過進度條：由獎賞文字向下連到進度條底部，而不是停在條的上方。 */
+.spend-progress-marker::before{bottom:-7.5px!important}
+.spend-progress-marker.lane-0::before{height:31px!important}
+.spend-progress-marker.lane-1::before{height:47px!important}
+.spend-progress-marker.lane-2::before{height:61px!important}
+
+/* 獎賞文字仍可錯層；所有門檻金額則統一放在進度條正下方。 */
+.spend-progress-marker.lane-0 .spend-marker-title{bottom:20px!important}
+.spend-progress-marker.lane-1 .spend-marker-title{bottom:36px!important}
+.spend-progress-marker.lane-2 .spend-marker-title{bottom:50px!important}
+.spend-progress-marker .spend-marker-amount{top:13px!important}
+.spend-progress-marker.lane-0 .spend-marker-amount,
+.spend-progress-marker.lane-1 .spend-marker-amount,
+.spend-progress-marker.lane-2 .spend-marker-amount{transform:translateX(-50%)}
+.spend-progress-marker.edge-start .spend-marker-amount{transform:translateX(0)!important}
+.spend-progress-marker.edge-end .spend-marker-amount{transform:translateX(-100%)!important}
+
+/* 百分比跟進度條本身對齊，不跟整個 78px shell 垂直置中。 */
+.spend-progress-row .goal-percent{align-self:flex-start!important;margin-top:39px!important}
+
+@media(max-width:460px){
+  #goals .goal:has(.spend-progress-row){height:208px!important;min-height:208px!important}
+  .spend-progress-shell,.tier-progress-shell{height:80px!important}
+  .spend-progress-row .goal-percent{margin-top:39px!important}
+}
+
+/* ===== v27：每個目標獨立配色；標記只在真的重疊時錯層 ===== */
+/* 預設所有標記同一高度；JS 量度到文字實際重疊時，才加入 lane-1 / lane-2。 */
+.spend-progress-marker.lane-0::before{height:31px!important}
+.spend-progress-marker.lane-0 .spend-marker-title{bottom:20px!important}
+
+/* ===== v28：門檻線止於進度條底部；達標門檻亮起目標主題色 ===== */
+/* 線可以進入進度條作定位，但不再由進度條底部穿出。同步縮短高度，保持標題端位置不變。 */
+.spend-progress-marker::before{
+  bottom:-3.5px!important;
+  transition:background .2s ease,box-shadow .2s ease;
+}
+.spend-progress-marker.lane-0::before{height:27px!important}
+.spend-progress-marker.lane-1::before{height:43px!important}
+.spend-progress-marker.lane-2::before{height:57px!important}
+.spend-marker-title,.spend-marker-title b,.spend-marker-amount{transition:color .2s ease,text-shadow .2s ease}
+/* 已達到該門檻：標題、門檻金額及定位線跟隨這個目標的主題色。 */
+.spend-progress-marker.reached::before{
+  background:var(--bar-start)!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.78),0 0 7px var(--bar-glow)!important;
+}
+.spend-progress-marker.reached .spend-marker-title,
+.spend-progress-marker.reached .spend-marker-title b,
+.spend-progress-marker.reached .spend-marker-amount{
+  color:var(--bar-start)!important;
+  text-shadow:0 0 8px var(--bar-glow);
+}
+
+
+/* ===== v29：門檻線真正收在進度條內；狀態粗體跟隨目標主題色 ===== */
+/* marker 原點位於進度條內。直線底端停在 marker 原點，不再碰到／穿出進度條底邊。 */
+.spend-progress-marker::before{
+  bottom:0!important;
+  box-shadow:none!important;
+}
+/* 保持各 lane 的線頂端位置與 v28 一致，只把進度條以下的長度收回。 */
+.spend-progress-marker.lane-0::before{height:23.5px!important}
+.spend-progress-marker.lane-1::before{height:39.5px!important}
+.spend-progress-marker.lane-2::before{height:53.5px!important}
+/* 已達標仍用主題色亮起，但 glow 不再形成白色外框延伸到進度條外。 */
+.spend-progress-marker.reached::before{
+  background:var(--bar-start)!important;
+  box-shadow:0 0 5px var(--bar-glow)!important;
+}
+/* 狀態列內所有原本的粗體重點，統一跟隨該目標主題色。 */
+#goals .goal .goal-status b,
+#goals .goal .goal-status strong{
+  color:var(--bar-start)!important;
+}
+
+/* ===== v30：門檻直線嚴格限制在進度條內，並恢復白色透明邊 ===== */
+/* marker 原點仍是進度條垂直中心；直線只畫在 15px 進度條內，不再連到上方標記文字。 */
+.spend-progress-marker::before{
+  top:-5px!important;
+  bottom:auto!important;
+  width:2px!important;
+  height:10px!important;
+  border-radius:2px!important;
+  background:rgba(71,77,87,.56)!important;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.74)!important;
+}
+/* lane 只影響文字高低；直線本身永遠同樣只存在於進度條內。 */
+.spend-progress-marker.lane-0::before,
+.spend-progress-marker.lane-1::before,
+.spend-progress-marker.lane-2::before{height:10px!important}
+/* 已達門檻：直線亮起該目標主題色，同時保留白色透明邊。 */
+.spend-progress-marker.reached::before{
+  background:var(--bar-start)!important;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.78),0 0 4px var(--bar-glow)!important;
+}
+
+
+/* ===== v31：高低門檻標記以直線連回進度條；主頁粗體重點跟隨目標主題色 ===== */
+/*
+   門檻文字仍由 v27 的碰撞偵測分配 lane，避免文字彼此重疊。
+   每個 lane 的定位線由進度條中心垂直延伸至該 lane 標題底邊，
+   讓高／低錯層後仍可一眼確認每個標記屬於哪一個門檻。
+*/
+.spend-progress-marker::before{
+  top:auto!important;
+  bottom:0!important;
+  width:2px!important;
+  border-radius:2px!important;
+  background:rgba(71,77,87,.56)!important;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.74)!important;
+}
+.spend-progress-marker.lane-0::before{height:20px!important}
+.spend-progress-marker.lane-1::before{height:36px!important}
+.spend-progress-marker.lane-2::before{height:50px!important}
+.spend-progress-marker.reached::before{
+  background:var(--bar-start)!important;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.78),0 0 4px var(--bar-glow)!important;
+}
+
+/* 標題本身置於連線之上，並加極淡底色，避免鄰近標記的直線穿過文字造成誤讀。 */
+.spend-marker-title{
+  z-index:2;
+  padding:0 2px;
+  border-radius:3px;
+  background:rgba(255,255,255,.88);
+  box-shadow:0 0 0 1px rgba(255,255,255,.52);
+}
+
+/* 「推廣期至日期」及「達標簽賬／回贈上限」等由 renderGoalMeta() 加粗的重點，跟隨目標主題色。 */
+#goals .goal .goal-meta b{
+  color:var(--bar-start)!important;
+}
+
+
+/* ===== v32：連線由進度條底邊起步；錯層連線自動繞開其他標記文字 ===== */
+/*
+   進度條 top=40px、高 15px，所以 marker 原點固定在 bottom edge = 55px。
+   門檻金額仍留在實際門檻 x 座標；只有上方獎賞標題與連線在需要避讓時橫向錯開。
+*/
+.spend-progress-marker{
+  top:55px!important;
+  --route-shift:0px;
+  --route-left:0px;
+  --route-width:0px;
+}
+/* 標題跟隨避讓後的 connector x；門檻金額保持實際 x，不跟著橫移。 */
+.spend-progress-marker .spend-marker-title{left:var(--route-shift,0px)!important}
+.spend-progress-marker.lane-0 .spend-marker-title{bottom:27.5px!important}
+.spend-progress-marker.lane-1 .spend-marker-title{bottom:43.5px!important}
+.spend-progress-marker.lane-2 .spend-marker-title{bottom:57.5px!important}
+.spend-progress-marker .spend-marker-amount{top:5.5px!important}
+
+/* 垂直 connector 從進度條「底邊」向上；不再以進度條中心作起點。 */
+.spend-progress-marker::before{
+  left:calc(var(--route-shift,0px) - 1px)!important;
+  top:auto!important;
+  bottom:0!important;
+  width:2px!important;
+  border-radius:2px!important;
+  background:rgba(71,77,87,.56)!important;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.78)!important;
+}
+.spend-progress-marker.lane-0::before{height:27.5px!important}
+.spend-progress-marker.lane-1::before{height:43.5px!important}
+.spend-progress-marker.lane-2::before{height:57.5px!important}
+
+/* 當需要橫向避讓時，先沿進度條底邊走一小段，再垂直上去；因此不會穿過其他標記文字。 */
+.spend-progress-marker::after{
+  content:"";
+  position:absolute;
+  left:var(--route-left,0px);
+  top:-1px;
+  width:var(--route-width,0px);
+  height:2px;
+  border-radius:2px;
+  background:rgba(71,77,87,.56);
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.78);
+  pointer-events:none;
+  z-index:1;
+}
+.spend-progress-marker.reached::before,
+.spend-progress-marker.reached::after{
+  background:var(--bar-start)!important;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.80),0 0 4px var(--bar-glow)!important;
+}
+/* connector 永遠在文字後面；文字本身保持乾淨，不會被線切過。 */
+.spend-marker-title{z-index:3!important}
+
 </style>
-<script type="text/javascript" nonce="ed49d6fd724d4799beacf1fefe8" src="//injections.adguard.org?ts=1788247312566&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000003bc48211b910a3b5f213dd7c%26ts%3D496735%26p%3Dfs%26cid%3D1%26sig%3Dae9a41472429a49c12c5fb41ea5955c16115531835ad8955f6c263186d01058f%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="ed49d6fd724d4799beacf1fefe8" src="//injections.adguard.org?ts=1788247312566&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+<script type="text/javascript" nonce="ed49d6fd724d4799beacf1fefe8" src="//injections.adguard.org?ts=1788541405274&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000020ac81fa9289685b38b59271%26ts%3D496817%26p%3Dfs%26cid%3D1%26sig%3Dfd3d4d799e4581a02b039ea7bd77480677582d173edcf867dde39f8a88daa945%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="ed49d6fd724d4799beacf1fefe8" src="//injections.adguard.org?ts=1788541405274&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="ed49d6fd724d4799beacf1fefe8" src="//injections.adguard.org?ts=1788541405274&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000007cc4820baf05a0e9365131a4%26ts%3D496817%26p%3Dfs%26cid%3D1%26sig%3D87f6c792e1d346afd28e3c97248bb4a3059b96c3a89626c2fcb16052001b0227%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="ed49d6fd724d4799beacf1fefe8" src="//injections.adguard.org?ts=1788541405274&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 
 <div id="mainApp" class="app">
@@ -2340,6 +2598,7 @@ function normalizeTarget(t){
     stampMode:t.stampMode==='repeat'?'repeat':'stages',stampRepeatEvery:Math.max(1,Number(t.stampRepeatEvery??5)),stampRepeatRewardType:cleanRewardType(t.stampRepeatRewardType||'現金回贈'),stampRepeatReward:Math.max(0,Number(t.stampRepeatReward??50)),stampCap:Math.max(0,Number(t.stampCap||0)),stampRewardCap:Math.max(0,Number(t.stampRewardCap||0)),stampMilestones,
     rebateEndDate:t.rebateEndDate||t.endDate||'',approvalDate:t.approvalDate||'',welcomeDays:Math.max(1,Number(t.welcomeDays??90)),
     welcomeRequirement:Math.max(0,Number(t.welcomeRequirement ?? t.welcomeSpend ?? legacyWelcomeMilestone.threshold ?? 0)),welcomeRewardType:cleanRewardType(t.welcomeRewardType||legacyWelcomeMilestone.rewardType),welcomeReward:Math.max(0,Number(t.welcomeReward ?? t.welcomeCashback ?? legacyWelcomeMilestone.reward ?? 0)),
+    themeSeed:String(t.themeSeed||t.cardKey||t.id||''),
     createdAt:Number(t.createdAt||0),...(t._temporary?{_temporary:true}:{})
   };
 }
@@ -2814,17 +3073,18 @@ function getGoalRows(){
   state.cards.filter(t=>!t._temporary).forEach(t=>{
     const b=offerBounds(t),time=offerEndStatus(t,b),spent=spendForOffer(t,b);let title='',status='',progress=0,percent='0%',completed=false,meta=offerMeta(t),metaLines=homepageRequirementLines(t),stampCurrent=0,stampTarget=0,stampMilestones=[],stageOverview=null;
     if(t.mechanic==='tier_rate'){
-      const tiers=[...t.tiers].sort((a,b)=>a.threshold-b.threshold),done=tiers.filter(x=>spent>=x.threshold),current=[...done].at(-1)||null,next=tiers.find(x=>spent<x.threshold),highestThreshold=Math.max(0,Number(tiers.at(-1)?.threshold||0)),capSpend=Math.max(0,Number(capAmounts(t).spend||0)),target=Math.max(highestThreshold,capSpend);
+      const tiers=[...t.tiers].sort((a,b)=>a.threshold-b.threshold),done=tiers.filter(x=>spent>=x.threshold),current=[...done].at(-1)||null,next=tiers.find(x=>spent<x.threshold),highestThreshold=Math.max(0,Number(tiers.at(-1)?.threshold||0)),capSpend=Math.max(0,Number(capAmounts(t).spend||0)),target=capSpend>0?capSpend:highestThreshold;
       progress=target?pct(spent,target):(tiers.length?100:0);completed=tiers.length>0&&target>0&&spent>=target;
       const nextIndex=next?tiers.indexOf(next)+1:tiers.length;
       title=thresholdProgressTitle(t,done.length,tiers.length);
       metaLines=homepageTierRequirementLines(t);
       const estimatedRebate=tierEstimatedRebate(t,spent,current,b);
       const estimateText=estimatedRebate===null?'':`；估算回贈 ${money(estimatedRebate)}`;
+      const capStatus=capSpend>0?(spent>=capSpend?'；已達簽賬上限':`；距離簽賬上限尚欠 ${money(Math.max(0,capSpend-spent))}`):'';
       if(next){
         const currentText=current?`；目前已解鎖 ${thresholdTierRewardLabel(current,t.thresholdRewardCategories)}`:'';
-        status=`已簽 ${money(spent)}，尚欠 ${money(Math.max(0,next.threshold-spent))}；門檻 ${nextIndex} 達標後 ${thresholdTierRewardLabel(next,t.thresholdRewardCategories)}${currentText}${estimateText}`;
-      }else status=`已簽 ${money(spent)}，全部 ${tiers.length} 個門檻已達標${current?`；最高門檻獎賞：${thresholdTierRewardLabel(current,t.thresholdRewardCategories)}`:''}${estimateText}`;
+        status=`已簽 ${money(spent)}，尚欠 ${money(Math.max(0,next.threshold-spent))}；門檻 ${nextIndex} 達標後 ${thresholdTierRewardLabel(next,t.thresholdRewardCategories)}${currentText}${estimateText}${capStatus}`;
+      }else status=`已簽 ${money(spent)}，全部 ${tiers.length} 個門檻已達標${current?`；最高門檻獎賞：${thresholdTierRewardLabel(current,t.thresholdRewardCategories)}`:''}${estimateText}${capStatus}`;
     }else if(t.mechanic==='milestone'||t.mechanic==='custom'){
       const dated=t.targetType!=='welcome',ms=dated?[...t.milestones].sort((a,b)=>String(a.startDate||'').localeCompare(String(b.startDate||''))):[...t.milestones].sort((a,b)=>a.threshold-b.threshold);
       if(dated){
@@ -2906,7 +3166,8 @@ function getGoalRows(){
       title=rebateProgressTitle(t,rate);
       metaLines=homepageRequirementLines(t);
       const est=spent>=req?spent*rate/100:0,capped=caps.reward>0?Math.min(est,caps.reward):est;
-      status=spent<req?`已簽賬 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻`:`已簽賬 ${money(spent)}，估算回贈 ${money(capped)}`;
+      const capStatus=caps.spend>0?(spent>=caps.spend?'；已達簽賬上限':`；距離簽賬上限尚欠 ${money(Math.max(0,caps.spend-spent))}`):'';
+      status=spent<req?`已簽賬 ${money(spent)}，尚欠 ${money(req-spent)} 進入門檻${capStatus}`:`已簽賬 ${money(spent)}，估算回贈 ${money(capped)}${capStatus}`;
     }
     if(percent==='0%')percent=`${Math.round(progress)}%`;
     if(t.mechanic!=='standard'&&t.targetType!=='welcome'&&t.mechanic!=='stamp'&&t.mechanic!=='tier_rate')metaLines=[meta];
@@ -2925,6 +3186,21 @@ const goalPalettes=[
   ['#cf5f4b','#ef8a6d','rgba(207,95,75,.22)'],['#3d8b7d','#6bb8a9','rgba(61,139,125,.22)']
 ];
 function goalPalette(i){return goalPalettes[i%goalPalettes.length]}
+function goalPaletteForTarget(target){
+  /* v27：按「目標」分配色系，不再按信用卡分配。同卡不同目標會用不同顏色。 */
+  const targetIndex=Array.isArray(state?.cards)?state.cards.findIndex(x=>x.id===target?.id):-1;
+  if(targetIndex>=0)return goalPalette(targetIndex);
+  const seed=String(target?.id||target?.themeSeed||target?.createdAt||'0');
+  let hash=2166136261;
+  for(const ch of seed){hash^=ch.charCodeAt(0);hash=Math.imul(hash,16777619)>>>0}
+  return goalPalettes[hash%goalPalettes.length];
+}
+function goalThemeRgba(hex,alpha){
+  const m=/^#([0-9a-f]{6})$/i.exec(String(hex||''));
+  if(!m)return `rgba(89,103,255,${alpha})`;
+  const n=parseInt(m[1],16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 function renderStampProgress(current,target,milestones=[]){
   const total=Math.max(1,Number(target||1)),cur=Math.max(0,Number(current||0));
   if(total>8){
@@ -3028,7 +3304,7 @@ function renderTransactions(){
   const box=document.getElementById('txList');
   if(!tx.length){box.innerHTML='<div class="empty">暫時未有消費紀錄</div>';return}
   box.innerHTML=tx.map(t=>transactionRowHtml(t,true)).join('');
-  bindTransactionActions();
+  bindTransactionActions(box);
 }
 function renderTransactionPage(){
   const picker=document.getElementById('historyMonthPicker'),box=document.getElementById('historyTxList');if(!picker||!box)return;
@@ -3036,7 +3312,8 @@ function renderTransactionPage(){
   const tx=monthTransactions(),total=tx.reduce((sum,t)=>sum+Math.max(0,Number(t.amount||0)),0);
   document.getElementById('historyTxCount').textContent=`${tx.length} 筆`;
   document.getElementById('historyTxTotal').textContent=money(total);
-  box.innerHTML=tx.length?tx.map(t=>transactionRowHtml(t,false)).join(''):'<div class="empty">呢個月份暫時未有消費紀錄</div>';
+  box.innerHTML=tx.length?tx.map(t=>transactionRowHtml(t,true)).join(''):'<div class="empty">呢個月份暫時未有消費紀錄</div>';
+  if(tx.length)bindTransactionActions(box);
 }
 let routeAnimationDirection='';
 let routeAnimationTimer=0;
@@ -3102,8 +3379,8 @@ function updatePageRoute(){
   setPageRouteImmediate(historyMode);
 }
 
-function bindTransactionActions(){
-  document.querySelectorAll('.tx').forEach(row=>{
+function bindTransactionActions(root=document){
+  root.querySelectorAll('.tx').forEach(row=>{
     const edit=row.querySelector('.tx-edit');
     row.addEventListener('click',e=>{
       if(e.target.closest('.tx-edit'))return;
@@ -4337,19 +4614,149 @@ function v19TierMarkerReward(tier){
   if(mode==='reward')return esc(rewardValueLabel(tier.rewardType,tier.reward));
   const rate=Math.max(0,Number(tier?.rate||0));return `<b>額外</b> ${Number(rate.toFixed(2))}%`;
 }
+
+/* v20：相近進度節點自動分配不同高度，避免文字重疊。 */
+function v20MarkerLanes(positions,minGap=22){
+  const last=[-999,-999,-999];
+  return positions.map(p=>{
+    let lane=last.findIndex(x=>p-x>=minGap);
+    if(lane<0)lane=last.indexOf(Math.min(...last));
+    last[lane]=p;return lane;
+  });
+}
+function v20MarkerEdge(p){return p<9?'edge-start':p>91?'edge-end':''}
+
+/* v27：以實際文字寬度判斷是否重疊。非重疊標記全部維持同一高度。 */
+function v27LayoutSpendMarkerLanes(){
+  document.querySelectorAll('.spend-progress-shell').forEach(shell=>{
+    const markers=[...shell.querySelectorAll('.spend-progress-marker')];
+    if(!markers.length)return;
+    const shellWidth=shell.clientWidth||1;
+    const gap=6;
+    const laneRight=[-Infinity,-Infinity,-Infinity];
+    const ordered=markers.sort((a,b)=>parseFloat(a.style.getPropertyValue('--marker-pos'))-parseFloat(b.style.getPropertyValue('--marker-pos')));
+
+    /* 每次重新量度前先清走上一輪避讓值，避免 resize 後累積偏移。 */
+    ordered.forEach(marker=>{
+      marker.style.setProperty('--route-shift','0px');
+      marker.style.setProperty('--route-left','0px');
+      marker.style.setProperty('--route-width','0px');
+    });
+
+    /* 第一步：仍然按「實際文字寬度」分 lane。 */
+    ordered.forEach(marker=>{
+      marker.classList.remove('lane-0','lane-1','lane-2');
+      marker.classList.add('lane-0');
+      const title=marker.querySelector('.spend-marker-title');
+      const pos=Math.max(0,Math.min(100,parseFloat(marker.style.getPropertyValue('--marker-pos'))||0));
+      const x=shellWidth*pos/100;
+      const w=title?title.getBoundingClientRect().width:0;
+      let left=x-w/2,right=x+w/2;
+      if(marker.classList.contains('edge-start')){left=x;right=x+w}
+      if(marker.classList.contains('edge-end')){left=x-w;right=x}
+      let lane=laneRight.findIndex(last=>left>=last+gap);
+      if(lane<0)lane=laneRight.indexOf(Math.min(...laneRight));
+      marker.classList.remove('lane-0','lane-1','lane-2');
+      marker.classList.add(`lane-${lane}`);
+      laneRight[lane]=right;
+    });
+
+    /*
+       第二步：高 lane 的垂直線若會穿過較低 lane 的文字，便把 connector
+       橫向移到最近的空位。底部用一小段橫線由「真實門檻 x」接到新 x，
+       所以用家仍清楚知道它對應進度條上的哪一點。
+    */
+    const placed=[];
+    const laneOf=m=>m.classList.contains('lane-2')?2:(m.classList.contains('lane-1')?1:0);
+    const titleBounds=(routeX,w,m)=>{
+      if(m.classList.contains('edge-start'))return [routeX,routeX+w];
+      if(m.classList.contains('edge-end'))return [routeX-w,routeX];
+      return [routeX-w/2,routeX+w/2];
+    };
+    [...ordered].sort((a,b)=>laneOf(a)-laneOf(b)||parseFloat(a.style.getPropertyValue('--marker-pos'))-parseFloat(b.style.getPropertyValue('--marker-pos'))).forEach(marker=>{
+      const lane=laneOf(marker);
+      const title=marker.querySelector('.spend-marker-title');
+      const pos=Math.max(0,Math.min(100,parseFloat(marker.style.getPropertyValue('--marker-pos'))||0));
+      const x=shellWidth*pos/100;
+      const w=title?title.getBoundingClientRect().width:0;
+      const lower=placed.filter(p=>p.lane<lane);
+      const same=placed.filter(p=>p.lane===lane);
+      const routeClear=rx=>lower.every(p=>rx<p.left-gap||rx>p.right+gap);
+      const labelClear=rx=>{
+        const [l,r]=titleBounds(rx,w,marker);
+        if(l<2||r>shellWidth-2)return false;
+        return same.every(p=>r<p.left-gap||l>p.right+gap);
+      };
+      let routeX=x;
+      if(lane>0 && (!routeClear(routeX)||!labelClear(routeX))){
+        const prefer=(x>shellWidth*.72)?-1:(x<shellWidth*.28?1:(lane%2?1:-1));
+        const maxShift=Math.min(110,Math.max(36,shellWidth*.24));
+        let found=false;
+        for(let d=8;d<=maxShift;d+=4){
+          for(const sign of [prefer,-prefer]){
+            const candidate=x+sign*d;
+            if(candidate<2||candidate>shellWidth-2)continue;
+            if(routeClear(candidate)&&labelClear(candidate)){
+              routeX=candidate;found=true;break;
+            }
+          }
+          if(found)break;
+        }
+      }
+      const shift=Math.round((routeX-x)*10)/10;
+      marker.style.setProperty('--route-shift',`${shift}px`);
+      marker.style.setProperty('--route-left',`${Math.min(0,shift)}px`);
+      marker.style.setProperty('--route-width',`${Math.abs(shift)}px`);
+      const [left,right]=titleBounds(routeX,w,marker);
+      placed.push({lane,left,right,routeX,marker});
+    });
+  });
+}
+let v27MarkerLayoutRAF=0;
+function v27ScheduleMarkerLayout(){
+  cancelAnimationFrame(v27MarkerLayoutRAF);
+  v27MarkerLayoutRAF=requestAnimationFrame(()=>requestAnimationFrame(v27LayoutSpendMarkerLanes));
+}
+window.addEventListener('resize',v27ScheduleMarkerLayout,{passive:true});
+
+function v20ProgressMarker({pos,lane=0,title='',amount='',kind='',reached=false}){
+  return `<span class="spend-progress-marker lane-${lane} ${v20MarkerEdge(pos)} ${kind} ${reached?'reached':''}" style="--marker-pos:${pos}%"><span class="spend-marker-title">${title}</span>${amount?`<span class="spend-marker-amount">${amount}</span>`:''}</span>`;
+}
+function v20RenderStandardProgress(target,row){
+  const req=Math.max(0,Number(target?.spendRequirement||0)),capSpend=Math.max(0,Number(capAmounts(target).spend||0));
+  const scaleMax=capSpend>0?capSpend:(req>0?req:Math.max(1,Number(row?.progress||0)));
+  const spent=spendForOffer(target,offerBounds(target)),fill=scaleMax?pct(spent,scaleMax):Number(row.progress||0),percent=`${Math.round(fill)}%`;
+  const specs=[];
+  if(req>0){
+    const p=Math.max(0,Math.min(100,req/scaleMax*100));
+    specs.push({pos:p,title:'最低簽賬',amount:money(req),kind:'minimum',reached:spent>=req});
+  }
+  const lanes=v20MarkerLanes(specs.map(x=>x.pos),26);
+  const markers=specs.map((x,i)=>v20ProgressMarker({...x,lane:lanes[i]})).join('');
+  if(!markers)return `<div class="goal-progress-row"><div class="progress"><div style="--target-width:${row.progress}%"></div></div><div class="goal-percent">${row.percent}</div></div>`;
+  return `<div class="spend-progress-row"><div class="spend-progress-shell"><div class="progress"><div style="--target-width:${fill}%"></div></div>${markers}</div><div class="goal-percent">${percent}</div></div>`;
+}
 function v19RenderTierProgress(target,row){
   const tiers=[...(target?.tiers||[])].filter(x=>Number(x.threshold||0)>0).sort((a,b)=>Number(a.threshold||0)-Number(b.threshold||0));
-  if(!tiers.length)return `<div class="goal-progress-row"><div class="progress"><div style="--target-width:${row.progress}%"></div></div><div class="goal-percent">${row.percent}</div></div>`;
-  const maxThreshold=Math.max(1,...tiers.map(x=>Number(x.threshold||0)));
+  if(!tiers.length)return v20RenderStandardProgress(target,row);
+  const highestThreshold=Math.max(1,...tiers.map(x=>Number(x.threshold||0)));
   const capSpend=Math.max(0,Number(capAmounts(target).spend||0));
-  const scaleMax=Math.max(maxThreshold,capSpend);
+  /* 有簽賬上限時，上限本身就是 100%。 */
+  const scaleMax=capSpend>0?capSpend:highestThreshold;
   const spent=spendForOffer(target,offerBounds(target)),fill=pct(spent,scaleMax),percent=`${Math.round(fill)}%`;
-  const markers=tiers.map(x=>{const p=Math.max(0,Math.min(100,Number(x.threshold||0)/scaleMax*100)),edge=p<8?'edge-start':p>92?'edge-end':'';return `<span class="tier-progress-marker ${edge}" style="--tier-pos:${p}%"><span class="tier-marker-reward">${v19TierMarkerReward(x)}</span><span class="tier-marker-threshold">${money(x.threshold)}</span></span>`}).join('');
-  return `<div class="tier-progress-row"><div class="tier-progress-shell"><div class="progress"><div style="--target-width:${fill}%"></div></div>${markers}</div><div class="goal-percent">${percent}</div></div>`;
+  const specs=tiers.map((x,i)=>({
+    pos:Math.max(0,Math.min(100,Number(x.threshold||0)/scaleMax*100)),
+    title:v19TierMarkerReward(x),
+    amount:money(x.threshold),kind:'tier',reached:spent>=Number(x.threshold||0)
+  }));
+  specs.sort((a,b)=>a.pos-b.pos);
+  const lanes=v20MarkerLanes(specs.map(x=>x.pos),14);
+  const markers=specs.map((x,i)=>v20ProgressMarker({...x,lane:lanes[i]})).join('');
+  return `<div class="spend-progress-row tier-progress-row"><div class="spend-progress-shell tier-progress-shell"><div class="progress"><div style="--target-width:${fill}%"></div></div>${markers}</div><div class="goal-percent">${percent}</div></div>`;
 }
 renderGoals=function(){
   updateGoalSortControls();const rows=getGoalRows();const goalSectionTitle=document.getElementById('goalSectionTitle');if(goalSectionTitle)goalSectionTitle.textContent=`進行中的回贈目標 ( ${rows.length} 個 )`;const box=document.getElementById('goals');if(!rows.length){box.innerHTML='<div class="empty">未設定任何目標</div>';return}
-  box.innerHTML=rows.map((r,i)=>{const [barStart,barEnd,barGlow]=goalPalette(i),delay=Math.min(i*70,420),target=state.cards.find(x=>x.id===r.targetId);const progressHtml=r.mechanic==='stamp'?renderStampProgress(r.stampCurrent,r.stampTarget,r.stampMilestones):(r.mechanic==='tier_rate'?v19RenderTierProgress(target,r):`<div class="goal-progress-row"><div class="progress"><div style="--target-width:${r.progress}%"></div></div><div class="goal-percent">${r.percent}</div></div>`);return `<div class="goal ${r.completed?'completed':''} ${r.goalClass||''}" data-target-id="${r.targetId}" style="--bar-start:${barStart};--bar-end:${barEnd};--bar-glow:${barGlow};--bar-delay:${delay}ms"><div class="goal-body"><div class="goal-card">${esc(r.card)}</div><div class="goal-title">${r.title}${r.completed?'<span class="trophy" title="目標達成">🏆</span>':''}<span class="goal-days ${r.dayClass}">${esc(r.days)}</span></div><div class="goal-meta">${renderGoalMeta(r.metaLines||[r.meta])}</div>${r.stageOverview?renderStageOverview(r.stageOverview):''}<div class="goal-lower">${progressHtml}<div class="goal-status">${renderGoalStatus(r.status)}</div></div></div><button class="goal-modify" type="button" aria-label="修改" title="修改">✎</button></div>`}).join('');bindGoalActions();scheduleGoalHeightEqualize();
+  box.innerHTML=rows.map((r,i)=>{const target=state.cards.find(x=>x.id===r.targetId),[barStart,barEnd,barGlow]=goalPaletteForTarget(target),themeSoft=goalThemeRgba(barStart,.09),themeFade=goalThemeRgba(barEnd,.04),themeSoftHover=goalThemeRgba(barStart,.12),themeFadeHover=goalThemeRgba(barEnd,.06),delay=Math.min(i*70,420);const progressHtml=r.mechanic==='stamp'?renderStampProgress(r.stampCurrent,r.stampTarget,r.stampMilestones):(r.mechanic==='tier_rate'?v19RenderTierProgress(target,r):(r.mechanic==='standard'?v20RenderStandardProgress(target,r):`<div class="goal-progress-row"><div class="progress"><div style="--target-width:${r.progress}%"></div></div><div class="goal-percent">${r.percent}</div></div>`));return `<div class="goal ${r.completed?'completed':''} ${r.goalClass||''}" data-target-id="${r.targetId}" style="--bar-start:${barStart};--bar-end:${barEnd};--bar-glow:${barGlow};--theme-soft:${themeSoft};--theme-fade:${themeFade};--theme-soft-hover:${themeSoftHover};--theme-fade-hover:${themeFadeHover};--bar-delay:${delay}ms"><div class="goal-body"><div class="goal-card">${esc(r.card)}</div><div class="goal-title">${r.title}${r.completed?'<span class="trophy" title="目標達成">🏆</span>':''}<span class="goal-days ${r.dayClass}">${esc(r.days)}</span></div><div class="goal-meta">${renderGoalMeta(r.metaLines||[r.meta])}</div>${r.stageOverview?renderStageOverview(r.stageOverview):''}<div class="goal-lower">${progressHtml}<div class="goal-status">${renderGoalStatus(r.status)}</div></div></div><button class="goal-modify" type="button" aria-label="修改" title="修改">✎</button></div>`}).join('');bindGoalActions();scheduleGoalHeightEqualize();v27ScheduleMarkerLayout();
 };
 
 
